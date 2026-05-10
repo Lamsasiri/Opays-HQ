@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 
 // Composant de Carte Statistique pour le Dashboard
