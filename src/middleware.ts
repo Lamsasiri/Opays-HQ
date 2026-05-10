@@ -1,44 +1,19 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
+import { updateSession } from '@/lib/supabase-middleware';
 import type { NextRequest } from 'next/server';
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  // 1. Si pas de session et on essaie d'accéder au HQ, retour au login
-  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
-  // 2. Si session active, on vérifie le rôle pour les zones sensibles
-  if (session) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single();
-
-    const role = profile?.role;
-
-    // Exemple : Restriction de la zone Equity aux fondateurs uniquement
-    if (req.nextUrl.pathname.startsWith('/dashboard/equity') && !['CEO', 'COO'].includes(role)) {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-    
-    // Restriction de la zone Leads (Ventes) aux Sales et Fondateurs
-    if (req.nextUrl.pathname.startsWith('/dashboard/leads') && !['CEO', 'COO', 'SALES'].includes(role)) {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-  }
-
-  return res;
+export async function middleware(request: NextRequest) {
+  return await updateSession(request);
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public assets
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };
