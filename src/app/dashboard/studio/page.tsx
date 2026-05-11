@@ -54,11 +54,11 @@ export default function StudioPage() {
     <div className="p-8 space-y-8 max-w-6xl mx-auto">
       <header className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
-          <Calculator size={12} /> OPAYS STUDIO
+          <Calculator size={12} /> OUTILS DE VENTE
         </div>
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Calculateur de Gains (ROI)</h1>
         <p className="text-gray-500 max-w-xl mx-auto text-sm">
-          Découvrez combien d'argent votre entreprise perd chaque année à cause des tâches manuelles et comment l'automatisation peut corriger cela.
+          Découvrez combien d'argent votre client perd chaque année et comment notre solution peut corriger cela.
         </p>
       </header>
 

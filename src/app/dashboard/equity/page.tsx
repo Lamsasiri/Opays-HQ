@@ -27,8 +27,8 @@ export default async function EquityPage() {
   return (
     <div className="p-8 space-y-8">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mon Equity</h1>
-        <p className="text-gray-500 mt-1 text-sm">Suivi en temps réel de votre participation au capital d'OPAYS TECH.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mes Actions</h1>
+        <p className="text-gray-500 mt-1 text-sm">Suivez en temps réel vos parts dans le capital d'OPAYS TECH.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

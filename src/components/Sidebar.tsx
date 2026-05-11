@@ -46,10 +46,10 @@ export default function Sidebar({ profile }: { profile: any }) {
   const canSeeTreasury = ['CEO', 'COO', 'ADMIN'].includes(profile?.role);
 
   const commonLinks = [
-    { href: '/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard size={18} /> },
-    { href: '/dashboard/studio', label: 'Studio (Audits)', icon: <Target size={18} /> },
-    { href: '/dashboard/projects', label: 'Projets', icon: <Briefcase size={18} /> },
-    { href: '/dashboard/knowledge', label: 'Ficelles du métier', icon: <BookOpen size={18} /> },
+    { href: '/dashboard', label: 'Accueil', icon: <LayoutDashboard size={18} /> },
+    { href: '/dashboard/studio', label: 'Outils de Vente', icon: <Target size={18} /> },
+    { href: '/dashboard/projects', label: 'Mes Projets', icon: <Briefcase size={18} /> },
+    { href: '/dashboard/knowledge', label: 'Guide & Savoir-faire', icon: <BookOpen size={18} /> },
     { href: '/dashboard/tasks', label: 'Mes Tâches', icon: <CheckCircle2 size={18} /> },
     { href: '/dashboard/ideas', label: 'Boîte à Idées', icon: <Lightbulb size={18} /> },
   ];
@@ -59,13 +59,13 @@ export default function Sidebar({ profile }: { profile: any }) {
   ] : [];
 
   const associateLinks = [
-    { href: '/dashboard/leads', label: 'Leads (CRM)', icon: <Users size={18} /> },
-    { href: '/dashboard/equity', label: 'Mes Parts (Equity)', icon: <TrendingUp size={18} /> },
+    { href: '/dashboard/leads', label: 'Mes Prospects', icon: <Users size={18} /> },
+    { href: '/dashboard/equity', label: 'Mes Actions', icon: <TrendingUp size={18} /> },
     ...(canSeeTreasury ? [{ href: '/dashboard/treasury', label: 'Trésorerie', icon: <Wallet size={18} /> }] : []),
   ];
 
   const employeeLinks = [
-    { href: '/dashboard/hr', label: 'Mon Espace RH', icon: <UserCircle size={18} /> },
+    { href: '/dashboard/hr', label: 'Espace Employé', icon: <UserCircle size={18} /> },
   ];
 
   return (

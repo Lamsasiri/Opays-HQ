@@ -18,8 +18,8 @@ export default async function KnowledgePage() {
   return (
     <div className="p-8 space-y-8">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Les Ficelles du Métier</h1>
-        <p className="text-gray-500 mt-1 text-sm">Le savoir-faire d'OPAYS TECH, accessible en un clic.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Guide & Savoir-faire</h1>
+        <p className="text-gray-500 mt-1 text-sm">Le manuel pratique d'OPAYS TECH pour réussir vos missions.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

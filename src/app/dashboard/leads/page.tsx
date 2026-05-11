@@ -47,14 +47,14 @@ export default function LeadsPage() {
     <div className="p-8 space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Leads & CRM</h1>
-          <p className="text-gray-500 mt-1 text-sm">Gérez votre pipeline de vente et suivez chaque opportunité.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mes Prospects</h1>
+          <p className="text-gray-500 mt-1 text-sm">Gérez votre liste de clients potentiels et suivez chaque vente.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
           className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all shadow-sm"
         >
-          <Plus size={18} /> Nouveau Lead
+          <Plus size={18} /> Nouveau Prospect
         </button>
       </header>
 

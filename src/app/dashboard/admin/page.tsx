@@ -23,10 +23,10 @@ export default async function AdminPage() {
     <div className="p-8 space-y-10">
       <header>
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 border border-red-200 rounded-full text-red-600 text-[10px] font-bold uppercase tracking-widest mb-3">
-          <Lock size={12} /> Espace Gouvernance CEO
+          <Lock size={12} /> Espace Direction
         </div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Administration Globale</h1>
-        <p className="text-gray-500 mt-1 text-sm">Gérez les accès, les membres et les documents confidentiels.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Gestion de l'équipe</h1>
+        <p className="text-gray-500 mt-1 text-sm">Gérez les accès, les membres et les documents importants.</p>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

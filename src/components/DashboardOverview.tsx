@@ -86,36 +86,36 @@ export default function DashboardOverview() {
     <div className="p-8 space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Tableau de Bord</h1>
-          <p className="text-gray-500 mt-1 text-sm">Bienvenue sur le centre de commandement d'OPAYS TECH.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Accueil</h1>
+          <p className="text-gray-500 mt-1 text-sm">Bienvenue sur votre centre de gestion OPAYS TECH.</p>
         </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <StatCard title="Leads Actifs" value={stats.leads} icon={<Users size={20} />} />
+          <StatCard title="Prospects" value={stats.leads} icon={<Users size={20} />} />
           <StatCard title="Projets en cours" value={stats.projects} icon={<Briefcase size={20} />} />
-          <StatCard title="Tâches Todo" value={stats.tasks} icon={<CheckSquare size={20} />} />
-          <StatCard title="Audits en cours" value={stats.audits} icon={<Zap size={20} />} />
+          <StatCard title="Tâches à faire" value={stats.tasks} icon={<CheckSquare size={20} />} />
+          <StatCard title="Analyses en cours" value={stats.audits} icon={<Zap size={20} />} />
         </div>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
           <div className="flex justify-between items-center">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Allocation Capacité</h3>
-            <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md font-bold">LIVE</span>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400">Répartition du travail</h3>
+            <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md font-bold">EN DIRECT</span>
           </div>
           
           <div className="space-y-4">
-            <CapacityBar label="Studio (70%)" current={stats.studioShare || 0} target={70} color="bg-blue-500" />
-            <CapacityBar label="Labs (20%)" current={stats.labsShare || 0} target={20} color="bg-purple-500" />
-            <CapacityBar label="Buffer (10%)" current={Math.max(0, 100 - (stats.studioShare + stats.labsShare))} target={10} color="bg-gray-300" />
+            <CapacityBar label="Services (70%)" current={stats.studioShare || 0} target={70} color="bg-blue-500" />
+            <CapacityBar label="Innovation (20%)" current={stats.labsShare || 0} target={20} color="bg-purple-500" />
+            <CapacityBar label="Réserve (10%)" current={Math.max(0, 100 - (stats.studioShare + stats.labsShare))} target={10} color="bg-gray-300" />
           </div>
 
           <div className="pt-3 border-t border-gray-100">
             <p className="text-[11px] text-gray-400 italic leading-relaxed">
               {stats.labsShare > 20
-                ? "⚠️ Les Labs dépassent l'allocation cible."
-                : "✓ Allocation conforme au cadre 70/20/10."}
+                ? "⚠️ L'innovation prend trop de place sur les services."
+                : "✓ La répartition du travail est optimale."}
             </p>
           </div>
         </div>

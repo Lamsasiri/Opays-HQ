@@ -27,8 +27,8 @@ export default async function HRPage() {
   return (
     <div className="p-8 space-y-8">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mon Espace RH</h1>
-        <p className="text-gray-500 mt-1 text-sm">Gestion de votre carrière et de vos performances au sein d'OPAYS TECH.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Espace Employé</h1>
+        <p className="text-gray-500 mt-1 text-sm">Gérez vos documents administratifs et vos fiches de paie.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

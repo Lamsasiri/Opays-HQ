@@ -33,8 +33,8 @@ export default async function TreasuryPage() {
     <div className="p-8 space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Trésorerie & Partenariats</h1>
-          <p className="text-gray-500 mt-1 text-sm">Vue stratégique sur les actifs et les alliances d'OPAYS TECH.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Caisse & Partenaires</h1>
+          <p className="text-gray-500 mt-1 text-sm">Suivi de l'argent et des alliances d'OPAYS TECH.</p>
         </div>
         <div className="flex gap-3">
           <button className="px-5 py-2.5 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl flex items-center gap-2 hover:bg-gray-50 transition-all">

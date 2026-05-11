@@ -30,8 +30,8 @@ export default async function ProjectsPage() {
     <div className="p-8 space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Gestion des Projets</h1>
-          <p className="text-gray-500 mt-1 text-sm">Suivi de la production, de la maintenance et de la facturation.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mes Projets</h1>
+          <p className="text-gray-500 mt-1 text-sm">Suivi de la production, de l'entretien et de la facturation.</p>
         </div>
       </header>
 
@@ -46,7 +46,7 @@ export default async function ProjectsPage() {
                       <span className={`px-2 py-0.5 text-[9px] font-bold rounded-md uppercase tracking-widest ${
                         project.branch === 'STUDIO' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600'
                       }`}>
-                        {project.branch}
+                        {project.branch === 'STUDIO' ? 'SERVICES' : 'INNOVATION'}
                       </span>
                       <h3 className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors">{project.title}</h3>
                     </div>
