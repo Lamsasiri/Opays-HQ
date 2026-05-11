@@ -1,88 +1,65 @@
 "use client";
 
-import React, { useState } from 'react';
-import { CheckCircle2, Clock, AlertCircle, ChevronDown, MessageSquare, Send } from 'lucide-react';
+import React from 'react';
+import { Calendar, ChevronRight, MessageSquare } from 'lucide-react';
 
-const PriorityColors: any = {
-  'LOW': 'text-zinc-500',
-  'MEDIUM': 'text-blue-500',
-  'HIGH': 'text-orange-500',
-  'URGENT': 'text-red-500',
+const StatusColors: any = {
+  'TODO': 'bg-gray-100 text-gray-600',
+  'DOING': 'bg-blue-50 text-blue-600',
+  'DONE': 'bg-green-50 text-green-600',
 };
 
-const StatusIcons: any = {
-  'TODO': <div className="w-5 h-5 rounded-full border-2 border-zinc-700" />,
-  'DOING': <div className="w-5 h-5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />,
-  'DONE': <CheckCircle2 className="text-green-500" size={20} />,
+const PriorityColors: any = {
+  'HIGH': 'bg-red-50 text-red-600 border-red-200',
+  'MEDIUM': 'bg-yellow-50 text-yellow-600 border-yellow-200',
+  'LOW': 'bg-gray-50 text-gray-500 border-gray-200',
 };
 
 export default function TaskItem({ task }: { task: any }) {
-  const [expanded, setExpanded] = useState(false);
-  const [comment, setComment] = useState('');
-
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 hover:border-zinc-700 transition-all group space-y-4">
-      <div className="flex items-center gap-6">
-        <button className="flex-shrink-0 hover:scale-110 transition-transform">
-          {StatusIcons[task.status]}
-        </button>
-        
-        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <div className="flex items-center gap-3 mb-1">
-            <h3 className={`font-bold truncate ${task.status === 'DONE' ? 'text-zinc-500 line-through' : 'text-white'}`}>
+    <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all group">
+      <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className={`w-2 h-2 rounded-full ${task.status === 'DONE' ? 'bg-green-500' : task.status === 'DOING' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className={`font-semibold text-sm truncate ${task.status === 'DONE' ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
               {task.title}
-            </h3>
-            <span className={`text-[10px] font-black ${PriorityColors[task.priority]}`}>
-              {task.priority}
-            </span>
+            </p>
+            {task.priority && (
+              <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded border ${PriorityColors[task.priority] || PriorityColors['LOW']}`}>
+                {task.priority}
+              </span>
+            )}
           </div>
-          <div className="flex items-center gap-4 text-xs text-zinc-500">
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {task.due_date ? new Date(task.due_date).toLocaleDateString('fr-FR') : 'Sans date'}
-            </span>
-            <span className="flex items-center gap-1">
-              <AlertCircle size={12} /> {task.projects?.title || 'Tâche Interne'}
-            </span>
-            <span className="flex items-center gap-1">
-               <MessageSquare size={12} /> {task.task_comments?.length || 0}
-            </span>
+          <div className="flex items-center gap-3 mt-1">
+            {task.projects?.title && (
+              <span className="text-xs text-gray-400">{task.projects.title}</span>
+            )}
+            {task.due_date && (
+              <span className="text-xs text-gray-400 flex items-center gap-1">
+                <Calendar size={10} /> {new Date(task.due_date).toLocaleDateString('fr-FR')}
+              </span>
+            )}
+            {task.task_comments?.length > 0 && (
+              <span className="text-xs text-gray-400 flex items-center gap-1">
+                <MessageSquare size={10} /> {task.task_comments.length}
+              </span>
+            )}
           </div>
         </div>
-
-        <button onClick={() => setExpanded(!expanded)} className={`text-zinc-700 hover:text-zinc-400 transition-all ${expanded ? 'rotate-180' : ''}`}>
-          <ChevronDown size={20} />
-        </button>
       </div>
 
-      {expanded && (
-        <div className="border-t border-zinc-800 pt-4 space-y-4 animate-in fade-in duration-300">
-          <div className="space-y-3">
-            {task.task_comments?.map((c: any) => (
-              <div key={c.id} className="bg-zinc-950 p-3 rounded-xl border border-zinc-800">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-[10px] font-bold text-zinc-400">{c.profiles?.full_name}</span>
-                  <span className="text-[10px] text-zinc-600">{new Date(c.created_at).toLocaleString()}</span>
-                </div>
-                <p className="text-sm text-zinc-300">{c.content}</p>
-              </div>
-            ))}
-            {!task.task_comments?.length && <p className="text-[10px] text-zinc-600 italic px-2">Aucun commentaire pour le moment.</p>}
+      <div className="flex items-center gap-3">
+        <span className={`px-3 py-1 text-[10px] font-bold rounded-lg ${StatusColors[task.status]}`}>
+          {task.status}
+        </span>
+        {task.profiles?.full_name && (
+          <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold" title={task.profiles.full_name}>
+            {task.profiles.full_name.charAt(0)}
           </div>
-
-          <div className="flex gap-2">
-            <input 
-              type="text" 
-              placeholder="Ajouter un commentaire..."
-              className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-xs focus:border-blue-500 outline-none"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <button className="p-2 bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition-colors">
-              <Send size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+        <ChevronRight size={16} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+      </div>
     </div>
   );
 }

@@ -21,7 +21,7 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-screen bg-black">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar profile={profile} />
       <main className="flex-1 overflow-y-auto">
         {children}

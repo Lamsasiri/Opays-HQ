@@ -6,12 +6,12 @@ import { Users, Phone, Mail, Building2, MoreHorizontal, Plus, Clock, Target } fr
 import NewLeadModal from '@/components/modals/NewLeadModal';
 
 const StatusColors: any = {
-  'NEW': 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-  'CONTACTED': 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-  'AUDIT_PENDING': 'bg-purple-500/10 text-purple-500 border-purple-500/20',
-  'PROPOSAL_SENT': 'bg-orange-500/10 text-orange-500 border-orange-500/20',
-  'CLOSED_WON': 'bg-green-500/10 text-green-500 border-green-500/20',
-  'CLOSED_LOST': 'bg-red-500/10 text-red-500 border-red-500/20',
+  'NEW': 'bg-blue-50 text-blue-600 border-blue-200',
+  'CONTACTED': 'bg-yellow-50 text-yellow-600 border-yellow-200',
+  'AUDIT_PENDING': 'bg-purple-50 text-purple-600 border-purple-200',
+  'PROPOSAL_SENT': 'bg-orange-50 text-orange-600 border-orange-200',
+  'CLOSED_WON': 'bg-green-50 text-green-600 border-green-200',
+  'CLOSED_LOST': 'bg-red-50 text-red-600 border-red-200',
 };
 
 export default function LeadsPage() {
@@ -44,54 +44,62 @@ export default function LeadsPage() {
   };
 
   return (
-    <div className="p-8 space-y-8 text-white">
+    <div className="p-8 space-y-8">
       <header className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight">Leads & CRM</h1>
-          <p className="text-zinc-500 mt-2">Gérez votre pipeline de vente et suivez chaque opportunité.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Leads & CRM</h1>
+          <p className="text-gray-500 mt-1 text-sm">Gérez votre pipeline de vente et suivez chaque opportunité.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="px-5 py-2.5 bg-white text-black font-bold rounded-xl flex items-center gap-2 hover:bg-zinc-200 transition-all"
+          className="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all shadow-sm"
         >
           <Plus size={18} /> Nouveau Lead
         </button>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">Total Pipeline</p>
-          <h3 className="text-2xl font-bold">{(leads?.reduce((acc, lead) => acc + (lead.potential_value || 0), 0) || 0).toLocaleString()} $</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Total Pipeline</p>
+          <h3 className="text-2xl font-bold text-gray-900">{(leads?.reduce((acc, lead) => acc + (lead.potential_value || 0), 0) || 0).toLocaleString()} $</h3>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-          <p className="text-xs text-zinc-500 font-bold uppercase tracking-widest mb-1">En Audit</p>
-          <h3 className="text-2xl font-bold">{leads?.filter(l => l.status === 'AUDIT_PENDING').length || 0}</h3>
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">En Audit</p>
+          <h3 className="text-2xl font-bold text-gray-900">{leads?.filter(l => l.status === 'AUDIT_PENDING').length || 0}</h3>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Gagnés</p>
+          <h3 className="text-2xl font-bold text-green-600">{leads?.filter(l => l.status === 'CLOSED_WON').length || 0}</h3>
+        </div>
+        <div className="bg-white border border-gray-200 rounded-2xl p-5">
+          <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">Total Leads</p>
+          <h3 className="text-2xl font-bold text-gray-900">{leads?.length || 0}</h3>
         </div>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-zinc-800 bg-zinc-900/50">
-              <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">Entreprise</th>
-              <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">Status</th>
-              <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">SLA / Audit</th>
-              <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">Valeur Est.</th>
-              <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-widest">Assigné à</th>
+            <tr className="border-b border-gray-100 bg-gray-50/50">
+              <th className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">Entreprise</th>
+              <th className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">Status</th>
+              <th className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">SLA / Audit</th>
+              <th className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">Valeur Est.</th>
+              <th className="p-4 text-xs font-semibold text-gray-400 uppercase tracking-widest">Assigné à</th>
               <th className="p-4"></th>
             </tr>
           </thead>
           <tbody>
             {leads.map((lead) => (
-              <tr key={lead.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors group">
+              <tr key={lead.id} className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors group">
                 <td className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-400 group-hover:text-white transition-colors">
-                      <Building2 size={20} />
+                    <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-blue-600 transition-colors">
+                      <Building2 size={18} />
                     </div>
                     <div>
-                      <span className="font-bold block">{lead.company_name}</span>
-                      <span className="text-[10px] text-zinc-500">{lead.contact_name}</span>
+                      <span className="font-semibold block text-gray-900">{lead.company_name}</span>
+                      <span className="text-xs text-gray-400">{lead.contact_name}</span>
                     </div>
                   </div>
                 </td>
@@ -103,25 +111,25 @@ export default function LeadsPage() {
                 <td className="p-4">
                   <div className="space-y-1">
                     {lead.status === 'NEW' && (
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-red-400">
+                      <div className="flex items-center gap-2 text-[11px] font-semibold text-red-500">
                         <Clock size={12} /> SLA : {getSlaLabel(lead.sla_qualification_deadline)}
                       </div>
                     )}
                     {lead.status === 'AUDIT_PENDING' && (
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-purple-400">
+                      <div className="flex items-center gap-2 text-[11px] font-semibold text-purple-500">
                         <Target size={12} /> Audit : {lead.audit_deadline ? new Date(lead.audit_deadline).toLocaleDateString() : 'Non planifié'}
                       </div>
                     )}
                   </div>
                 </td>
                 <td className="p-4">
-                  <span className="font-mono text-sm">{(lead.potential_value || 0).toLocaleString()} $</span>
+                  <span className="font-mono text-sm font-semibold text-gray-900">{(lead.potential_value || 0).toLocaleString()} $</span>
                 </td>
-                <td className="p-4 text-sm text-zinc-400">
+                <td className="p-4 text-sm text-gray-500">
                   {lead.profiles?.full_name || 'Non assigné'}
                 </td>
                 <td className="p-4 text-right">
-                  <button className="p-2 hover:bg-zinc-800 rounded-lg text-zinc-500 transition-all">
+                  <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 transition-all">
                     <MoreHorizontal size={18} />
                   </button>
                 </td>
@@ -130,7 +138,7 @@ export default function LeadsPage() {
 
             {!loading && !leads.length && (
               <tr>
-                <td colSpan={6} className="p-20 text-center text-zinc-600 italic">
+                <td colSpan={6} className="p-20 text-center text-gray-400 italic">
                   Aucun prospect enregistré.
                 </td>
               </tr>

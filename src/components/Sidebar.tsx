@@ -15,7 +15,8 @@ import {
   Target,
   ShieldCheck,
   CheckCircle2,
-  Lightbulb
+  Lightbulb,
+  LogOut
 } from 'lucide-react';
 
 interface NavItemProps {
@@ -28,14 +29,14 @@ interface NavItemProps {
 const NavItem = ({ href, label, icon, active }: NavItemProps) => (
   <Link 
     href={href}
-    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
       active 
-        ? 'bg-white text-black font-semibold shadow-lg shadow-white/5' 
-        : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
     }`}
   >
     {icon}
-    <span className="text-sm">{label}</span>
+    <span>{label}</span>
   </Link>
 );
 
@@ -45,40 +46,40 @@ export default function Sidebar({ profile }: { profile: any }) {
   const canSeeTreasury = ['CEO', 'COO', 'ADMIN'].includes(profile?.role);
 
   const commonLinks = [
-    { href: '/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard size={20} /> },
-    { href: '/dashboard/studio', label: 'Studio (Audits)', icon: <Target size={20} /> },
-    { href: '/dashboard/projects', label: 'Projets', icon: <Briefcase size={20} /> },
-    { href: '/dashboard/knowledge', label: 'Ficelles du métier', icon: <BookOpen size={20} /> },
-    { href: '/dashboard/tasks', label: 'Mes Tâches', icon: <CheckCircle2 size={20} /> },
-    { href: '/dashboard/ideas', label: 'Boîte à Idées', icon: <Lightbulb size={20} /> },
+    { href: '/dashboard', label: 'Tableau de bord', icon: <LayoutDashboard size={18} /> },
+    { href: '/dashboard/studio', label: 'Studio (Audits)', icon: <Target size={18} /> },
+    { href: '/dashboard/projects', label: 'Projets', icon: <Briefcase size={18} /> },
+    { href: '/dashboard/knowledge', label: 'Ficelles du métier', icon: <BookOpen size={18} /> },
+    { href: '/dashboard/tasks', label: 'Mes Tâches', icon: <CheckCircle2 size={18} /> },
+    { href: '/dashboard/ideas', label: 'Boîte à Idées', icon: <Lightbulb size={18} /> },
   ];
 
   const adminLinks = (profile?.role === 'CEO' || profile?.is_admin) ? [
-    { href: '/dashboard/admin', label: 'Administration', icon: <ShieldCheck size={20} /> },
+    { href: '/dashboard/admin', label: 'Administration', icon: <ShieldCheck size={18} /> },
   ] : [];
 
   const associateLinks = [
-    { href: '/dashboard/leads', label: 'Leads (CRM)', icon: <Users size={20} /> },
-    { href: '/dashboard/equity', label: 'Mes Parts (Equity)', icon: <TrendingUp size={20} /> },
-    ...(canSeeTreasury ? [{ href: '/dashboard/treasury', label: 'Trésorerie', icon: <Wallet size={20} /> }] : []),
+    { href: '/dashboard/leads', label: 'Leads (CRM)', icon: <Users size={18} /> },
+    { href: '/dashboard/equity', label: 'Mes Parts (Equity)', icon: <TrendingUp size={18} /> },
+    ...(canSeeTreasury ? [{ href: '/dashboard/treasury', label: 'Trésorerie', icon: <Wallet size={18} /> }] : []),
   ];
 
   const employeeLinks = [
-    { href: '/dashboard/hr', label: 'Mon Espace RH', icon: <UserCircle size={20} /> },
+    { href: '/dashboard/hr', label: 'Mon Espace RH', icon: <UserCircle size={18} /> },
   ];
 
   return (
-    <aside className="w-64 bg-zinc-950 border-r border-zinc-800 h-screen flex flex-col p-6 sticky top-0">
-      <div className="mb-10 px-4 flex items-center gap-3">
-        <img src="/icon%20logo.PNG" alt="Opays Logo" className="w-8 h-8 rounded-lg shadow-lg" />
+    <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col p-5 sticky top-0">
+      <div className="mb-8 px-3 flex items-center gap-3">
+        <img src="/icon%20logo.PNG" alt="Opays Logo" className="w-9 h-9 rounded-xl shadow-sm" />
         <div>
-          <h2 className="text-xl font-bold tracking-tighter">OPAYS <span className="text-zinc-500">HQ</span></h2>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Operating System</p>
+          <h2 className="text-lg font-bold tracking-tight text-gray-900">OPAYS <span className="text-gray-400">HQ</span></h2>
+          <p className="text-[9px] text-gray-400 uppercase tracking-widest font-semibold">Operating System</p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2 overflow-y-auto custom-scrollbar">
-        <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest px-4 mb-2">Général</p>
+      <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
+        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest px-4 mb-2">Général</p>
         {commonLinks.map((link) => (
           <NavItem 
             key={link.href} 
@@ -87,8 +88,8 @@ export default function Sidebar({ profile }: { profile: any }) {
           />
         ))}
 
-        <div className="pt-6">
-          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest px-4 mb-2">
+        <div className="pt-5">
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest px-4 mb-2">
             {isAssociate ? 'Gestion Associé' : 'Espace Employé'}
           </p>
           {(isAssociate ? associateLinks : employeeLinks).map((link) => (
@@ -101,7 +102,7 @@ export default function Sidebar({ profile }: { profile: any }) {
         </div>
 
         {adminLinks.length > 0 && (
-          <div className="pt-6">
+          <div className="pt-5">
             <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest px-4 mb-2">Gouvernance</p>
             {adminLinks.map((link) => (
               <NavItem 
@@ -114,21 +115,21 @@ export default function Sidebar({ profile }: { profile: any }) {
         )}
       </nav>
 
-      <div className="pt-6 border-t border-zinc-800">
+      <div className="pt-4 border-t border-gray-100 space-y-2">
         <NavItem 
           href="/dashboard/settings" 
           label="Paramètres" 
-          icon={<Settings size={20} />} 
+          icon={<Settings size={18} />} 
           active={pathname === '/dashboard/settings'} 
         />
         
-        <div className="mt-4 p-4 bg-zinc-900/50 rounded-xl border border-zinc-800 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold">
+        <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
             {profile?.full_name?.charAt(0)}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs font-bold truncate">{profile?.full_name || 'Utilisateur'}</p>
-            <p className="text-[10px] text-zinc-500 truncate">{profile?.role || 'Rôle'}</p>
+            <p className="text-xs font-semibold text-gray-900 truncate">{profile?.full_name || 'Utilisateur'}</p>
+            <p className="text-[10px] text-gray-400 truncate">{profile?.role || 'Rôle'}</p>
           </div>
         </div>
       </div>

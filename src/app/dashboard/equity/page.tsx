@@ -25,70 +25,70 @@ export default async function EquityPage() {
   const totalVested = logs?.reduce((acc, log) => acc + log.shares_unlocked, 0) || 0;
 
   return (
-    <div className="p-8 space-y-8 text-white">
+    <div className="p-8 space-y-8">
       <header>
-        <h1 className="text-4xl font-bold tracking-tight">Mon Equity</h1>
-        <p className="text-zinc-500 mt-2">Suivi en temps réel de votre participation au capital d'OPAYS TECH.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Mon Equity</h1>
+        <p className="text-gray-500 mt-1 text-sm">Suivi en temps réel de votre participation au capital d'OPAYS TECH.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <div className="flex items-center gap-3 text-zinc-400 mb-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-3 text-gray-400 mb-4">
             <TrendingUp size={20} />
             <span className="text-sm font-medium">Parts Débloquées</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-bold">{totalVested.toFixed(2)}%</h3>
-            <span className="text-zinc-500 text-sm">sur {profile?.equity_percent || 0}%</span>
+            <h3 className="text-4xl font-bold text-gray-900">{totalVested.toFixed(2)}%</h3>
+            <span className="text-gray-400 text-sm">sur {profile?.equity_percent || 0}%</span>
           </div>
-          <div className="mt-6 w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+          <div className="mt-6 w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
             <div 
-              className="bg-white h-full transition-all duration-1000" 
+              className="bg-blue-600 h-full rounded-full transition-all duration-1000" 
               style={{ width: `${(totalVested / (profile?.equity_percent || 1)) * 100}%` }}
             ></div>
           </div>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <div className="flex items-center gap-3 text-zinc-400 mb-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-3 text-gray-400 mb-4">
             <Award size={20} />
             <span className="text-sm font-medium">Objectif Cible</span>
           </div>
-          <h3 className="text-4xl font-bold">{profile?.equity_percent || 0}%</h3>
-          <p className="text-xs text-zinc-500 mt-2 font-bold text-blue-400">Vesting sur 2 ans (Cliff 6 mois)</p>
+          <h3 className="text-4xl font-bold text-gray-900">{profile?.equity_percent || 0}%</h3>
+          <p className="text-xs text-blue-600 font-semibold mt-2">Vesting sur 2 ans (Cliff 6 mois)</p>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <div className="flex items-center gap-3 text-zinc-400 mb-4">
+        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="flex items-center gap-3 text-gray-400 mb-4">
             <Calendar size={20} />
             <span className="text-sm font-medium">Prochain Déblocage</span>
           </div>
-          <h3 className="text-2xl font-bold">1er du mois</h3>
-          <p className="text-xs text-zinc-500 mt-2">Sous réserve de l'apport de service validé.</p>
+          <h3 className="text-2xl font-bold text-gray-900">1er du mois</h3>
+          <p className="text-xs text-gray-400 mt-2">Sous réserve de l'apport de service validé.</p>
         </div>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-8">
-        <h2 className="text-xl font-bold mb-6">Historique des Dotations</h2>
-        <div className="space-y-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8">
+        <h2 className="text-lg font-bold text-gray-900 mb-6">Historique des Dotations</h2>
+        <div className="space-y-3">
           {logs?.map((log) => (
-            <div key={log.id} className="flex items-center justify-between p-4 bg-zinc-900 rounded-xl border border-zinc-800">
+            <div key={log.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
               <div className="flex items-center gap-4">
-                <div className="p-2 bg-green-500/10 text-green-500 rounded-lg">
+                <div className="p-2 bg-green-50 text-green-600 rounded-lg">
                   <CheckCircle2 size={20} />
                 </div>
                 <div>
-                  <p className="font-semibold">Dotation Mensuelle - {new Date(log.month).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</p>
-                  <p className="text-xs text-zinc-500">{log.contribution_notes}</p>
+                  <p className="font-semibold text-gray-900">Dotation Mensuelle - {new Date(log.month).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</p>
+                  <p className="text-xs text-gray-400">{log.contribution_notes}</p>
                 </div>
               </div>
-              <span className="text-lg font-bold text-white">+{log.shares_unlocked}%</span>
+              <span className="text-lg font-bold text-green-600">+{log.shares_unlocked}%</span>
             </div>
           ))}
 
           {!logs?.length && (
             <div className="py-10 text-center">
-              <p className="text-zinc-500 italic">Aucune dotation enregistrée pour le moment.</p>
+              <p className="text-gray-400 italic">Aucune dotation enregistrée pour le moment.</p>
             </div>
           )}
         </div>
