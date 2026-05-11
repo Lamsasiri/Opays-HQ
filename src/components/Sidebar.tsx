@@ -71,7 +71,7 @@ export default function Sidebar({ profile }: { profile: any }) {
   return (
     <aside className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col p-5 sticky top-0">
       <div className="mb-8 px-3 flex items-center gap-3">
-        <img src="/icon%20logo.PNG" alt="Opays Logo" className="w-9 h-9 rounded-xl shadow-sm" />
+        <img src="/icon-logo.png" alt="Opays Logo" className="w-9 h-9 rounded-xl shadow-sm" />
         <div>
           <h2 className="text-lg font-bold tracking-tight text-gray-900">OPAYS <span className="text-gray-400">HQ</span></h2>
           <p className="text-[9px] text-gray-400 uppercase tracking-widest font-semibold">Operating System</p>
