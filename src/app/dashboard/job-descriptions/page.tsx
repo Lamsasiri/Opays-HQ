@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { BookOpen, Copy, FileText, Printer, Sparkles } from 'lucide-react';
+import { BookOpen, Copy, FileText, Sparkles } from 'lucide-react';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
 import { getJobDescription, jobDescriptionToMarkdown, jobDescriptions } from '@/lib/jobDescriptions';
 
@@ -82,13 +82,7 @@ export default function JobDescriptionsPage() {
                     onClick={() => setReaderOpen(true)}
                     className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/15"
                   >
-                    <FileText size={16} /> Ouvrir en modale
-                  </button>
-                  <button
-                    onClick={() => window.print()}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
-                  >
-                    <Printer size={16} /> Imprimer / PDF
+                    <FileText size={16} /> Lire & Télécharger PDF
                   </button>
                 </div>
               </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
-import { Settings, UserPlus, FileUp, Users, ShieldCheck, DollarSign, Shield, TrendingUp, BarChart3 } from 'lucide-react';
+import { Settings, UserPlus, FileUp, Users, ShieldCheck, DollarSign, Shield, TrendingUp, BarChart3, Loader2, Check } from 'lucide-react';
 import AccessControlModal from '@/components/modals/AccessControlModal';
 import AssignEquityModal from '@/components/modals/AssignEquityModal';
 import AssociateDocumentsModal from '@/components/modals/AssociateDocumentsModal';
@@ -16,6 +16,32 @@ export default function SettingsPage() {
   const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
   const [isEquityModalOpen, setIsEquityModalOpen] = useState(false);
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
+
+  // Form states
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('SALES');
+  const [inviteShares, setInviteShares] = useState('');
+  const [inviteSalary, setInviteSalary] = useState('');
+  const [inviteType, setInviteType] = useState('ASSOCIATE');
+  const [inviting, setInviting] = useState(false);
+  const [inviteSuccess, setInviteSuccess] = useState(false);
+
+  const [docTitle, setDocTitle] = useState('');
+  const [docRoles, setDocRoles] = useState<string[]>([]);
+  const [publishing, setPublishing] = useState(false);
+  const [publishSuccess, setPublishSuccess] = useState(false);
+
+  const [budgetTotal, setBudgetTotal] = useState('');
+  const [budgetCA, setBudgetCA] = useState('');
+  const [savingBudget, setSavingBudget] = useState(false);
+  const [budgetSuccess, setBudgetSuccess] = useState(false);
+
+  const [repartServices, setRepartServices] = useState('70');
+  const [repartInnovation, setRepartInnovation] = useState('20');
+  const [repartReserve, setRepartReserve] = useState('10');
+  const [savingRepart, setSavingRepart] = useState(false);
+  const [repartSuccess, setRepartSuccess] = useState(false);
+
   const supabase = useMemo(() => createClient(), []);
   const { profile, isCEO, isManager } = useProfile();
 
@@ -35,6 +61,103 @@ export default function SettingsPage() {
   const openAccessControl = (member: any) => {
     setSelectedMember(member);
     setIsAccessModalOpen(true);
+  };
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail.trim()) return;
+    setInviting(true);
+
+    // Insert into profiles with pending status
+    const { error } = await supabase.from('profiles').insert({
+      email: inviteEmail.trim(),
+      role: inviteRole,
+      type: inviteType,
+      shares_percent: inviteShares ? parseFloat(inviteShares) : 0,
+      salary: inviteSalary ? parseFloat(inviteSalary) : 0,
+      full_name: inviteEmail.split('@')[0],
+      status: 'INVITED',
+    });
+
+    if (!error) {
+      // Log the activity
+      await supabase.from('activity_log').insert({
+        action: 'member_invited',
+        details: { email: inviteEmail, role: inviteRole, type: inviteType },
+        performed_by: profile?.id,
+      });
+
+      setInviteEmail('');
+      setInviteShares('');
+      setInviteSalary('');
+      setInviteSuccess(true);
+      setTimeout(() => setInviteSuccess(false), 2500);
+      fetchData();
+    }
+    setInviting(false);
+  };
+
+  const handlePublishDoc = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!docTitle.trim()) return;
+    setPublishing(true);
+
+    const { error } = await supabase.from('global_documents').insert({
+      title: docTitle.trim(),
+      visible_to: docRoles.length > 0 ? docRoles : ['ALL'],
+      created_by: profile?.id,
+    });
+
+    if (!error) {
+      await supabase.from('activity_log').insert({
+        action: 'document_published',
+        details: { title: docTitle, visible_to: docRoles },
+        performed_by: profile?.id,
+      });
+
+      setDocTitle('');
+      setDocRoles([]);
+      setPublishSuccess(true);
+      setTimeout(() => setPublishSuccess(false), 2500);
+      fetchData();
+    }
+    setPublishing(false);
+  };
+
+  const toggleDocRole = (role: string) => {
+    setDocRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
+    );
+  };
+
+  const handleSaveBudget = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingBudget(true);
+
+    await supabase.from('activity_log').insert({
+      action: 'budget_updated',
+      details: { budget_total: budgetTotal, objectif_ca: budgetCA },
+      performed_by: profile?.id,
+    });
+
+    setBudgetSuccess(true);
+    setTimeout(() => setBudgetSuccess(false), 2500);
+    setSavingBudget(false);
+  };
+
+  const handleSaveRepart = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingRepart(true);
+
+    await supabase.from('activity_log').insert({
+      action: 'repartition_updated',
+      details: { services: repartServices, innovation: repartInnovation, reserve: repartReserve },
+      performed_by: profile?.id,
+    });
+
+    setRepartSuccess(true);
+    setTimeout(() => setRepartSuccess(false), 2500);
+    setSavingRepart(false);
   };
 
   if (loading && !profile) return <div className="p-8 text-slate-400">Chargement du centre de pilotage...</div>;
@@ -60,15 +183,15 @@ export default function SettingsPage() {
                 <UserPlus className="text-cyan-300" size={22} />
                 <h2 className="text-lg font-semibold text-white">Inviter un membre</h2>
               </div>
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-4" onSubmit={handleInvite}>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Email</label>
-                    <input type="email" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="email@opays.tech" />
+                    <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="email@opays.tech" required />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Rôle</label>
-                    <select className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-cyan-400/30">
+                    <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-cyan-400/30">
                       <option value="SALES">Commercial</option>
                       <option value="ENGINEER">Ingénieur</option>
                       <option value="CTO">CTO</option>
@@ -78,22 +201,23 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Parts (%)</label>
-                    <input type="number" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="0" />
+                    <input type="number" value={inviteShares} onChange={(e) => setInviteShares(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="0" />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Salaire ($)</label>
-                    <input type="number" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="0" />
+                    <input type="number" value={inviteSalary} onChange={(e) => setInviteSalary(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-400/30" placeholder="0" />
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Type de contrat</label>
-                  <select className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-cyan-400/30">
+                  <select value={inviteType} onChange={(e) => setInviteType(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-cyan-400/30">
                     <option value="ASSOCIATE">Associé (parts + salaire)</option>
                     <option value="EMPLOYEE">Employé (salaire uniquement)</option>
                   </select>
                 </div>
-                <button className="w-full rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">
-                  Envoyer l'invitation
+                <button type="submit" disabled={inviting || !inviteEmail.trim()} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400 disabled:opacity-40">
+                  {inviting ? <Loader2 size={16} className="animate-spin" /> : inviteSuccess ? <Check size={16} /> : null}
+                  {inviting ? 'Envoi...' : inviteSuccess ? 'Invitation envoyée !' : "Envoyer l'invitation"}
                 </button>
               </form>
             </div>
@@ -103,23 +227,24 @@ export default function SettingsPage() {
                 <FileUp className="text-violet-300" size={22} />
                 <h2 className="text-lg font-semibold text-white">Documents importants</h2>
               </div>
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-4" onSubmit={handlePublishDoc}>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Titre du document</label>
-                  <input type="text" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-violet-400/30" placeholder="ex: Contrat type 2026" />
+                  <input type="text" value={docTitle} onChange={(e) => setDocTitle(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-violet-400/30" placeholder="ex: Contrat type 2026" required />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Qui peut voir ce document ?</label>
                   <div className="grid grid-cols-2 gap-2">
                     {['Associés', 'Employés', 'CEO', 'CTO', 'Commerciaux'].map((role) => (
-                      <label key={role} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/55 px-3 py-2 text-xs font-medium text-slate-300">
-                        <input type="checkbox" className="accent-cyan-400" /> {role}
+                      <label key={role} className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/55 px-3 py-2 text-xs font-medium text-slate-300 cursor-pointer">
+                        <input type="checkbox" checked={docRoles.includes(role)} onChange={() => toggleDocRole(role)} className="accent-cyan-400" /> {role}
                       </label>
                     ))}
                   </div>
                 </div>
-                <button className="w-full rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15">
-                  Publier le document
+                <button type="submit" disabled={publishing || !docTitle.trim()} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/15 disabled:opacity-40">
+                  {publishing ? <Loader2 size={16} className="animate-spin" /> : publishSuccess ? <Check size={16} className="text-emerald-300" /> : null}
+                  {publishing ? 'Publication...' : publishSuccess ? 'Document publié !' : 'Publier le document'}
                 </button>
               </form>
 
@@ -179,19 +304,22 @@ export default function SettingsPage() {
                 <DollarSign className="text-emerald-300" size={22} />
                 <h2 className="text-lg font-semibold text-white">Budget mensuel</h2>
               </div>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Budget Total ($)</label>
-                  <input type="number" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-emerald-400/30" placeholder="10000" />
+              <form onSubmit={handleSaveBudget} className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Budget Total ($)</label>
+                    <input type="number" value={budgetTotal} onChange={(e) => setBudgetTotal(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-emerald-400/30" placeholder="10000" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Objectif CA ($)</label>
+                    <input type="number" value={budgetCA} onChange={(e) => setBudgetCA(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-emerald-400/30" placeholder="50000" />
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Objectif CA ($)</label>
-                  <input type="number" className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-emerald-400/30" placeholder="50000" />
-                </div>
-              </div>
-              <button className="w-full rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">
-                Définir le budget
-              </button>
+                <button type="submit" disabled={savingBudget} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:opacity-40">
+                  {savingBudget ? <Loader2 size={16} className="animate-spin" /> : budgetSuccess ? <Check size={16} /> : null}
+                  {savingBudget ? 'Enregistrement...' : budgetSuccess ? 'Budget enregistré !' : 'Définir le budget'}
+                </button>
+              </form>
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/5 p-8 space-y-6 backdrop-blur-xl shadow-2xl shadow-black/20">
@@ -199,23 +327,24 @@ export default function SettingsPage() {
                 <BarChart3 className="text-orange-300" size={22} />
                 <h2 className="text-lg font-semibold text-white">Répartition du travail</h2>
               </div>
-              <div className="space-y-3">
+              <form onSubmit={handleSaveRepart} className="space-y-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Services (%)</label>
-                  <input type="number" defaultValue={70} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
+                  <input type="number" value={repartServices} onChange={(e) => setRepartServices(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Innovation (%)</label>
-                  <input type="number" defaultValue={20} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
+                  <input type="number" value={repartInnovation} onChange={(e) => setRepartInnovation(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Réserve (%)</label>
-                  <input type="number" defaultValue={10} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
+                  <input type="number" value={repartReserve} onChange={(e) => setRepartReserve(e.target.value)} className="w-full rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 outline-none focus:border-orange-400/30" />
                 </div>
-              </div>
-              <button className="w-full rounded-2xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange-400">
-                Appliquer la répartition
-              </button>
+                <button type="submit" disabled={savingRepart} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-orange-400 disabled:opacity-40">
+                  {savingRepart ? <Loader2 size={16} className="animate-spin" /> : repartSuccess ? <Check size={16} /> : null}
+                  {savingRepart ? 'Application...' : repartSuccess ? 'Répartition appliquée !' : 'Appliquer la répartition'}
+                </button>
+              </form>
             </div>
           </div>
         )}
