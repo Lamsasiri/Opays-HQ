@@ -9,7 +9,7 @@ interface DocumentTemplateProps {
   items?: { description: string; amount: number }[];
   total?: number;
   content?: React.ReactNode;
-  type: 'INVOICE' | 'CONTRACT' | 'ADMIN';
+  type: 'INVOICE' | 'CONTRACT' | 'ADMIN' | 'QUOTE' | 'PURCHASE_ORDER' | 'MINUTES';
   logoSrc?: string;
   sealSrc?: string;
 }
@@ -61,7 +61,7 @@ export default function DocumentTemplate({
 
       {/* Main Content */}
       <main className="flex-1">
-        {type === 'INVOICE' && items && (
+        {['INVOICE', 'QUOTE', 'PURCHASE_ORDER'].includes(type) && items && (
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-zinc-200">
@@ -86,14 +86,8 @@ export default function DocumentTemplate({
           </table>
         )}
 
-        {type === 'CONTRACT' && content && (
+        {['CONTRACT', 'ADMIN', 'MINUTES'].includes(type) && content && (
           <div className="text-sm leading-relaxed space-y-4 text-justify">
-            {content}
-          </div>
-        )}
-
-        {type === 'ADMIN' && content && (
-          <div className="text-sm leading-relaxed space-y-4">
             {content}
           </div>
         )}

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useMemo, useState } from 'react';
-import { BookCopy, ClipboardList, Copy, FileText, Scale, ShieldCheck, Sparkles, BadgeDollarSign, ScrollText, CheckCircle2 } from 'lucide-react';
+import { BookCopy, ClipboardList, Copy, FileText, Scale, ShieldCheck, Sparkles, BadgeDollarSign, ScrollText, CheckCircle2, Printer, ReceiptText, ClipboardCheck, NotepadText } from 'lucide-react';
 import DocumentTemplate from '@/components/DocumentTemplate';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
 
-type TemplateKey = 'INVOICE' | 'CONTRACT' | 'ADMIN';
+type TemplateKey = 'INVOICE' | 'QUOTE' | 'CONTRACT' | 'PURCHASE_ORDER' | 'MINUTES' | 'ADMIN';
 
 type TemplateItem = {
   key: TemplateKey;
@@ -80,6 +80,62 @@ Client: ________________________
 
 ${sharedFooter}`;
 
+const quoteCopy = `DEVIS OPAYS TECH
+Référence: [DEV-2026-001]
+Date: [JJ/MM/AAAA]
+Client: [Nom du client]
+Objet: Proposition pour [mission / projet]
+
+DÉTAIL
+- Audit IA initial et cadrage
+- Mise en place des automatisations
+- Livraison et suivi
+
+ESTIMATION
+[MONTANT ESTIMÉ] USD
+
+VALIDITÉ
+Ce devis est valable pendant [X] jours.
+
+${sharedFooter}`;
+
+const purchaseOrderCopy = `BON DE COMMANDE
+Référence: [BC-2026-001]
+Date: [JJ/MM/AAAA]
+Client: [Nom du client]
+Fournisseur: OPAYS TECH
+
+OBJET
+Validation d'une commande ou d'une prestation déjà acceptée.
+
+LIGNES
+- [Produit / service] - [Quantité] - [Prix]
+
+INSTRUCTIONS
+- Démarrage après validation
+- Livraison selon les conditions convenues
+
+${sharedFooter}`;
+
+const minutesCopy = `COMPTE RENDU DE RÉUNION
+Référence: [CR-2026-001]
+Date: [JJ/MM/AAAA]
+Participants: [Noms]
+
+POINTS DISCUTÉS
+- [Point 1]
+- [Point 2]
+- [Point 3]
+
+DÉCISIONS
+- [Décision 1]
+- [Décision 2]
+
+ACTIONS
+- [Action] - Responsable: [Nom] - Échéance: [Date]
+
+${sharedFooter}`;
+
 const adminCopy = `NOTE ADMINISTRATIVE
 Référence: [ADM-2026-001]
 Date: [JJ/MM/AAAA]
@@ -100,6 +156,31 @@ Sceau / signature à apposer si nécessaire.
 ${sharedFooter}`;
 
 const templates: TemplateItem[] = [
+  {
+    key: 'QUOTE',
+    title: 'Devis commercial',
+    subtitle: 'Le premier document à envoyer avant facture ou contrat.',
+    icon: <ReceiptText size={18} />,
+    summary: 'Très utile pour formaliser une proposition, cadrer le périmètre et poser une estimation simple.',
+    copyText: quoteCopy,
+    kind: 'INVOICE',
+    render: (
+      <DocumentTemplate
+        type="QUOTE"
+        title="Devis"
+        reference="DEV-2026-001"
+        date="12/05/2026"
+        clientName="Client Démo"
+        clientAddress={`Adresse du client\nVille, Pays`}
+        items={[
+          { description: 'Audit IA initial et cadrage', amount: 250 },
+          { description: 'Mise en place des automatisations', amount: 1250 },
+          { description: 'Formation et transfert', amount: 500 },
+        ]}
+        total={2000}
+      />
+    ),
+  },
   {
     key: 'INVOICE',
     title: 'Facture standard',
@@ -122,6 +203,32 @@ const templates: TemplateItem[] = [
           { description: 'Formation et transfert', amount: 500 },
         ]}
         total={2000}
+      />
+    ),
+  },
+  {
+    key: 'PURCHASE_ORDER',
+    title: 'Bon de commande',
+    subtitle: 'Quand un client valide la commande ou la prestation.',
+    icon: <ClipboardCheck size={18} />,
+    summary: 'Permet de confirmer la commande avant démarrage et d’éviter les zones floues.',
+    copyText: purchaseOrderCopy,
+    kind: 'CONTRACT',
+    render: (
+      <DocumentTemplate
+        type="PURCHASE_ORDER"
+        title="Bon de commande"
+        reference="BC-2026-001"
+        date="12/05/2026"
+        clientName="Client Démo"
+        clientAddress={`Adresse du client\nVille, Pays`}
+        content={
+          <div className="space-y-4 text-sm leading-relaxed">
+            <p><strong>Objet :</strong> validation d'une commande ou d'une prestation acceptée.</p>
+            <p><strong>Référence :</strong> ce document confirme ce qui a été convenu avant exécution.</p>
+            <p><strong>Instructions :</strong> démarrage après validation, livraison selon les délais définis et suivi du point de contact.</p>
+          </div>
+        }
       />
     ),
   },
@@ -158,6 +265,32 @@ const templates: TemplateItem[] = [
             <p>
               <strong>Signature :</strong> les parties valident ce contrat avant démarrage de la mission.
             </p>
+          </div>
+        }
+      />
+    ),
+  },
+  {
+    key: 'MINUTES',
+    title: 'Compte rendu de réunion',
+    subtitle: 'Document simple pour garder la trace des décisions et actions.',
+    icon: <NotepadText size={18} />,
+    summary: 'Très utile pour les réunions CEO/COO, les points de suivi projet et les décisions d’équipe.',
+    copyText: minutesCopy,
+    kind: 'ADMIN',
+    render: (
+      <DocumentTemplate
+        type="MINUTES"
+        title="Compte rendu de réunion"
+        reference="CR-2026-001"
+        date="12/05/2026"
+        clientName="Interne"
+        content={
+          <div className="space-y-4 text-sm leading-relaxed">
+            <p><strong>Participants :</strong> [Noms]</p>
+            <p><strong>Points discutés :</strong> [Point 1], [Point 2], [Point 3]</p>
+            <p><strong>Décisions :</strong> ce qui a été validé et ce qui doit être suivi.</p>
+            <p><strong>Actions :</strong> chaque action doit avoir un responsable et une date.</p>
           </div>
         }
       />
@@ -223,7 +356,7 @@ export default function DocumentsPage() {
     <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.12),_transparent_24%),linear-gradient(180deg,#050816_0%,#090d19_48%,#0b1020_100%)]" />
       <div className="relative z-10 mx-auto max-w-7xl space-y-8 p-6 md:p-8">
-        <header className="space-y-3">
+        <header className="space-y-3 print:hidden">
           <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200 backdrop-blur">
             <BookCopy size={12} /> Modèles administratifs
           </div>
@@ -234,7 +367,7 @@ export default function DocumentsPage() {
         </header>
 
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
-          <aside className="space-y-4">
+          <aside className="space-y-4 print:hidden">
             {templates.map((item) => {
               const active = item.key === selected;
               return (
@@ -285,15 +418,21 @@ export default function DocumentsPage() {
                   >
                     <FileText size={16} /> Ouvrir en lecture centrée
                   </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                  >
+                    <Printer size={16} /> Imprimer / PDF
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl">
+            <div className="overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl print:shadow-none print:border-none print:bg-transparent">
               {template.render}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 print:hidden">
               <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
                 <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Règle 1</p>
                 <p className="mt-2 leading-relaxed">Le texte doit rester simple et compréhensible par une personne non technique.</p>
@@ -310,7 +449,7 @@ export default function DocumentsPage() {
           </section>
         </div>
 
-        <section className="rounded-[2.25rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
+        <section className="rounded-[2.25rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl print:hidden">
           <div className="flex items-center gap-2 text-cyan-300">
             <ClipboardList size={18} />
             <h3 className="text-xs font-bold uppercase tracking-[0.28em] text-slate-300">Autres documents à modéliser</h3>
