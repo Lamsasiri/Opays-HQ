@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
 import { DollarSign, Flame, BarChart3, TrendingUp, Users, Briefcase, CheckSquare, Zap } from 'lucide-react';
+import ActivityFeed from '@/components/ActivityFeed';
+import Link from 'next/link';
+import { useProfile } from '@/lib/ProfileProvider';
 
 const CapacityBar = ({ label, current, target, color }: any) => (
   <div className="space-y-1.5">
@@ -19,19 +22,19 @@ const CapacityBar = ({ label, current, target, color }: any) => (
   </div>
 );
 
-const StatCard = ({ title, value, icon, change }: { title: string, value: string | number, icon: any, change?: string }) => (
-  <div className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-md transition-all">
+const StatCard = ({ title, value, icon, href, change }: { title: string, value: string | number, icon: any, href: string, change?: string }) => (
+  <a href={href} className="bg-white border border-gray-200 p-6 rounded-2xl hover:shadow-md hover:border-blue-200 transition-all group">
     <div className="flex justify-between items-start">
       <div>
         <p className="text-gray-500 text-sm font-medium">{title}</p>
         <h3 className="text-3xl font-bold text-gray-900 mt-2">{value}</h3>
         {change && <p className="text-green-600 text-xs font-medium mt-1">{change} vs mois dernier</p>}
       </div>
-      <div className="p-3 bg-gray-50 rounded-xl text-gray-500">
+      <div className="p-3 bg-gray-50 rounded-xl text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
         {icon}
       </div>
     </div>
-  </div>
+  </a>
 );
 
 export default function DashboardOverview() {
@@ -46,7 +49,7 @@ export default function DashboardOverview() {
     labsShare: 0
   });
   const [projects, setProjects] = useState<any[]>([]);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,10 +96,10 @@ export default function DashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <StatCard title="Prospects" value={stats.leads} icon={<Users size={20} />} />
-          <StatCard title="Projets en cours" value={stats.projects} icon={<Briefcase size={20} />} />
-          <StatCard title="Tâches à faire" value={stats.tasks} icon={<CheckSquare size={20} />} />
-          <StatCard title="Analyses en cours" value={stats.audits} icon={<Zap size={20} />} />
+          <StatCard title="Prospects" value={stats.leads} icon={<Users size={20} />} href="/dashboard/leads" />
+          <StatCard title="Projets en cours" value={stats.projects} icon={<Briefcase size={20} />} href="/dashboard/projects" />
+          <StatCard title="Tâches à faire" value={stats.tasks} icon={<CheckSquare size={20} />} href="/dashboard/tasks" />
+          <StatCard title="Analyses en cours" value={stats.audits} icon={<Zap size={20} />} href="/dashboard/audit" />
         </div>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-5">
@@ -123,38 +126,31 @@ export default function DashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-5">Projets Récents</h2>
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-lg font-bold text-gray-900">Projets Récents</h2>
+            <Link href="/dashboard/projects" className="text-xs text-blue-600 hover:underline transition-all">Tout voir</Link>
+          </div>
           <div className="space-y-3">
             {projects.map((project) => (
-              <div key={project.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all">
+              <Link 
+                key={project.id} 
+                href={`/dashboard/projects/${project.id}`}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-blue-50/50 hover:border-blue-100 border border-transparent transition-all group"
+              >
                 <div>
-                  <p className="font-semibold text-gray-900">{project.title}</p>
+                  <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{project.title}</p>
                   <p className="text-sm text-gray-500">{project.leads?.company_name} • Échéance : {project.due_date ? new Date(project.due_date).toLocaleDateString() : 'TBD'}</p>
                 </div>
-                <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full uppercase">
+                <span className="px-3 py-1 bg-white border border-gray-100 text-blue-600 text-[10px] font-bold rounded-full uppercase shadow-sm">
                   {project.status}
                 </span>
-              </div>
+              </Link>
             ))}
             {projects.length === 0 && <p className="text-gray-400 italic py-10 text-center">Aucun projet actif.</p>}
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-5">Objectifs Collectifs</h2>
-          <div className="space-y-5">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Croissance Pipeline</span>
-              <span className="font-semibold text-gray-900">75%</span>
-            </div>
-            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-              <div className="bg-blue-500 h-full rounded-full" style={{ width: '75%' }}></div>
-            </div>
-            <p className="text-xs text-gray-400 leading-relaxed italic">
-              "L'efficience n'est pas une destination, c'est un processus continu."
-            </p>
-          </div>
-        </div>
+        <ActivityFeed />
       </div>
     </div>
   );

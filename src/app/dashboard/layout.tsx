@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import Sidebar from '@/components/Sidebar';
+import ClientSearchWrapper from '@/components/ClientSearchWrapper';
+import { ProfileProvider } from '@/lib/ProfileProvider';
 
 export default async function DashboardLayout({
   children,
@@ -21,11 +23,14 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar profile={profile} />
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
-    </div>
+    <ProfileProvider initialProfile={profile}>
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar />
+        <ClientSearchWrapper />
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
+    </ProfileProvider>
   );
 }

@@ -1,22 +1,45 @@
-import { createServerSupabaseClient } from '@/lib/supabase-server';
-import { redirect } from 'next/navigation';
-import { Settings, UserPlus, FileUp, Users, Lock, DollarSign, ShieldCheck, Eye, Wallet, BarChart3 } from 'lucide-react';
+"use client";
 
-export default async function SettingsPage() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+import React, { useState, useEffect, useMemo } from 'react';
+import { createClient } from '@/lib/supabase';
+import { Settings, UserPlus, FileUp, Users, Lock, DollarSign, ShieldCheck, Eye, Wallet, BarChart3, Shield, TrendingUp } from 'lucide-react';
+import AccessControlModal from '@/components/modals/AccessControlModal';
+import AssignEquityModal from '@/components/modals/AssignEquityModal';
+import AssociateDocumentsModal from '@/components/modals/AssociateDocumentsModal';
+import { useProfile } from '@/lib/ProfileProvider';
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user?.id)
-    .single();
+export default function SettingsPage() {
+  const [members, setMembers] = useState<any[]>([]);
+  const [docs, setDocs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
+  const [isEquityModalOpen, setIsEquityModalOpen] = useState(false);
+  const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
+  const supabase = useMemo(() => createClient(), []);
+  const { profile, isCEO, isManager } = useProfile();
 
-  const { data: members } = await supabase.from('profiles').select('*');
-  const { data: docs } = await supabase.from('global_documents').select('*');
+  const fetchData = async () => {
+    setLoading(true);
 
-  const isCEO = profile?.role === 'CEO' || profile?.is_admin;
-  const isManager = ['CEO', 'COO', 'CTO', 'ADMIN'].includes(profile?.role);
+    const { data: membersData } = await supabase.from('profiles').select('*').order('full_name', { ascending: true });
+    setMembers(membersData || []);
+
+    const { data: docsData } = await supabase.from('global_documents').select('*').order('created_at', { ascending: false });
+    setDocs(docsData || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const openAccessControl = (member: any) => {
+    setSelectedMember(member);
+    setIsAccessModalOpen(true);
+  };
+
+  if (loading && !profile) return <div className="p-8">Chargement du centre de pilotage...</div>;
 
   return (
     <div className="p-8 space-y-10">
@@ -36,12 +59,12 @@ export default async function SettingsPage() {
       {isCEO && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Inviter un membre */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6 shadow-sm">
             <div className="flex items-center gap-3">
               <UserPlus className="text-blue-600" size={22} />
               <h2 className="text-lg font-bold text-gray-900">Inviter un Membre</h2>
             </div>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</label>
@@ -82,12 +105,12 @@ export default async function SettingsPage() {
           </div>
 
           {/* Documents importants */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6 shadow-sm">
             <div className="flex items-center gap-3">
               <FileUp className="text-purple-600" size={22} />
               <h2 className="text-lg font-bold text-gray-900">Documents Importants</h2>
             </div>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Titre du document</label>
                 <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-purple-500" placeholder="ex: Contrat type 2026" />
@@ -124,28 +147,43 @@ export default async function SettingsPage() {
 
       {/* ═══ SECTION CEO : Liste des membres ═══ */}
       {isCEO && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-8">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
             <Users size={20} /> Membres de l'équipe ({members?.length || 0})
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {members?.map((m: any) => (
-              <div key={m.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all group">
+              <div key={m.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-md transition-all group border border-transparent hover:border-gray-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">
+                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xs font-bold">
                     {m.full_name?.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-semibold text-sm text-gray-900">{m.full_name}</p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-widest">{m.role} • {m.type}</p>
+                    <p className="font-bold text-sm text-gray-900">{m.full_name}</p>
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{m.role} • {m.type}</p>
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  <button className="p-2 text-gray-300 hover:text-blue-600 transition-colors" title="Voir le profil">
-                    <Eye size={14} />
+                  <button 
+                    onClick={() => openAccessControl(m)}
+                    className="p-2.5 bg-white text-gray-400 hover:text-blue-600 rounded-xl border border-gray-100 hover:border-blue-100 shadow-sm transition-all" 
+                    title="Gérer les accès"
+                  >
+                    <Shield size={16} />
                   </button>
-                  <button className="p-2 text-gray-300 hover:text-red-500 transition-colors" title="Gérer l'accès">
-                    <Lock size={14} />
+                  <button 
+                    onClick={() => { setSelectedMember(m); setIsEquityModalOpen(true); }}
+                    className="p-2.5 bg-white text-gray-400 hover:text-green-600 rounded-xl border border-gray-100 hover:border-green-100 shadow-sm transition-all" 
+                    title="Gérer les parts sociales"
+                  >
+                    <TrendingUp size={16} />
+                  </button>
+                  <button 
+                    onClick={() => { setSelectedMember(m); setIsDocsModalOpen(true); }}
+                    className="p-2.5 bg-white text-gray-400 hover:text-blue-600 rounded-xl border border-gray-100 hover:border-blue-100 shadow-sm transition-all" 
+                    title="Documents personnalisés"
+                  >
+                    <FileUp size={16} />
                   </button>
                 </div>
               </div>
@@ -157,7 +195,7 @@ export default async function SettingsPage() {
       {/* ═══ SECTION MANAGER : Budget & Objectifs ═══ */}
       {isManager && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6 shadow-sm">
             <div className="flex items-center gap-3">
               <DollarSign className="text-green-600" size={22} />
               <h2 className="text-lg font-bold text-gray-900">Budget Mensuel</h2>
@@ -177,7 +215,7 @@ export default async function SettingsPage() {
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6">
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-6 shadow-sm">
             <div className="flex items-center gap-3">
               <BarChart3 className="text-orange-500" size={22} />
               <h2 className="text-lg font-bold text-gray-900">Répartition du Travail</h2>
@@ -213,6 +251,24 @@ export default async function SettingsPage() {
           </p>
         </div>
       )}
+
+      <AccessControlModal 
+        isOpen={isAccessModalOpen} 
+        onClose={() => { setIsAccessModalOpen(false); fetchData(); }} 
+        member={selectedMember} 
+      />
+
+      <AssignEquityModal
+        isOpen={isEquityModalOpen}
+        onClose={() => { setIsEquityModalOpen(false); fetchData(); }}
+        onSuccess={fetchData}
+      />
+
+      <AssociateDocumentsModal
+        isOpen={isDocsModalOpen}
+        onClose={() => { setIsDocsModalOpen(false); fetchData(); }}
+        member={selectedMember}
+      />
     </div>
   );
 }

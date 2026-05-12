@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Building2, User, Mail, Phone, DollarSign } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 
-export default function NewLeadModal({ isOpen, onClose, onSuccess }: { isOpen: boolean, onClose: () => void, onSuccess: () => void }) {
+export default function NewLeadModal({ isOpen, onClose, onSuccess, lead }: { isOpen: boolean, onClose: () => void, onSuccess: () => void, lead?: any }) {
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
   const [formData, setFormData] = useState({
@@ -18,18 +18,47 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess }: { isOpen: b
     audit_deadline: ''
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      if (lead) {
+        setFormData({
+          company_name: lead.company_name || '',
+          contact_name: lead.contact_name || '',
+          email: lead.email || '',
+          phone: lead.phone || '',
+          potential_value: lead.potential_value || 0,
+          status: lead.status || 'NEW',
+          sla_qualification_deadline: lead.sla_qualification_deadline || '',
+          audit_deadline: lead.audit_deadline || ''
+        });
+      } else {
+        setFormData({
+          company_name: '', contact_name: '', email: '', phone: '', potential_value: 0, status: 'NEW',
+          sla_qualification_deadline: '', audit_deadline: ''
+        });
+      }
+    }
+  }, [isOpen, lead]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.from('leads').insert([{
-      ...formData,
-      sla_qualification_deadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    }]);
+    
+    let res;
+    if (lead) {
+      res = await supabase.from('leads').update(formData).eq('id', lead.id);
+    } else {
+      res = await supabase.from('leads').insert([{
+        ...formData,
+        sla_qualification_deadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      }]);
+    }
+
     setLoading(false);
-    if (!error) { onSuccess(); onClose(); }
-    else { alert("Erreur lors de la création du lead"); }
+    if (!res.error) { onSuccess(); onClose(); }
+    else { alert(`Erreur lors de la ${lead ? 'modification' : 'création'} du lead`); }
   };
 
   const inputClass = "w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-10 pr-4 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 outline-none transition-all text-sm";
@@ -39,7 +68,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess }: { isOpen: b
       <div className="bg-white border border-gray-200 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
         <div className="p-5 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Building2 size={18} className="text-blue-600" /> Nouveau Prospect
+            <Building2 size={18} className="text-blue-600" /> {lead ? 'Modifier le Prospect' : 'Nouveau Prospect'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
             <X size={18} />
@@ -93,7 +122,7 @@ export default function NewLeadModal({ isOpen, onClose, onSuccess }: { isOpen: b
               Annuler
             </button>
             <button type="submit" disabled={loading} className="flex-[2] py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-sm text-sm">
-              {loading ? 'Création...' : 'Créer le Lead'}
+              {loading ? (lead ? 'Modification...' : 'Création...') : (lead ? 'Enregistrer' : 'Créer le Lead')}
             </button>
           </div>
         </form>

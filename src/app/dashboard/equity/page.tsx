@@ -12,7 +12,9 @@ export default async function EquityPage() {
     .eq('id', user?.id)
     .single();
 
-  if (profile?.type !== 'ASSOCIATE') {
+  const isAuthorized = profile?.type === 'ASSOCIATE' || profile?.permissions?.equity || ['CEO', 'COO', 'ADMIN'].includes(profile?.role || '');
+
+  if (!isAuthorized) {
     redirect('/dashboard');
   }
 

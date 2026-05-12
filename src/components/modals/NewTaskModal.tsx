@@ -4,27 +4,48 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 
-export default function NewTaskModal({ isOpen, onClose, onSuccess }: { isOpen: boolean, onClose: () => void, onSuccess: () => void }) {
+export default function NewTaskModal({ isOpen, onClose, onSuccess, task }: { isOpen: boolean, onClose: () => void, onSuccess: () => void, task?: any }) {
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
+  const [members, setMembers] = useState<any[]>([]);
   const supabase = createClient();
-  const [formData, setFormData] = useState({ title: '', project_id: '', priority: 'MEDIUM', due_date: '' });
+  const [formData, setFormData] = useState({ title: '', project_id: '', priority: 'MEDIUM', due_date: '', assigned_to: '' });
 
   useEffect(() => {
     if (isOpen) {
       supabase.from('projects').select('id, title').then(({ data }) => { if (data) setProjects(data); });
+      supabase.from('profiles').select('id, full_name').then(({ data }) => { if (data) setMembers(data); });
+      
+      if (task) {
+        setFormData({
+          title: task.title || '',
+          project_id: task.project_id || '',
+          priority: task.priority || 'MEDIUM',
+          due_date: task.due_date || '',
+          assigned_to: task.assigned_to || ''
+        });
+      } else {
+        setFormData({ title: '', project_id: '', priority: 'MEDIUM', due_date: '', assigned_to: '' });
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, task]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.from('tasks').insert([{ ...formData, status: 'TODO' }]);
+    
+    let res;
+    if (task) {
+      res = await supabase.from('tasks').update(formData).eq('id', task.id);
+    } else {
+      res = await supabase.from('tasks').insert([{ ...formData, status: 'TODO' }]);
+    }
+
     setLoading(false);
-    if (!error) { onSuccess(); onClose(); }
-    else { alert("Erreur lors de la création de la tâche"); }
+    if (!res.error) { onSuccess(); onClose(); }
+    else { alert(`Erreur lors de la ${task ? 'modification' : 'création'} de la tâche`); }
   };
 
   const inputClass = "w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all";
@@ -34,7 +55,7 @@ export default function NewTaskModal({ isOpen, onClose, onSuccess }: { isOpen: b
       <div className="bg-white border border-gray-200 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
         <div className="p-5 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <CheckCircle2 size={18} className="text-blue-600" /> Nouvelle Tâche
+            <CheckCircle2 size={18} className="text-blue-600" /> {task ? 'Modifier la Tâche' : 'Nouvelle Tâche'}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
             <X size={18} />
@@ -66,6 +87,14 @@ export default function NewTaskModal({ isOpen, onClose, onSuccess }: { isOpen: b
           </div>
 
           <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Assigné à</label>
+            <select className={inputClass} value={formData.assigned_to} onChange={(e) => setFormData({...formData, assigned_to: e.target.value})}>
+              <option value="">Sélectionner un membre...</option>
+              {members.map(m => <option key={m.id} value={m.id}>{m.full_name}</option>)}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Échéance</label>
             <input type="date" className={inputClass} value={formData.due_date} onChange={(e) => setFormData({...formData, due_date: e.target.value})} />
           </div>
@@ -73,7 +102,7 @@ export default function NewTaskModal({ isOpen, onClose, onSuccess }: { isOpen: b
           <div className="pt-3 flex gap-3">
             <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors text-sm">Annuler</button>
             <button type="submit" disabled={loading} className="flex-[2] py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-sm text-sm">
-              {loading ? 'Création...' : 'Créer la Tâche'}
+              {loading ? (task ? 'Modification...' : 'Création...') : (task ? 'Enregistrer' : 'Créer la Tâche')}
             </button>
           </div>
         </form>
