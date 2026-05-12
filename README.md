@@ -9,7 +9,7 @@ Cette application permet de coordonner les ventes, le développement technique, 
 - **Frontend :** Next.js 15 (App Router)
 - **Styling :** Tailwind CSS + Framer Motion (Studio Design)
 - **Backend :** Supabase (Auth, Database, Storage)
-- **IA :** Intégration directe avec l'agent Antigravity pour les audits.
+- **IA :** Intégration directe avec l'agent Opays Help Ai pour les audits.
 
 ## Structure
 - `/src/components` : Composants UI premium (Dashboard, Audit Space).

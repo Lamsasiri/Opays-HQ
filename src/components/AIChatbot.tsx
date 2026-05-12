@@ -20,7 +20,7 @@ export default function AIChatbot() {
       {
         id: 'welcome',
         role: 'assistant',
-        content: `Bonjour ${profile?.full_name?.split(' ')[0] || 'associé'}. Je suis Antigravity OS. Comment puis-je assister vos opérations aujourd'hui ?`,
+        content: `Bonjour ${profile?.full_name?.split(' ')[0] || 'associ\u00e9'}. Je suis Opays Help Ai OS. Comment puis-je assister vos op\u00e9rations aujourd'hui ?`,
       },
     ],
   });
@@ -50,7 +50,7 @@ export default function AIChatbot() {
                   <Bot size={20} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold tracking-tight">Antigravity <span className="text-cyan-300">OS</span></h3>
+                  <h3 className="text-sm font-semibold tracking-tight">Opays Help Ai <span className="text-cyan-300">OS</span></h3>
                   <div className="flex items-center gap-1.5">
                     <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                     <span className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Système actif</span>
@@ -118,7 +118,7 @@ export default function AIChatbot() {
                 </button>
               </div>
               <p className="mt-3 text-center text-[10px] font-medium uppercase tracking-[0.28em] text-slate-500">
-                Antigravity OS v1.0.4 - Intelligence collective
+                Opays Help Ai OS v1.0.4 - Intelligence collective
               </p>
             </form>
           </motion.div>

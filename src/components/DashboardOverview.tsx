@@ -115,7 +115,7 @@ export default function DashboardOverview() {
         <header className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200">
-              <Sparkles size={12} /> Antigravity OS
+              <Sparkles size={12} /> Opays Help Ai OS
             </div>
             <h1 className="text-4xl font-semibold tracking-tight text-white lg:text-5xl">
               Bonjour {profile?.full_name?.split(' ')[0] || roleLabel},

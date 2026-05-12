@@ -111,57 +111,206 @@ export default function StudioPage() {
     setLoading(false);
   };
 
-  const openDocument = (type: 'pitch' | 'cases') => {
+  const openDocument = (type: 'pitch' | 'cases' | 'audit') => {
     const docs = {
       pitch: {
-        title: "Templates Pitch",
-        subtitle: "Un support de lecture centré pour aligner l'équipe avant une prise de parole commerciale.",
+        title: "Guide de Pitch Commercial \u2014 Opays Tech",
+        subtitle: "Support complet pour pr\u00e9parer et r\u00e9ussir chaque prise de parole commerciale.",
         badge: 'Vente',
-        sourceLabel: 'PDF recommandé',
+        sourceLabel: 'Guide interne',
         pdfUrl: null,
-        content: `# Q: À quoi sert un bon pitch ?
-### R:
-- À faire comprendre la valeur en peu de mots.
-- À donner envie d'aller plus loin sans forcer.
+        content: `# Guide de Pitch Commercial \u2014 Opays Tech
 
-## Q: Que doit contenir un bon pitch ?
-### R:
-- Le problème du client.
-- Ce que nous simplifions.
-- Le résultat concret.
-- La prochaine étape.
+## 1. AVANT LE PITCH : PR\u00c9PARER LE TERRAIN
 
-## Q: Comment parler simplement ?
-### R:
-- On évite le jargon.
-- On parle de temps gagné, d'erreurs évitées et de travail plus fluide.
-- On montre que le client reste en contrôle.`,
+### Q: Que dois-je savoir avant de parler au client ?
+- Le nom du d\u00e9cideur et son r\u00f4le exact dans l\u2019entreprise.
+- Le secteur d\u2019activit\u00e9 et les d\u00e9fis typiques de ce secteur.
+- Ce que le client fait actuellement (manuellement ou avec un outil existant).
+- Ce qui l\u2019a pouss\u00e9 \u00e0 accepter le rendez-vous : un probl\u00e8me urgent, une curiosit\u00e9, une recommandation.
+- Ne jamais arriver sans avoir fait 10 minutes de recherche sur l\u2019entreprise.
+
+### Q: Quelle attitude adopter ?
+- \u00catre calme, professionnel et \u00e0 l\u2019\u00e9coute. On n\u2019est pas l\u00e0 pour vendre, on est l\u00e0 pour comprendre.
+- Parler comme un conseiller, pas comme un vendeur.
+- Si on ne sait pas, on dit "Je vais v\u00e9rifier et revenir vers vous."
+
+## 2. LA STRUCTURE DU PITCH (5 MINUTES MAX)
+
+### Q: Comment organiser un pitch efficace ?
+1. **Le constat** (30 sec) \u2014 D\u00e9crivez un probl\u00e8me que le client vit probablement : "Beaucoup d\u2019entreprises de votre secteur perdent du temps sur des t\u00e2ches qui pourraient \u00eatre simplifi\u00e9es."
+2. **L\u2019impact** (30 sec) \u2014 Chiffrez la douleur : "En moyenne, cela repr\u00e9sente X heures par semaine et Y dollars par an de co\u00fbt cach\u00e9."
+3. **Notre approche** (1 min) \u2014 "Nous analysons vos processus, identifions les goulots, et mettons en place des solutions qui simplifient le travail."
+4. **La preuve** (1 min) \u2014 Donnez un exemple concret : "Pour une entreprise similaire, nous avons r\u00e9duit le temps de traitement de 40%."
+5. **La prochaine \u00e9tape** (30 sec) \u2014 "Si cela vous int\u00e9resse, nous pouvons faire un audit gratuit de 2 heures."
+
+## 3. LES PHRASES CL\u00c9S \u00c0 UTILISER
+
+### Q: Quelles phrases fonctionnent bien ?
+- "Notre objectif, c\u2019est de vous faire gagner du temps sur ce qui n\u2019a pas de valeur ajout\u00e9e."
+- "On ne remplace personne \u2014 on enl\u00e8ve les t\u00e2ches qui fatiguent votre \u00e9quipe."
+- "Le but, c\u2019est que votre \u00e9quipe se concentre sur ce qu\u2019elle fait de mieux."
+- "Nous commen\u00e7ons toujours par un diagnostic \u2014 pas de solution sans compr\u00e9hension."
+- "Ce n\u2019est pas de la magie, c\u2019est de la m\u00e9thode."
+
+### Q: Quelles phrases \u00e9viter ?
+- "L\u2019IA va r\u00e9volutionner votre business." \u2192 Trop vague, trop prometteur.
+- "Nos solutions sont \u00e0 la pointe de la technologie." \u2192 Le client veut des r\u00e9sultats, pas du jargon.
+- "C\u2019est tr\u00e8s simple." \u2192 Rien n\u2019est simple quand on change les habitudes.
+
+## 4. G\u00c9RER LES OBJECTIONS
+
+### Q: "C\u2019est trop cher pour nous."
+- "Je comprends. Justement, notre audit initial mesure combien vous perdez aujourd\u2019hui. Souvent, le co\u00fbt de ne rien faire est plus \u00e9lev\u00e9."
+
+### Q: "On n\u2019est pas pr\u00eats pour l\u2019IA."
+- "En r\u00e9alit\u00e9, il s\u2019agit de simplifier vos processus. L\u2019IA est un outil parmi d\u2019autres, on l\u2019utilise quand c\u2019est pertinent."
+
+### Q: "On a d\u00e9j\u00e0 essay\u00e9 et \u00e7a n\u2019a pas march\u00e9."
+- "C\u2019est pour \u00e7a qu\u2019on commence par comprendre ce qui n\u2019a pas fonctionn\u00e9. Notre approche est progressive."
+
+## 5. APR\u00c8S LE PITCH
+
+### Q: Que faire juste apr\u00e8s ?
+- Envoyer un r\u00e9sum\u00e9 par email dans les 2 heures.
+- Proposer une date pour l\u2019audit ou le prochain \u00e9change.
+- Ajouter le lead dans le CRM avec les notes de conversation.
+- Partager un retour \u00e0 l\u2019\u00e9quipe lors du point commercial hebdomadaire.`,
       },
       cases: {
-        title: 'Études de Cas',
-        subtitle: "Une lecture centrée pour expliquer ce qu'on a déjà résolu et ce que cela change pour un client.",
+        title: "\u00c9tudes de Cas \u2014 Opays Tech",
+        subtitle: "Comment documenter, structurer et pr\u00e9senter nos succ\u00e8s pour convaincre de futurs clients.",
         badge: 'Preuve',
-        sourceLabel: 'PDF recommandé',
+        sourceLabel: 'Guide interne',
         pdfUrl: null,
-        content: `# Q: Pourquoi une étude de cas est utile ?
-### R:
-- Parce qu'elle prouve que la méthode fonctionne dans la vraie vie.
+        content: `# Guide des \u00c9tudes de Cas \u2014 Opays Tech
 
-## Q: Qu'est-ce qu'on doit montrer ?
-### R:
-- Le contexte de départ.
-- Le problème rencontré.
-- Ce qu'on a changé.
-- Le résultat obtenu.
+## 1. POURQUOI UNE \u00c9TUDE DE CAS EST INDISPENSABLE
 
-## Q: Quelle forme est la meilleure ?
-### R:
-- Une version courte, claire et lisible.
-- Idéalement un PDF propre pour faciliter la lecture et le partage.`,
+### Q: Pourquoi documenter nos projets ?
+- Parce qu\u2019un client ne nous croit pas sur parole \u2014 il veut voir ce qu\u2019on a d\u00e9j\u00e0 fait.
+- Parce qu\u2019une bonne \u00e9tude de cas vend mieux qu\u2019un long discours.
+- Parce qu\u2019elle montre qu\u2019on a de l\u2019exp\u00e9rience, de la m\u00e9thode et des r\u00e9sultats mesurables.
+
+### Q: Quand cr\u00e9er une \u00e9tude de cas ?
+- Apr\u00e8s chaque projet livr\u00e9 avec succ\u00e8s.
+- Quand le client est satisfait et accepte d\u2019\u00eatre cit\u00e9 (m\u00eame anonymement).
+- Quand les r\u00e9sultats sont mesurables : temps gagn\u00e9, erreurs r\u00e9duites, CA pr\u00e9serv\u00e9.
+
+## 2. LA STRUCTURE
+
+### Q: Quel plan suivre ?
+1. **Le contexte** \u2014 Qui est le client ? Secteur ? Taille de l\u2019\u00e9quipe ?
+2. **Le probl\u00e8me** \u2014 Qu\u2019est-ce qui ne fonctionnait pas ? Combien \u00e7a co\u00fbtait ?
+3. **Notre diagnostic** \u2014 Qu\u2019avons-nous identifi\u00e9 comme cause principale ?
+4. **La solution** \u2014 Qu\u2019avons-nous fait concr\u00e8tement ? En combien de temps ?
+5. **Les r\u00e9sultats** \u2014 Qu\u2019est-ce qui a chang\u00e9 ? Quels chiffres le prouvent ?
+6. **Le t\u00e9moignage** (optionnel) \u2014 Une phrase du client qui r\u00e9sume l\u2019impact.
+
+## 3. LES BONNES PRATIQUES
+
+### Q: Comment \u00e9crire pour que ce soit cr\u00e9dible ?
+- Utiliser des chiffres r\u00e9els : "40% de temps gagn\u00e9" est plus fort que "beaucoup de temps gagn\u00e9".
+- Rester honn\u00eate : si on n\u2019a r\u00e9solu que 2 probl\u00e8mes sur 5, on le dit.
+- \u00c9crire comme si on expliquait \u00e0 un dirigeant non technique.
+- Garder le document court : 1 \u00e0 2 pages maximum.
+- Ajouter un visuel si possible : avant/apr\u00e8s, graphique, capture.
+
+## 4. EXEMPLE CONCRET
+
+### Contexte
+- Entreprise de services B2B, 15 employ\u00e9s, bas\u00e9e \u00e0 Kinshasa.
+- L\u2019\u00e9quipe commerciale passait 60% de son temps sur l\u2019administratif.
+
+### Probl\u00e8me
+- Devis cr\u00e9\u00e9s manuellement dans Word \u2014 45 minutes par devis.
+- Relances clients non suivies \u2014 3 opportunit\u00e9s perdues par mois.
+- Aucun tableau de bord pour le dirigeant.
+
+### Diagnostic Opays
+- Processus de devis non standardis\u00e9.
+- Absence de suivi centralis\u00e9 des prospects.
+- Pas de visibilit\u00e9 sur les performances commerciales.
+
+### Solution mise en place
+- G\u00e9n\u00e9rateur de devis automatis\u00e9 (temps : 5 minutes au lieu de 45).
+- CRM simple pour suivre les prospects par \u00e9tape.
+- Tableau de bord mensuel avec les KPIs essentiels.
+
+### R\u00e9sultats (apr\u00e8s 3 mois)
+- Temps de cr\u00e9ation des devis r\u00e9duit de 90%.
+- 0 opportunit\u00e9 perdue par oubli de relance.
+- Vue claire du pipeline en temps r\u00e9el.
+- ROI : co\u00fbt de la solution amorti en 2 mois.
+
+## 5. UTILISATION
+
+### Q: Comment utiliser une \u00e9tude de cas ?
+- L\u2019envoyer par email apr\u00e8s un premier rendez-vous prometteur.
+- La partager sur LinkedIn sous forme de post r\u00e9sum\u00e9.
+- La pr\u00e9senter en r\u00e9union pour illustrer un point concret.
+- La mettre \u00e0 disposition de toute l\u2019\u00e9quipe commerciale ici.`,
+      },
+      audit: {
+        title: "M\u00e9thodologie d'Audit Opays Tech",
+        subtitle: "Le guide complet pour mener un diagnostic op\u00e9rationnel et identifier les leviers de croissance.",
+        badge: 'Audit',
+        sourceLabel: 'Interne',
+        pdfUrl: null,
+        content: `# M\u00e9thodologie d'Audit Opays Tech
+
+## 1. INTRODUCTION \u00c0 L'AUDIT
+
+### Q: Quel est l'objectif principal de l'audit ?
+- L'audit n'est pas un contr\u00f4le, c'est une exploration.
+- Le but est d'identifier les \"frictions\" : tout ce qui ralentit l'\u00e9quipe, g\u00e9n\u00e8re des erreurs ou co\u00fbte de l'argent sans cr\u00e9er de valeur.
+- L'audit doit d\u00e9boucher sur un plan d'action concret avec un ROI mesurable.
+
+## 2. LES 4 PILIERS DU DIAGNOSTIC
+
+### Pilier 1 : Flux d'Information
+- Comment l'information circule-t-elle du client vers l'\u00e9quipe ?
+- Y a-t-il des ruptures (passages du papier au num\u00e9rique, ressaisie de donn\u00e9es) ?
+- Qui attend qui ? O\u00f9 sont les goulots d'\u00e9tranglement ?
+
+### Pilier 2 : T\u00e2ches R\u00e9p\u00e9titives
+- Quelles sont les t\u00e2ches faites plus de 10 fois par semaine ?
+- Quelle est la part de travail manuel sans valeur ajout\u00e9e (copier-coller, tri d'emails) ?
+- Combien de temps cela repr\u00e9sente-t-il par collaborateur ?
+
+### Pilier 3 : Gestion des Erreurs
+- Quelles sont les erreurs les plus fr\u00e9quentes (oublis de relance, fautes dans les devis, retards) ?
+- Quel est le co\u00fbt direct et indirect de ces erreurs (temps de correction, client perdu) ?
+
+### Pilier 4 : Outillage Actuel
+- Quels outils sont utilis\u00e9s ? Sont-ils connect\u00e9s entre eux ?
+- L'\u00e9quipe est-elle form\u00e9e \u00e0 ces outils ?
+
+## 3. D\u00c9ROULEMENT DE LA MISSION
+
+### \u00c9tape 1 : Immersion (1-2 jours)
+- Observation directe des postes de travail.
+- Interviews individuelles courtes (15-20 min) avec les collaborateurs cl\u00e9s.
+- Collecte des documents types (devis, factures, emails types).
+
+### \u00c9tape 2 : Analyse et Chiffrage (1 jour)
+- Traduction des frictions en co\u00fbts financiers (via le calculateur ROI).
+- Identification des 3 priorit\u00e9s d'automatisation.
+- R\u00e9daction du rapport de diagnostic.
+
+### \u00c9tape 3 : Pr\u00e9sentation de la Roadmap
+- Pr\u00e9sentation au d\u00e9cideur : Probl\u00e8mes \u2192 Impact \u2192 Solution \u2192 Gain attendu.
+
+## 4. POSTURE DE L'AUDITEUR
+
+### Q: Comment se comporter face \u00e0 l'\u00e9quipe ?
+- \u00catre un alli\u00e9, pas un inspecteur.
+- Rassurer sur le fait que l'IA ne remplace pas l'humain, mais supprime les t\u00e2ches p\u00e9nibles.
+- \u00c9couter plus que parler. Noter les frustrations, car c'est l\u2019\u00e0 que se trouve la valeur.`,
       },
     };
 
-    setReaderDoc(docs[type]);
+    setReaderDoc(docs[type as keyof typeof docs]);
     setReaderOpen(true);
   };
 
@@ -203,8 +352,8 @@ export default function StudioPage() {
           }}
         />
         <ToolCard 
-          title="Études de Cas" 
-          description="Démontrez vos succès passés avec des rapports détaillés."
+          title="\u00c9tudes de Cas" 
+          description="D\u00e9montrez vos succ\u00e8s pass\u00e9s avec des rapports d\u00e9taill\u00e9s."
           icon={<FileText size={24} />}
           active={activeTool === 'cases'}
           onClick={() => {
@@ -213,8 +362,18 @@ export default function StudioPage() {
           }}
         />
         <ToolCard 
-          title="Générateur de Devis" 
-          description="Créez des estimations rapides pour vos solutions IA."
+          title="M\u00e9thodologie d'Audit" 
+          description="Le cadre structur\u00e9 pour diagnostiquer une entreprise."
+          icon={<Target size={24} />}
+          active={activeTool === 'audit'}
+          onClick={() => {
+            setActiveTool('audit');
+            openDocument('audit');
+          }}
+        />
+        <ToolCard 
+          title="G\u00e9n\u00e9rateur de Devis" 
+          description="Cr\u00e9ez des estimations rapides pour vos solutions IA."
           icon={<Briefcase size={24} />}
           active={activeTool === 'quotes'}
           onClick={() => setActiveTool('quotes')}

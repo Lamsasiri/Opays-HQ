@@ -52,7 +52,7 @@ export default function AICommandCenter() {
       {
         id: 'system-init',
         role: 'assistant',
-        content: `Bienvenue dans le Command Center, **${profile?.full_name || 'associé'}**. Je suis Antigravity OS, prêt à piloter les opérations avec **${selectedModel.name}**. Posez une question ou utilisez un skill ci-dessous.`,
+        content: `Bienvenue dans le Command Center, **${profile?.full_name || 'associ\u00e9'}**. Je suis Opays Help Ai OS, pr\u00eat \u00e0 piloter les op\u00e9rations avec **${selectedModel.name}**. Posez une question ou utilisez un skill ci-dessous.`,
       },
     ],
   });
@@ -82,7 +82,7 @@ export default function AICommandCenter() {
             <Bot size={18} />
           </div>
           <div>
-            <h1 className="text-base font-semibold text-white">Antigravity OS</h1>
+            <h1 className="text-base font-semibold text-white">Opays Help Ai OS</h1>
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200">Command Center</p>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function AICommandCenter() {
             <input
               value={input}
               onChange={handleInputChange}
-              placeholder={`Posez une question à Antigravity (${selectedModel.name})...`}
+              placeholder={`Posez une question \u00e0 Opays Help Ai (${selectedModel.name})...`}
               className="flex-1 bg-transparent py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500"
             />
             <button

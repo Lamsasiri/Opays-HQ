@@ -23,7 +23,7 @@ const requestSchema = z.object({
 });
 
 function buildSystemPrompt(userProfile?: { full_name?: string; role?: string; type?: string }) {
-  return `Tu es Antigravity OS, le système nerveux de OPAYS HQ.
+  return `Tu es Opays Help Ai OS, le syst\u00e8me nerveux de OPAYS HQ.
 
 Règles de comportement:
 - Réponds comme un directeur d'exploitation et un copilote stratégique.
