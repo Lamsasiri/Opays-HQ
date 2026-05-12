@@ -34,9 +34,10 @@ const AVAILABLE_MODELS = [
 
 const SUGGESTED_SKILLS = [
   { id: 'task', title: 'Créer une tâche', desc: 'Assigner du travail à l\'équipe', icon: <CheckCircle2 size={16} className="text-green-500" /> },
-  { id: 'linkedin', title: 'Post LinkedIn', desc: 'Rédiger une annonce marketing', icon: <Share2 size={16} className="text-blue-500" /> },
-  { id: 'audit', title: 'Analyse Audit', desc: 'Résumer les activités récentes', icon: <Terminal size={16} className="text-purple-500" /> },
-  { id: 'contract', title: 'Brouillon Contrat', desc: 'Rédiger une clause juridique', icon: <FileText size={16} className="text-orange-500" /> },
+  { id: 'audit', title: 'Flux d\'activité', desc: 'Quoi de neuf aujourd\'hui ?', icon: <Zap size={16} className="text-yellow-500" /> },
+  { id: 'financial', title: 'Santé Financière', desc: 'Trésorerie et factures', icon: <Database size={16} className="text-blue-500" /> },
+  { id: 'knowledge', title: 'Base de Connaissance', desc: 'Chercher dans les méthodes', icon: <Terminal size={16} className="text-purple-500" /> },
+  { id: 'linkedin', title: 'Post LinkedIn', desc: 'Rédiger une annonce marketing', icon: <Share2 size={16} className="text-blue-600" /> },
 ];
 
 export default function AICommandCenter() {
@@ -70,8 +71,9 @@ Je suis prêt à assister vos opérations stratégiques avec le modèle **${sele
   const handleSkillClick = (skill: string) => {
     if (skill === 'task') setInput("Peux-tu créer une tâche pour...");
     if (skill === 'linkedin') setInput("Rédige un post LinkedIn sur...");
-    if (skill === 'audit') setInput("Fais-moi un résumé des derniers audits...");
-    if (skill === 'contract') setInput("Prépare une clause de contrat pour...");
+    if (skill === 'audit') setInput("Quelles sont les dernières activités importantes dans l'entreprise ?");
+    if (skill === 'financial') setInput("Peux-tu me faire un rapport rapide sur la santé financière actuelle ?");
+    if (skill === 'knowledge') setInput("Cherche dans la base de connaissance comment nous gérons...");
   };
 
   return (
