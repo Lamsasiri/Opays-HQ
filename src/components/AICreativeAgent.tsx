@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from 'ai/react';
 import { Sparkles, Send, Bot, User, Loader2, Image as ImageIcon, Presentation, FileText, Share2, Copy, Check } from 'lucide-react';
-import { useProfile } from '@/hooks/useProfile';
+import { useProfile } from '@/lib/ProfileProvider';
 
 export default function AICreativeAgent() {
   const { profile } = useProfile();
