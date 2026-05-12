@@ -1,7 +1,7 @@
 # FICHE DE POSTE — OPAYS TECH
 
 **Intitulé du poste :** Sales & Communication  
-**Titulaire :** Zaina  
+**Titulaire :** ZAINA BWALE GODLOVE  
 **Rôle HQ :** `SALES`  
 **Type :** `ASSOCIATE`  
 **Référence :** `JD-OPAYS-005`

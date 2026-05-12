@@ -1,7 +1,7 @@
 # FICHE DE POSTE — OPAYS TECH
 
 **Intitulé du poste :** Chef Commercial  
-**Titulaire :** Prince  
+**Titulaire :** Prince BAGHENI  
 **Rôle HQ :** `SALES`  
 **Type :** `ASSOCIATE`  
 **Référence :** `JD-OPAYS-003`

@@ -1,7 +1,7 @@
 # FICHE DE POSTE — OPAYS TECH
 
 **Intitulé du poste :** Directeur Technique  
-**Titulaire :** Evans  
+**Titulaire :** Evans SELEMANI  
 **Rôle HQ :** `CTO`  
 **Type :** `ASSOCIATE`  
 **Référence :** `JD-OPAYS-002`

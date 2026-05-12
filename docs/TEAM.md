@@ -10,10 +10,10 @@
 | # | Nom | Poste | Rôle HQ | Type | Périmètre |
 |---|---|---|---|---|---|
 | 1 | **[DG]** | Directeur Général & Lead R&D | `CEO` | `ASSOCIATE` | Vision, R&D, Gouvernance, Validation |
-| 2 | **Evans** | Directeur Technique (CTO) | `CTO` | `ASSOCIATE` | Développement, Infrastructure, Qualité |
-| 3 | **Prince** | Chef Commercial (CSO) | `SALES` | `ASSOCIATE` | Coordination terrain, Négociation, Pipeline |
-| 4 | **Patricia** | Sales & Gestion Comptable | `SALES` | `ASSOCIATE` | Prospection, Comptabilité, Trésorerie |
-| 5 | **Zaina** | Sales & Communication | `SALES` | `ASSOCIATE` | Prospection, Branding, Communication |
+| 2 | **Evans SELEMANI** | Directeur Technique (CTO) | `CTO` | `ASSOCIATE` | Développement, Infrastructure, Qualité |
+| 3 | **Prince BAGHENI** | Chef Commercial (CSO) | `SALES` | `ASSOCIATE` | Coordination terrain, Négociation, Pipeline |
+| 4 | **Patricia ZAMWANA** | Sales & Gestion Comptable | `SALES` | `ASSOCIATE` | Prospection, Comptabilité, Trésorerie |
+| 5 | **ZAINA BWALE GODLOVE** | Sales & Communication | `SALES` | `ASSOCIATE` | Prospection, Branding, Communication |
 
 ---
 
@@ -22,32 +22,32 @@
 ### 1. DG & Lead R&D (CEO)
 - **Gouvernance :** Arbitrage des décisions majeures, partenariats stratégiques.
 - **R&D Stratégique :** Veille IA, automatisation avancée, souveraineté de données.
-- **Supervision Technique :** Appui à Evans sur l'architecture complexe.
+- **Supervision Technique :** Appui à Evans SELEMANI sur l'architecture complexe.
 - **Validation d'Audit :** Décision finale sur faisabilité technique et commerciale.
 - **KPIs :** Avancement roadmap R&D, rentabilité globale, satisfaction client.
 
-### 2. CTO — Evans
+### 2. CTO — Evans SELEMANI
 - **Développement :** Pilotage et exécution du code pour les projets clients.
 - **Infrastructure :** Maintenance serveurs, sécurité, disponibilité services.
 - **Qualité & Tests :** Validation technique avant livraison (Definition of Done).
 - **Support R&D :** Interface technique avec le DG pour les besoins de recherche.
 - **KPIs :** Respect des délais, bugs/résolution (SLA), disponibilité infra.
 
-### 3. CSO — Prince
+### 3. CSO — Prince BAGHENI
 - **Coordination Terrain :** Planification des descentes pour Patricia et Zaina.
 - **Relation Client (CRM) :** Interface entre besoins identifiés et équipe technique.
 - **Négociation & Closing :** Finalisation des ventes et signature contrats.
 - **Reporting :** Analyse du pipeline, remontée des goulots d'étranglement.
 - **KPIs :** Taux de conversion Leads → Projets, descentes/mois, pipeline value.
 
-### 4. Sales & Comptabilité — Patricia
+### 4. Sales & Comptabilité — Patricia ZAMWANA
 - **Prospection Terrain :** Visite d'entreprises, écoute et identification des blocages.
 - **Audit de Besoin :** Collecte des données primaires chez le client.
 - **Comptabilité :** Saisie journalière trésorerie, suivi factures, relance paiements.
 - **Gestion Administrative :** Archivage documents comptables et justificatifs.
 - **KPIs :** Nouveaux leads qualifiés/semaine, exactitude trésorerie, recouvrement.
 
-### 5. Sales & Communication — Zaina
+### 5. Sales & Communication — ZAINA BWALE GODLOVE
 - **Prospection Terrain :** Identification des goulots et promotion des solutions Opays.
 - **Branding & Design :** Supports de présentation, plaquettes, visuels de marque.
 - **Communication Externe :** LinkedIn, Réseaux, Événements pour attirer les dirigeants.
@@ -58,7 +58,7 @@
 
 ## Mapping Rôles ↔ Modules HQ
 
-| Module HQ | CEO | CTO | CSO (Prince) | Sales (Patricia/Zaina) |
+| Module HQ | CEO | CTO | CSO (Prince BAGHENI) | Sales (Patricia ZAMWANA / ZAINA BWALE GODLOVE) |
 |---|---|---|---|---|
 | Dashboard | ✅ | ✅ | ✅ | ✅ |
 | Projets | ✅ Écriture | ✅ Écriture | ✅ Lecture | ✅ Lecture |
@@ -70,7 +70,7 @@
 | Brand Assets | ✅ | ❌ | ✅ | ✅ |
 | Contrats | ✅ | ❌ | ❌ | ❌ |
 | Equity / Actions | ✅ | ✅ (lecture) | ✅ (lecture) | ✅ (lecture) |
-| Trésorerie | ✅ | ❌ | ❌ | ✅ (Patricia) |
+| Trésorerie | ✅ | ❌ | ❌ | ✅ (Patricia ZAMWANA) |
 | Knowledge | ✅ | ✅ | ✅ | ✅ |
 | Boîte à Idées | ✅ | ✅ | ✅ | ✅ |
 | Labs (R&D) | ✅ | ✅ | ❌ | ❌ |
@@ -83,8 +83,8 @@
 | Jour | Rituel | Participants | Module HQ |
 |---|---|---|---|
 | **Lundi** | Briefing — Nouvelles tâches, état trésorerie | Tous | Dashboard + Tasks |
-| **Mercredi** | Sales Check — Simulations ROI, état contrats | Prince, Patricia, Zaina + DG | Studio + Contracts |
-| **Vendredi** | Build Review — Validation technique, close tasks | Evans + DG | Workspace + Tasks |
+| **Mercredi** | Sales Check — Simulations ROI, état contrats | Prince BAGHENI, Patricia ZAMWANA, ZAINA BWALE GODLOVE + DG | Studio + Contracts |
+| **Vendredi** | Build Review — Validation technique, close tasks | Evans SELEMANI + DG | Workspace + Tasks |
 
 ---
 

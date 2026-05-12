@@ -1,7 +1,7 @@
 # FICHE DE POSTE — OPAYS TECH
 
 **Intitulé du poste :** Sales & Gestion Comptable  
-**Titulaire :** Patricia  
+**Titulaire :** Patricia ZAMWANA  
 **Rôle HQ :** `SALES`  
 **Type :** `ASSOCIATE`  
 **Référence :** `JD-OPAYS-004`

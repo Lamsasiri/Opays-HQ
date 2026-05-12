@@ -82,7 +82,7 @@ export const jobDescriptions: JobDescription[] = [
     slug: 'directeur-technique',
     reference: 'JD-OPAYS-002',
     title: 'Directeur Technique',
-    holder: 'Evans',
+    holder: 'Evans SELEMANI',
     role: 'CTO',
     type: 'ASSOCIATE',
     summary:
@@ -140,7 +140,7 @@ export const jobDescriptions: JobDescription[] = [
     slug: 'chef-commercial',
     reference: 'JD-OPAYS-003',
     title: 'Chef Commercial',
-    holder: 'Prince',
+    holder: 'Prince BAGHENI',
     role: 'SALES',
     type: 'ASSOCIATE',
     summary:
@@ -198,7 +198,7 @@ export const jobDescriptions: JobDescription[] = [
     slug: 'sales-gestion-comptable',
     reference: 'JD-OPAYS-004',
     title: 'Sales & Gestion Comptable',
-    holder: 'Patricia',
+    holder: 'Patricia ZAMWANA',
     role: 'SALES',
     type: 'ASSOCIATE',
     summary:
@@ -256,7 +256,7 @@ export const jobDescriptions: JobDescription[] = [
     slug: 'sales-communication',
     reference: 'JD-OPAYS-005',
     title: 'Sales & Communication',
-    holder: 'Zaina',
+    holder: 'ZAINA BWALE GODLOVE',
     role: 'SALES',
     type: 'ASSOCIATE',
     summary:
