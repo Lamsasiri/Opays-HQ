@@ -17,6 +17,7 @@ import {
   Search,
 } from 'lucide-react';
 import NewKnowledgeModal from '@/components/modals/NewKnowledgeModal';
+import DocumentReaderModal from '@/components/DocumentReaderModal';
 
 const IconMap: Record<string, React.ReactNode> = {
   METHOD: <Target className="text-cyan-300" size={22} />,
@@ -440,11 +441,13 @@ function renderContent(content: string) {
 
 export default function KnowledgePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(false);
   const [articles, setArticles] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [activeArticleId, setActiveArticleId] = useState<string | null>(null);
+  const [readerArticle, setReaderArticle] = useState<any>(null);
   const supabase = createClient();
 
   const fetchData = async () => {
@@ -494,6 +497,12 @@ export default function KnowledgePage() {
   }, [articles, search]);
 
   const activeArticle = filteredArticles.find((article) => article.id === activeArticleId) || filteredArticles[0] || articles[0];
+
+  const openReader = (article: any) => {
+    setActiveArticleId(article.id);
+    setReaderArticle(article);
+    setReaderOpen(true);
+  };
 
   return (
     <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
@@ -545,7 +554,7 @@ export default function KnowledgePage() {
                 return (
                   <button
                     key={article.id}
-                    onClick={() => setActiveArticleId(article.id)}
+                    onClick={() => openReader(article)}
                     className={`group rounded-[1.75rem] border p-5 text-left transition-all ${
                       active
                         ? 'border-cyan-500/30 bg-cyan-500/10 shadow-xl shadow-cyan-500/10'
@@ -564,7 +573,7 @@ export default function KnowledgePage() {
                           </p>
                         </div>
                       </div>
-                      {active && <ArrowRight size={16} className="mt-1 text-cyan-300" />}
+                      <ArrowRight size={16} className={`mt-1 transition ${active ? 'text-cyan-300' : 'text-slate-500 group-hover:text-cyan-300'}`} />
                     </div>
 
                     <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-slate-300">
@@ -615,6 +624,13 @@ export default function KnowledgePage() {
                     {renderContent(activeArticle.content)}
                   </div>
 
+                  <button
+                    onClick={() => openReader(activeArticle)}
+                    className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/15"
+                  >
+                    <BookOpen size={16} /> Ouvrir en lecture centrée
+                  </button>
+
                   <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
                       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Lecture</p>
@@ -656,6 +672,16 @@ export default function KnowledgePage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={fetchData}
+      />
+
+      <DocumentReaderModal
+        open={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={readerArticle?.title || activeArticle?.title || 'Lecture'}
+        subtitle="Lecture centrée pour mieux consulter le guide sans distraction."
+        content={readerArticle?.content || activeArticle?.content}
+        badge={CategoryLabel[readerArticle?.category || activeArticle?.category || ''] || 'Guide'}
+        sourceLabel={readerArticle?.target_role || activeArticle?.target_role || 'ALL'}
       />
     </div>
   );

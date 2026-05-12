@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
+import DocumentReaderModal from '@/components/DocumentReaderModal';
 import { 
   Target, 
   Zap, 
@@ -38,6 +39,8 @@ export default function StudioPage() {
   const [loading, setLoading] = useState(false);
   const [activeTool, setActiveTool] = useState('roi');
   const [step, setStep] = useState(1);
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [readerDoc, setReaderDoc] = useState<{ title: string; subtitle: string; content?: string; pdfUrl?: string | null; badge?: string; sourceLabel?: string } | null>(null);
   const supabase = createClient();
 
   const [data, setData] = useState({
@@ -108,6 +111,60 @@ export default function StudioPage() {
     setLoading(false);
   };
 
+  const openDocument = (type: 'pitch' | 'cases') => {
+    const docs = {
+      pitch: {
+        title: "Templates Pitch",
+        subtitle: "Un support de lecture centré pour aligner l'équipe avant une prise de parole commerciale.",
+        badge: 'Vente',
+        sourceLabel: 'PDF recommandé',
+        pdfUrl: null,
+        content: `# Q: À quoi sert un bon pitch ?
+### R:
+- À faire comprendre la valeur en peu de mots.
+- À donner envie d'aller plus loin sans forcer.
+
+## Q: Que doit contenir un bon pitch ?
+### R:
+- Le problème du client.
+- Ce que nous simplifions.
+- Le résultat concret.
+- La prochaine étape.
+
+## Q: Comment parler simplement ?
+### R:
+- On évite le jargon.
+- On parle de temps gagné, d'erreurs évitées et de travail plus fluide.
+- On montre que le client reste en contrôle.`,
+      },
+      cases: {
+        title: 'Études de Cas',
+        subtitle: "Une lecture centrée pour expliquer ce qu'on a déjà résolu et ce que cela change pour un client.",
+        badge: 'Preuve',
+        sourceLabel: 'PDF recommandé',
+        pdfUrl: null,
+        content: `# Q: Pourquoi une étude de cas est utile ?
+### R:
+- Parce qu'elle prouve que la méthode fonctionne dans la vraie vie.
+
+## Q: Qu'est-ce qu'on doit montrer ?
+### R:
+- Le contexte de départ.
+- Le problème rencontré.
+- Ce qu'on a changé.
+- Le résultat obtenu.
+
+## Q: Quelle forme est la meilleure ?
+### R:
+- Une version courte, claire et lisible.
+- Idéalement un PDF propre pour faciliter la lecture et le partage.`,
+      },
+    };
+
+    setReaderDoc(docs[type]);
+    setReaderOpen(true);
+  };
+
   return (
     <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.14),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(6,182,212,0.12),_transparent_26%),linear-gradient(180deg,#050816_0%,#090d1d_58%,#0b1020_100%)]" />
@@ -140,14 +197,20 @@ export default function StudioPage() {
           description="Accédez aux présentations de vente et decks investisseurs."
           icon={<Presentation size={24} />}
           active={activeTool === 'pitch'}
-          onClick={() => setActiveTool('pitch')}
+          onClick={() => {
+            setActiveTool('pitch');
+            openDocument('pitch');
+          }}
         />
         <ToolCard 
           title="Études de Cas" 
           description="Démontrez vos succès passés avec des rapports détaillés."
           icon={<FileText size={24} />}
           active={activeTool === 'cases'}
-          onClick={() => setActiveTool('cases')}
+          onClick={() => {
+            setActiveTool('cases');
+            openDocument('cases');
+          }}
         />
         <ToolCard 
           title="Générateur de Devis" 
@@ -347,6 +410,18 @@ export default function StudioPage() {
           </div>
         )}
       </div>
+
+      <DocumentReaderModal
+        open={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={readerDoc?.title || ''}
+        subtitle={readerDoc?.subtitle}
+        content={readerDoc?.content}
+        pdfUrl={readerDoc?.pdfUrl}
+        badge={readerDoc?.badge}
+        sourceLabel={readerDoc?.sourceLabel}
+      />
+
       </div>
     </div>
   );

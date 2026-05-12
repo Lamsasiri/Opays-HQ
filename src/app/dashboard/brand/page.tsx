@@ -2,9 +2,12 @@
 
 import React, { useState } from 'react';
 import { Palette, Image as ImageIcon, FileText, Download, Plus, Search, ExternalLink, Globe } from 'lucide-react';
+import DocumentReaderModal from '@/components/DocumentReaderModal';
 
 export default function BrandPage() {
   const [activeCategory, setActiveCategory] = useState('ALL');
+  const [readerOpen, setReaderOpen] = useState(false);
+  const [readerAsset, setReaderAsset] = useState<any | null>(null);
 
   const assets = [
     { title: 'Logo Opays Tech (Primary)', type: 'IMAGE', category: 'BRAND', url: '#' },
@@ -16,6 +19,61 @@ export default function BrandPage() {
   ];
 
   const filteredAssets = activeCategory === 'ALL' ? assets : assets.filter(a => a.category === activeCategory);
+
+  const openAsset = (asset: any) => {
+    const isDocument = ['PDF', 'DOC', 'SLIDE'].includes(asset.type);
+    setReaderAsset({
+      ...asset,
+      subtitle: isDocument
+        ? 'Lecture centrée pour consulter le support sans distraction.'
+        : 'Aperçu centré pour garder la lecture simple et claire.',
+      badge: asset.category,
+      sourceLabel: isDocument ? 'PDF recommandé' : 'Aperçu',
+      pdfUrl: isDocument ? null : null,
+      content:
+        asset.type === 'PDF'
+          ? `# Q: Pourquoi ce document doit exister en PDF ?
+### R:
+- Le PDF se lit mieux.
+- Il se partage plus proprement.
+- Il garde une mise en page stable dans l'app.
+
+## Q: Que doit contenir cette ressource ?
+### R:
+- Le message principal.
+- Les règles à suivre.
+- Les éléments visuels essentiels.
+- Les points de vigilance.`
+          : asset.type === 'DOC'
+            ? `# Q: À quoi sert ce modèle ?
+### R:
+- À standardiser un message.
+- À faire gagner du temps à l'équipe.
+
+## Q: Comment l'utiliser ?
+### R:
+- Le reprendre comme base.
+- Le garder simple.
+- Le convertir en PDF si le contenu devient long.`
+            : asset.type === 'SLIDE'
+              ? `# Q: Comment lire une présentation vision ?
+### R:
+- Diapositive par diapositive.
+- En gardant le message central en tête.
+
+## Q: Quelle est la bonne logique ?
+### R:
+- Montrer la vision.
+- Rassurer.
+- Donner envie d'aller plus loin.`
+              : `# Q: Que montre cet asset ?
+### R:
+- Un support visuel de marque.
+- Une ressource à consulter tranquillement.
+`,
+    });
+    setReaderOpen(true);
+  };
 
   return (
     <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
@@ -64,25 +122,37 @@ export default function BrandPage() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
         {filteredAssets.map((asset, i) => (
-            <div key={i} className="group flex flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/30 backdrop-blur-xl transition hover:border-pink-500/20">
+            <div
+              key={i}
+              role="button"
+              tabIndex={0}
+              onClick={() => openAsset(asset)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  openAsset(asset);
+                }
+              }}
+              className="group flex cursor-pointer flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 text-left shadow-2xl shadow-black/30 backdrop-blur-xl transition hover:border-pink-500/20"
+            >
               <div className="flex aspect-video items-center justify-center bg-white/5 transition-colors group-hover:bg-pink-500/10">
                 {asset.type === 'IMAGE' ? <ImageIcon size={32} className="text-slate-500 transition group-hover:text-pink-300" /> : <FileText size={32} className="text-slate-500 transition group-hover:text-pink-300" />}
-            </div>
+              </div>
               <div className="flex flex-1 flex-col p-5">
                 <span className="mb-1 text-[9px] font-bold uppercase tracking-[0.3em] text-pink-300">{asset.category}</span>
                 <h3 className="mb-4 text-sm font-semibold text-white line-clamp-2">{asset.title}</h3>
                 <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4">
                   <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">{asset.type}</span>
                   <div className="flex gap-2">
-                    <button className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:bg-white/10 hover:text-white">
+                    <span className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:bg-white/10 hover:text-white">
                     <Download size={14} />
-                    </button>
-                    <button className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:bg-white/10 hover:text-white">
+                    </span>
+                    <span className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:bg-white/10 hover:text-white">
                     <ExternalLink size={14} />
-                    </button>
+                    </span>
                   </div>
+                </div>
               </div>
-            </div>
             </div>
         ))}
         </div>
@@ -118,12 +188,32 @@ export default function BrandPage() {
                 Chaque descente terrain est une opportunité de capturer du contenu réel pour nos réseaux.
               </p>
             </div>
-            <button className="mx-auto w-fit rounded-2xl bg-white px-8 py-3 text-xs font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-100">
+            <button
+              onClick={() =>
+                openAsset({
+                  title: 'Charte Graphique Officielle',
+                  type: 'PDF',
+                  category: 'BRAND',
+                })
+              }
+              className="mx-auto w-fit rounded-2xl bg-white px-8 py-3 text-xs font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-100"
+            >
               Ouvrir les Guidelines Brand
             </button>
           </div>
         </div>
       </div>
+
+      <DocumentReaderModal
+        open={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        title={readerAsset?.title || 'Document'}
+        subtitle={readerAsset?.subtitle}
+        content={readerAsset?.content}
+        pdfUrl={readerAsset?.pdfUrl}
+        badge={readerAsset?.badge}
+        sourceLabel={readerAsset?.sourceLabel}
+      />
     </div>
   );
 }
