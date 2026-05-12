@@ -530,7 +530,7 @@ export default function KnowledgePage() {
           )}
         </header>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="grid grid-cols-1 gap-4">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
@@ -590,83 +590,7 @@ export default function KnowledgePage() {
               )}
             </div>
           </div>
-
-          <aside className="space-y-4">
-            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-              {activeArticle ? (
-                <>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-300">
-                        {CategoryLabel[activeArticle.category] || activeArticle.category}
-                      </div>
-                      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white">{activeArticle.title}</h2>
-                      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-400">
-                        <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                          <Shield size={12} /> {activeArticle.target_role || 'ALL'}
-                        </span>
-                        <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                          <CalendarDays size={12} /> {new Date(activeArticle.created_at).toLocaleDateString('fr-FR')}
-                        </span>
-                      </div>
-                    </div>
-                    {isAdmin && (
-                      <button
-                        onClick={() => deleteArticle(activeArticle.id)}
-                        className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-300"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="mt-6 space-y-4 rounded-[1.5rem] border border-white/10 bg-[#070b18] p-5">
-                    {renderContent(activeArticle.content)}
-                  </div>
-
-                  <button
-                    onClick={() => openReader(activeArticle)}
-                    className="mt-6 inline-flex items-center gap-2 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/15"
-                  >
-                    <BookOpen size={16} /> Ouvrir en lecture centrée
-                  </button>
-
-                  <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Lecture</p>
-                      <p className="mt-2 text-sm font-semibold text-white">Directement dans l'app</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Usage</p>
-                      <p className="mt-2 text-sm font-semibold text-white">Formation d'équipe</p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Rôle cible</p>
-                      <p className="mt-2 text-sm font-semibold text-white">{activeArticle.target_role || 'ALL'}</p>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="py-24 text-center">
-                  <BookOpen size={40} className="mx-auto text-slate-500" />
-                  <p className="mt-4 text-sm text-slate-400">Sélectionne un guide pour le lire ici.</p>
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-              <div className="flex items-center gap-2 text-cyan-300">
-                <FileText size={16} />
-                <h3 className="text-xs font-bold uppercase tracking-[0.28em] text-slate-300">Usage recommandé</h3>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                Ces guides aident chacun à comprendre la vision, à adopter les bons réflexes et à garder une manière de travailler cohérente.
-                Le but n'est pas de parler technique, mais de rendre le projet clair pour tous.
-              </p>
-            </div>
-          </aside>
         </div>
-      </div>
 
       <NewKnowledgeModal
         isOpen={isModalOpen}
@@ -683,6 +607,7 @@ export default function KnowledgePage() {
         badge={CategoryLabel[readerArticle?.category || activeArticle?.category || ''] || 'Guide'}
         sourceLabel={readerArticle?.target_role || activeArticle?.target_role || 'ALL'}
       />
+      </div>
     </div>
   );
 }

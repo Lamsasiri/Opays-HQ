@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
-import { Briefcase, Calendar, DollarSign, ShieldCheck, TrendingDown, Trash2, Layout, FileText, Sparkles, ArrowRight } from 'lucide-react';
+import { Briefcase, Calendar, DollarSign, ShieldCheck, TrendingDown, Trash2, Layout, FileText, Sparkles, ArrowRight, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useProfile } from '@/lib/ProfileProvider';
+import NewProjectModal from '@/components/modals/NewProjectModal';
 
 const StatusColors: any = {
   PLANNING: 'text-slate-300 bg-white/5 border-white/10',
@@ -17,6 +18,7 @@ const StatusColors: any = {
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showNewProject, setShowNewProject] = useState(false);
   const supabase = useMemo(() => createClient(), []);
   const { checkAccess, isAssociate } = useProfile();
 
@@ -58,8 +60,16 @@ export default function ProjectsPage() {
               </p>
             </div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300 backdrop-blur-xl">
-            {activeCount} projets actifs
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300 backdrop-blur-xl">
+              {activeCount} projets actifs
+            </div>
+            <button
+              onClick={() => setShowNewProject(true)}
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:opacity-95"
+            >
+              <Plus size={16} /> Nouveau projet
+            </button>
           </div>
         </header>
 
@@ -183,6 +193,12 @@ export default function ProjectsPage() {
           )}
         </div>
       </div>
+
+      <NewProjectModal
+        isOpen={showNewProject}
+        onClose={() => setShowNewProject(false)}
+        onSuccess={fetchData}
+      />
     </div>
   );
 }

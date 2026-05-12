@@ -4,7 +4,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
-import { Activity, ArrowRight, Box, Database, Globe, Layers3, Lock, Monitor, ShieldCheck, Terminal, Zap } from 'lucide-react';
+import { Activity, ArrowRight, Box, CheckCircle2, Briefcase, Database, Globe, Layers3, Lock, Monitor, Plus, ShieldCheck, Sparkles, Terminal, Zap } from 'lucide-react';
+import NewTaskModal from '@/components/modals/NewTaskModal';
+import NewProjectModal from '@/components/modals/NewProjectModal';
 
 type ProjectRow = {
   id: string;
@@ -25,6 +27,8 @@ export default function WorkspacePage() {
   const [tasks, setTasks] = useState<TaskRow[]>([]);
   const [lastSync, setLastSync] = useState<string>('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
@@ -86,8 +90,18 @@ export default function WorkspacePage() {
               <Terminal size={18} />
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Console remplacée par</p>
-              <p className="text-sm font-semibold text-white">Flux de diagnostic et supervision</p>
+              <p className="text-[10px] uppercase tracking-[0.28em] text-slate-500">Actions rapides</p>
+              <div className="mt-1 flex gap-2">
+                <button onClick={() => setShowTaskModal(true)} className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-200">
+                  <Plus size={12} /> Tâche
+                </button>
+                <button onClick={() => setShowProjectModal(true)} className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-200">
+                  <Briefcase size={12} /> Projet
+                </button>
+                <Link href="/dashboard/ai" className="inline-flex items-center gap-1.5 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-semibold text-cyan-200 transition hover:bg-cyan-500/15">
+                  <Sparkles size={12} /> IA
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -251,6 +265,17 @@ export default function WorkspacePage() {
           </div>
         </section>
       </motion.div>
+
+      <NewTaskModal
+        isOpen={showTaskModal}
+        onClose={() => setShowTaskModal(false)}
+        onSuccess={() => window.location.reload()}
+      />
+      <NewProjectModal
+        isOpen={showProjectModal}
+        onClose={() => setShowProjectModal(false)}
+        onSuccess={() => window.location.reload()}
+      />
     </div>
   );
 }
