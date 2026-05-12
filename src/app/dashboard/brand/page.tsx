@@ -80,8 +80,8 @@ export default function BrandPage() {
     setReaderAsset({
       ...asset,
       subtitle: !isImage
-        ? 'Lecture centr\u00e9e pour consulter le support sans distraction.'
-        : 'Aper\u00e7u centr\u00e9 pour garder la lecture simple et claire.',
+        ? 'Lecture centrée pour consulter le support sans distraction.'
+        : 'Aperçu centré pour garder la lecture simple et claire.',
       badge: asset.category,
       sourceLabel: !isImage ? 'Document' : 'Image',
       pdfUrl: asset.url,
@@ -100,8 +100,8 @@ export default function BrandPage() {
               <Palette size={16} /> Brand & Communication
             </div>
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-white">Biblioth\u00e8que d'Assets</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-400">Le hub visuel d'Opays Tech pour contr\u00f4ler les assets, les templates et la coh\u00e9rence de marque.</p>
+              <h1 className="text-3xl font-semibold tracking-tight text-white">Bibliothèque d'Assets</h1>
+              <p className="mt-2 max-w-2xl text-sm text-slate-400">Le hub visuel d'Opays Tech pour contrôler les assets, les templates et la cohérence de marque.</p>
             </div>
           </div>
           <button 
@@ -154,7 +154,7 @@ export default function BrandPage() {
         ) : filteredAssets.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
             <ImageIcon size={48} className="text-slate-700" />
-            <p className="text-slate-500">Aucun asset trouv\u00e9 dans cette cat\u00e9gorie.</p>
+            <p className="text-slate-500">Aucun asset trouvé dans cette catégorie.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
@@ -211,7 +211,7 @@ export default function BrandPage() {
               </div>
               <h2 className="mb-4 text-2xl font-semibold">Vision Communication</h2>
               <p className="mb-8 leading-relaxed text-pink-100">
-                Zaina, votre r\u00f4le est de traduire les prouesses techniques en histoires impactantes pour les d\u00e9cideurs.
+                Votre rôle est de traduire les prouesses techniques en histoires impactantes pour les décideurs.
               </p>
               <div className="grid grid-cols-1 gap-4">
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-4">
@@ -232,7 +232,7 @@ export default function BrandPage() {
               <div>
                 <h3 className="text-xl font-semibold text-white">Guidelines Brand</h3>
                 <p className="mx-auto mt-2 max-w-xs text-sm text-slate-400">
-                  Consultez la charte pour garantir la coh\u00e9rence visuelle.
+                  Consultez la charte pour garantir la cohérence visuelle.
                 </p>
               </div>
               <button

@@ -20,9 +20,9 @@ export default function AICreativeAgent() {
       {
         id: 'brand-init',
         role: 'assistant',
-        content: `Bonjour **Zaina** (ou tout autre associ\u00e9). Je suis votre **Assistant Cr\u00e9atif Opays**. Je ma\u00eetrise les codes de notre marque sur le bout des doigts. 
+        content: `Bonjour. Je suis votre **Assistant Créatif Opays**. Je maîtrise les codes de notre marque sur le bout des doigts. 
         
-Que souhaitez-vous cr\u00e9er aujourd'hui ? Un flyer pour une descente terrain ? Une structure de deck Canva ? Ou un texte percutant pour LinkedIn ?`,
+Que souhaitez-vous créer aujourd'hui ? Un flyer pour une descente terrain ? Une structure de deck Canva ? Ou un texte percutant pour LinkedIn ?`,
       },
     ],
   });
@@ -40,9 +40,9 @@ Que souhaitez-vous cr\u00e9er aujourd'hui ? Un flyer pour une descente terrain ?
   };
 
   const handleQuickAction = (type: string) => {
-    if (type === 'flyer') setInput("Aide-moi \u00e0 structurer un flyer pour un audit d'automatisation chez un nouveau prospect.");
-    if (type === 'canva') setInput("G\u00e9n\u00e8re un plan de 10 diapositives pour une pr\u00e9sentation Vision CEO d'Opays Tech.");
-    if (type === 'post') setInput("R\u00e9dige un post LinkedIn court et expert sur la souverainet\u00e9 num\u00e9rique avec Opays.");
+    if (type === 'flyer') setInput("Aide-moi à structurer un flyer pour un audit d'automatisation chez un nouveau prospect.");
+    if (type === 'canva') setInput("Génère un plan de 10 diapositives pour une présentation Vision CEO d'Opays Tech.");
+    if (type === 'post') setInput("Rédige un post LinkedIn court et expert sur la souveraineté numérique avec Opays.");
   };
 
   return (
@@ -102,7 +102,7 @@ Que souhaitez-vous cr\u00e9er aujourd'hui ? Un flyer pour une descente terrain ?
                     className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-pink-300 transition-colors"
                   >
                     {copied ? <Check size={12} /> : <Copy size={12} />}
-                    {copied ? 'Copi\u00e9' : 'Copier'}
+                    {copied ? 'Copié' : 'Copier'}
                   </button>
                 </div>
               )}
@@ -131,7 +131,7 @@ Que souhaitez-vous cr\u00e9er aujourd'hui ? Un flyer pour une descente terrain ?
           <input 
             value={input}
             onChange={handleInputChange}
-            placeholder="D\u00e9crivez votre besoin branding..."
+            placeholder="Décrivez votre besoin branding..."
             className="w-full rounded-2xl border border-white/10 bg-white/5 p-4 pr-12 text-sm text-white outline-none focus:border-pink-500/50 transition-all placeholder:text-slate-500"
           />
           <button 
@@ -143,7 +143,7 @@ Que souhaitez-vous cr\u00e9er aujourd'hui ? Un flyer pour une descente terrain ?
           </button>
         </div>
         <p className="mt-3 text-[9px] font-medium uppercase tracking-[0.2em] text-slate-500 text-center">
-          Entra\u00een\u00e9 sur l'identit\u00e9 souveraine d'Opays Tech
+          Entraîné sur l'identité souveraine d'Opays Tech
         </p>
       </form>
     </div>

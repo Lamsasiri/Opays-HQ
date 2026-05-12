@@ -33,7 +33,7 @@ export default function NewAssetModal({ isOpen, onClose, onSuccess }: NewAssetMo
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Non authentifi\u00e9');
+      if (!user) throw new Error('Non authentifié');
 
       let finalUrl = formData.url;
 
@@ -88,7 +88,7 @@ export default function NewAssetModal({ isOpen, onClose, onSuccess }: NewAssetMo
 
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-2">Ajouter un Asset</h2>
-            <p className="text-sm text-slate-400">Ajoutez une ressource officielle \u00e0 la biblioth\u00e8que de marque.</p>
+            <p className="text-sm text-slate-400">Ajoutez une ressource officielle à la bibliothèque de marque.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -106,7 +106,7 @@ export default function NewAssetModal({ isOpen, onClose, onSuccess }: NewAssetMo
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400/80">Cat\u00e9gorie</label>
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400/80">Catégorie</label>
                 <select 
                   className="w-full rounded-2xl border border-white/10 bg-[#0c1226] p-4 text-sm text-white outline-none focus:border-pink-500/50"
                   value={formData.category}
