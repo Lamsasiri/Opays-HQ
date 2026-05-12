@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import { X, Download, FileText, BookOpen, Sparkles, ExternalLink } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { X, Download, FileText, BookOpen, Sparkles, Copy, Check, ExternalLink } from 'lucide-react';
 
 type DocumentReaderModalProps = {
   open: boolean;
@@ -12,6 +12,7 @@ type DocumentReaderModalProps = {
   pdfUrl?: string | null;
   badge?: string;
   sourceLabel?: string;
+  copyText?: string;
 };
 
 function renderMarkdown(content: string) {
@@ -87,7 +88,10 @@ export default function DocumentReaderModal({
   pdfUrl,
   badge,
   sourceLabel,
+  copyText,
 }: DocumentReaderModalProps) {
+  const [copied, setCopied] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -100,6 +104,15 @@ export default function DocumentReaderModal({
   if (!open) return null;
 
   const isPdf = Boolean(pdfUrl && pdfUrl !== '#');
+  const canCopy = Boolean(copyText || content);
+
+  const handleCopy = async () => {
+    const text = copyText || content || '';
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1500);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xl" onMouseDown={onClose}>
@@ -151,6 +164,15 @@ export default function DocumentReaderModal({
                 >
                   <Download size={16} /> Ouvrir le PDF
                 </a>
+                {canCopy && (
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                  >
+                    {copied ? <Check size={16} className="text-emerald-300" /> : <Copy size={16} />} {copied ? 'Copié' : 'Copier le texte'}
+                  </button>
+                )}
                 <span className="text-xs text-slate-500">Le PDF est privilégié pour les documents à lire.</span>
               </div>
             </div>
@@ -161,7 +183,16 @@ export default function DocumentReaderModal({
                 <p className="text-xs font-bold uppercase tracking-[0.28em]">Lecture guidée</p>
               </div>
               <div className="space-y-4">{content ? renderMarkdown(content) : <p className="text-slate-400">Aucun contenu à afficher.</p>}</div>
-              <div className="pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {canCopy && (
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                  >
+                    {copied ? <Check size={16} className="text-emerald-300" /> : <Copy size={16} />} {copied ? 'Copié' : 'Copier le texte'}
+                  </button>
+                )}
                 <p className="text-xs text-slate-500">Astuce: pour un document long, exporte-le en PDF afin de garder une lecture plus stable dans la modale.</p>
               </div>
             </div>

@@ -10,6 +10,8 @@ interface DocumentTemplateProps {
   total?: number;
   content?: React.ReactNode;
   type: 'INVOICE' | 'CONTRACT' | 'ADMIN';
+  logoSrc?: string;
+  sealSrc?: string;
 }
 
 export default function DocumentTemplate({ 
@@ -21,19 +23,24 @@ export default function DocumentTemplate({
   items, 
   total,
   content,
-  type 
+  type,
+  logoSrc = '/icon-logo.png',
+  sealSrc = '/sceau-admin-opays.png'
 }: DocumentTemplateProps) {
   return (
-    <div className="bg-white text-black p-12 max-w-[800px] mx-auto min-h-[1100px] flex flex-col font-serif border border-zinc-200 shadow-xl print:shadow-none print:border-none">
+    <div className="mx-auto flex min-h-[1100px] max-w-[800px] flex-col border border-zinc-200 bg-white p-12 font-serif text-black shadow-xl print:border-none print:shadow-none">
       {/* Header */}
-      <header className="flex justify-between items-start border-b-2 border-blue-900 pb-8 mb-10">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter text-blue-900">OPAYS <span className="text-zinc-400">TECH</span></h1>
-          <p className="text-[10px] uppercase tracking-widest font-sans font-bold text-zinc-500">Infrastructure & Intelligence Artificielle</p>
-          <div className="mt-4 text-xs font-sans text-zinc-600 leading-relaxed">
-            <p>Avenue de la Justice, Gombe</p>
-            <p>Kinshasa, RD Congo</p>
-            <p>contact@opays.tech | +243 000 000 000</p>
+      <header className="mb-10 flex items-start justify-between border-b-2 border-blue-900 pb-8">
+        <div className="flex items-start gap-4">
+          <img src={logoSrc} alt="Logo OPAYS TECH" className="h-14 w-14 rounded-2xl object-contain shadow-sm" />
+          <div>
+            <h1 className="text-3xl font-black tracking-tighter text-blue-900">OPAYS <span className="text-zinc-400">TECH</span></h1>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Infrastructure & Intelligence Artificielle</p>
+            <div className="mt-4 text-xs leading-relaxed font-sans text-zinc-600">
+              <p>Avenue de la Justice, Gombe</p>
+              <p>Kinshasa, RD Congo</p>
+              <p>contact@opays.tech | +243 000 000 000</p>
+            </div>
           </div>
         </div>
         <div className="text-right">
@@ -93,9 +100,9 @@ export default function DocumentTemplate({
       </main>
 
       {/* Footer & Seal */}
-      <footer className="mt-20 border-t pt-10 relative">
-        <div className="flex justify-between items-end">
-          <div className="text-[10px] text-zinc-400 font-sans leading-relaxed">
+      <footer className="relative mt-20 border-t pt-10">
+        <div className="flex items-end justify-between">
+          <div className="text-[10px] font-sans leading-relaxed text-zinc-400">
             <p>OPAYS TECH S.A.R.L - RCCM: KIN/CD/00-X-0000</p>
             <p>Identification Nationale: 00-000-X00000X</p>
             <p>www.opays.tech</p>
@@ -105,7 +112,7 @@ export default function DocumentTemplate({
             <p className="text-[10px] font-bold uppercase text-zinc-400 font-sans">Validation Officielle</p>
             <div className="w-32 h-32 relative mx-auto opacity-90">
               <img 
-                src="/sceau%20admin%20opays.png" 
+                src={sealSrc} 
                 alt="Sceau Officiel OPAYS" 
                 className="w-full h-full object-contain"
               />
