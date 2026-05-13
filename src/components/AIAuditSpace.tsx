@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
-import { Zap, Search, BarChart3, Activity, ShieldAlert, CheckCircle2, Loader2, Sparkles, Database, Info, ArrowRight } from 'lucide-react';
+import { Zap, Search, BarChart3, Activity, ShieldAlert, CheckCircle2, Loader2, Sparkles, Database, Info, ArrowRight, Plus } from 'lucide-react';
 
 const AuditNode = ({ title, status, description }: { title: string, status: string, description: string }) => (
   <div className="bg-white border border-slate-200 p-8 rounded-[2rem] shadow-sm hover:border-blue-500/30 transition-all group relative overflow-hidden">
