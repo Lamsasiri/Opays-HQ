@@ -125,7 +125,8 @@ export default function LabsPage() {
                   tag: "Alpha",
                   color: "violet",
                   icon: <Sparkles size={24} />,
-                  bg: "from-violet-500/10 to-transparent"
+                  bg: "from-violet-500/10 to-transparent",
+                  content: "L'objectif est de déployer des modèles Llama-3 ou Mistral sur nos propres serveurs Goma/Kinshasa pour ne plus dépendre des API américaines pour nos données sensibles."
                 },
                 {
                   title: "Agents de Coordination",
@@ -134,17 +135,24 @@ export default function LabsPage() {
                   tag: "Benchmark",
                   color: "fuchsia",
                   icon: <Lightbulb size={24} />,
-                  bg: "from-fuchsia-500/10 to-transparent"
+                  bg: "from-fuchsia-500/10 to-transparent",
+                  content: "Nous testons l'implémentation du Model Context Protocol pour permettre à nos agents de lire directement les fichiers Obsidian et de synchroniser les tâches HQ."
                 }
               ].map((card, i) => (
                 <button 
                   key={i}
+                  onClick={() => openNote({
+                    title: card.title,
+                    content: card.content,
+                    profiles: { full_name: 'Lead Lab' },
+                    category: 'RESEARCH'
+                  })}
                   className={`group relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 text-left transition-all hover:border-${card.color}-400 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] hover:-translate-y-1`}
                 >
                   <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${card.bg} opacity-20 transition-transform group-hover:scale-150`} />
                   
                   <div className="relative z-10 mb-6 flex items-center justify-between">
-                    <div className={`rounded-2xl bg-${card.color}-50 p-3 text-${card.color}-600 border border-${card.color}-100 shadow-sm`}>
+                    <div className={`rounded-2xl bg-${card.color}-50 p-3 text-${card.color}-600 border border-${card.color}-100 shadow-sm group-hover:bg-${card.color}-600 group-hover:text-white transition-all`}>
                       {card.icon}
                     </div>
                     <span className="rounded-lg bg-slate-50 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-slate-400 border border-slate-100">
@@ -152,7 +160,7 @@ export default function LabsPage() {
                     </span>
                   </div>
                   
-                  <h3 className="relative z-10 text-xl font-bold text-slate-900 uppercase tracking-tight">{card.title}</h3>
+                  <h3 className="relative z-10 text-xl font-bold text-slate-900 uppercase tracking-tight group-hover:text-violet-600 transition-colors">{card.title}</h3>
                   <p className="relative z-10 mt-4 text-sm font-medium leading-relaxed text-slate-500 line-clamp-2">
                     {card.desc}
                   </p>
