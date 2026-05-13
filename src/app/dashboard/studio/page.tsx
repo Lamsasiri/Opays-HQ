@@ -18,7 +18,8 @@ import {
   Briefcase,
   Share2,
   Download,
-  Info
+  Info,
+  Sparkles
 } from 'lucide-react';
 
 const ToolCard = ({ title, description, icon, active, onClick }: any) => (
