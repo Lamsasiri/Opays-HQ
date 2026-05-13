@@ -6,13 +6,13 @@ import { Phone, Mail, Building2, MoreHorizontal, Plus, Clock, Target, Trash2, Ch
 import NewLeadModal from '@/components/modals/NewLeadModal';
 
 const StatusColors: any = {
-  'NEW': 'bg-sky-500/10 text-sky-300 border-sky-500/20',
-  'CONTACTED': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-  'AUDIT_PENDING': 'bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/20',
-  'PROPOSAL_SENT': 'bg-orange-500/10 text-orange-300 border-orange-500/20',
-  'CLOSED_WON': 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-  'CLOSED_LOST': 'bg-rose-500/10 text-rose-300 border-rose-500/20',
-  'WON': 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+  'NEW': 'bg-sky-50 text-sky-700 border-sky-100',
+  'CONTACTED': 'bg-amber-50 text-amber-700 border-amber-100',
+  'AUDIT_PENDING': 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100',
+  'PROPOSAL_SENT': 'bg-orange-50 text-orange-700 border-orange-100',
+  'CLOSED_WON': 'bg-emerald-50 text-emerald-700 border-emerald-100',
+  'CLOSED_LOST': 'bg-rose-50 text-rose-700 border-rose-100',
+  'WON': 'bg-emerald-50 text-emerald-700 border-emerald-100',
 };
 
 export default function LeadsPage() {
@@ -98,50 +98,50 @@ export default function LeadsPage() {
   };
 
   return (
-    <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.16),_transparent_30%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.14),_transparent_28%),linear-gradient(180deg,#050816_0%,#090d1d_55%,#0c1022_100%)]" />
+    <div className="relative min-h-full text-slate-900 bg-[#f8f9fb]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
       <div className="relative z-10 p-6 md:p-8 space-y-8 max-w-[1600px] mx-auto">
         <header className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-600">
               <Sparkles size={12} /> Revenue Control Center
             </div>
             <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-white">Mes Prospects</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-400">Gérez votre pipeline avec une lecture nette du risque, de la valeur et du prochain move commercial.</p>
+              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900">Mes Prospects</h1>
+              <p className="mt-2 max-w-2xl text-sm text-slate-500">Gérez votre pipeline avec une lecture nette du risque, de la valeur et du prochain move commercial.</p>
             </div>
           </div>
           <button 
             onClick={openNew}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-black/20 backdrop-blur-xl transition hover:bg-white/15"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:opacity-95"
           >
             <Plus size={18} /> Nouveau Prospect
           </button>
         </header>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl shadow-black/20">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Total Pipeline</p>
-            <h3 className="text-2xl font-semibold text-white">{(leads?.reduce((acc, lead) => acc + (lead.potential_value || 0), 0) || 0).toLocaleString()} $</h3>
+            <h3 className="text-2xl font-semibold text-slate-900">{(leads?.reduce((acc, lead) => acc + (lead.potential_value || 0), 0) || 0).toLocaleString()} $</h3>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl shadow-black/20">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">En Audit</p>
-            <h3 className="text-2xl font-semibold text-white">{leads?.filter(l => l.status === 'AUDIT_PENDING').length || 0}</h3>
+            <h3 className="text-2xl font-semibold text-slate-900">{leads?.filter(l => l.status === 'AUDIT_PENDING').length || 0}</h3>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl shadow-black/20">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Gagnés</p>
-            <h3 className="text-2xl font-semibold text-emerald-300">{leads?.filter(l => ['CLOSED_WON', 'WON'].includes(l.status)).length || 0}</h3>
+            <h3 className="text-2xl font-semibold text-emerald-600">{leads?.filter(l => ['CLOSED_WON', 'WON'].includes(l.status)).length || 0}</h3>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl shadow-black/20">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
             <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Total Leads</p>
-            <h3 className="text-2xl font-semibold text-white">{leads?.length || 0}</h3>
+            <h3 className="text-2xl font-semibold text-slate-900">{leads?.length || 0}</h3>
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/30 backdrop-blur-xl">
+        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/10 bg-white/5">
+              <tr className="border-b border-slate-100 bg-slate-50/50">
                 <th className="p-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-400">Entreprise</th>
                 <th className="p-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-400">Status</th>
                 <th className="p-4 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-400">SLA / Audit</th>
@@ -155,16 +155,16 @@ export default function LeadsPage() {
                 <tr 
                   key={lead.id} 
                   onClick={() => openEdit(lead)}
-                  className="border-b border-white/5 hover:bg-white/5 transition-colors group cursor-pointer"
+                  className="border-b border-slate-50 hover:bg-slate-50/80 transition-colors group cursor-pointer"
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition-colors group-hover:text-cyan-300">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-100 bg-slate-50 text-slate-400 transition-colors group-hover:text-cyan-600">
                         <Building2 size={18} />
                       </div>
                       <div>
-                        <span className="block font-semibold text-white">{lead.company_name}</span>
-                        <span className="text-xs text-slate-400">{lead.contact_name}</span>
+                        <span className="block font-semibold text-slate-900">{lead.company_name}</span>
+                        <span className="text-xs text-slate-500">{lead.contact_name}</span>
                       </div>
                     </div>
                   </td>
@@ -176,21 +176,21 @@ export default function LeadsPage() {
                   <td className="p-4">
                     <div className="space-y-1">
                       {lead.status === 'NEW' && (
-                        <div className="flex items-center gap-2 text-[11px] font-semibold text-rose-300">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold text-rose-600">
                           <Clock size={12} /> SLA : {getSlaLabel(lead.sla_qualification_deadline)}
                         </div>
                       )}
                       {lead.status === 'AUDIT_PENDING' && (
-                        <div className="flex items-center gap-2 text-[11px] font-semibold text-fuchsia-300">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold text-fuchsia-600">
                           <Target size={12} /> Audit : {lead.audit_deadline ? new Date(lead.audit_deadline).toLocaleDateString() : 'Non planifié'}
                         </div>
                       )}
                     </div>
                   </td>
                   <td className="p-4">
-                    <span className="font-mono text-sm font-semibold text-white">{(lead.potential_value || 0).toLocaleString()} $</span>
+                    <span className="font-mono text-sm font-semibold text-slate-900">{(lead.potential_value || 0).toLocaleString()} $</span>
                   </td>
-                  <td className="p-4 text-sm text-slate-300">
+                  <td className="p-4 text-sm text-slate-600">
                     {lead.profiles?.full_name || 'Non assigné'}
                   </td>
                   <td className="p-4 text-right">
@@ -198,22 +198,22 @@ export default function LeadsPage() {
                       {lead.status !== 'WON' && (
                         <button 
                           onClick={(e) => convertToProject(lead, e)}
-                          className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-300"
+                          className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-600"
                           title="Convertir en projet"
                         >
                           <CheckCircle size={18} />
                         </button>
                       )}
-                      {lead.status === 'WON' && <Trophy size={18} className="mr-2 text-amber-300" />}
+                      {lead.status === 'WON' && <Trophy size={18} className="mr-2 text-amber-500" />}
                       <button 
                         onClick={(e) => { e.stopPropagation(); openEdit(lead); }}
-                        className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-300"
+                        className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-600"
                       >
                         <MoreHorizontal size={18} />
                       </button>
                       <button 
                         onClick={(e) => deleteLead(lead.id, e)}
-                        className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-300"
+                        className="rounded-xl border border-slate-100 bg-white p-2 text-slate-400 transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -234,20 +234,20 @@ export default function LeadsPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <div className="mb-2 flex items-center gap-2 text-cyan-300">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 text-sm text-slate-600 shadow-sm">
+            <div className="mb-2 flex items-center gap-2 text-cyan-600 font-bold uppercase tracking-wider text-[10px]">
               <TrendingUp size={16} /> Pipeline prioritaire
             </div>
             <p>Les leads closables sont maintenant lisibles en un coup d'oeil, sans style générique.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <div className="mb-2 flex items-center gap-2 text-violet-300">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 text-sm text-slate-600 shadow-sm">
+            <div className="mb-2 flex items-center gap-2 text-violet-600 font-bold uppercase tracking-wider text-[10px]">
               <Shield size={16} /> Contrôle d'accès
             </div>
             <p>La page suit le RBAC global du dashboard et ne laisse passer que les rôles autorisés.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <div className="mb-2 flex items-center gap-2 text-emerald-300">
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 text-sm text-slate-600 shadow-sm">
+            <div className="mb-2 flex items-center gap-2 text-emerald-600 font-bold uppercase tracking-wider text-[10px]">
               <Phone size={16} /> Suivi commercial
             </div>
             <p>Les signaux d'audit et les SLA ressortent plus clairement pour prioriser les relances.</p>

@@ -25,7 +25,7 @@ export default function ActivityFeed() {
         href: '/dashboard/leads',
         title: `Nouveau lead : ${lead.company_name}`,
         time: lead.created_at,
-        icon: <UserPlus size={14} className="text-cyan-300" />,
+        icon: <UserPlus size={14} className="text-cyan-600" />,
       })),
       ...(tasks || []).map((task) => ({
         id: task.id,
@@ -33,7 +33,7 @@ export default function ActivityFeed() {
         href: task.project_id ? `/dashboard/projects/${task.project_id}` : '/dashboard/tasks',
         title: task.status === 'DONE' ? `Tâche terminée : ${task.title}` : `Tâche modifiée : ${task.title}`,
         time: task.updated_at,
-        icon: task.status === 'DONE' ? <CheckCircle2 size={14} className="text-emerald-300" /> : <Clock size={14} className="text-slate-400" />,
+        icon: task.status === 'DONE' ? <CheckCircle2 size={14} className="text-emerald-600" /> : <Clock size={14} className="text-slate-400" />,
       })),
       ...(projects || []).map((project) => ({
         id: project.id,
@@ -41,7 +41,7 @@ export default function ActivityFeed() {
         href: `/dashboard/projects/${project.id}`,
         title: `Nouveau projet lancé : ${project.title}`,
         time: project.created_at,
-        icon: <PlusCircle size={14} className="text-fuchsia-300" />,
+        icon: <PlusCircle size={14} className="text-indigo-600" />,
       })),
       ...(billing || []).map((entry) => {
         const p = Array.isArray(entry.projects) ? entry.projects[0] : entry.projects;
@@ -51,7 +51,7 @@ export default function ActivityFeed() {
           href: p?.id ? `/dashboard/projects/${p.id}` : '/dashboard/contracts',
           title: `Paiement reçu : ${entry.amount_paid}$ (${p?.title || 'Projet'})`,
           time: entry.updated_at,
-          icon: <DollarSign size={14} className="text-emerald-300" />,
+          icon: <DollarSign size={14} className="text-emerald-600" />,
         };
       }),
     ]
@@ -67,21 +67,21 @@ export default function ActivityFeed() {
   }, []);
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-slate-950/55 p-6 text-slate-100 shadow-2xl shadow-black/20 backdrop-blur-xl">
-      <h3 className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-slate-500">
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm backdrop-blur-xl">
+      <h3 className="mb-6 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.3em] text-slate-400">
         <MessageSquare size={14} /> Flux d'activité global
       </h3>
 
       <div className="space-y-6">
         {activities.map((activity, index) => (
           <Link key={activity.id} href={activity.href} className="group relative flex gap-4">
-            {index !== activities.length - 1 && <div className="absolute left-[7px] top-[24px] bottom-[-24px] w-px bg-white/10" />}
-            <div className="z-10 mt-1 flex h-4 w-4 items-center justify-center rounded-full border border-white/10 bg-white/5 transition group-hover:bg-cyan-400/15">
+            {index !== activities.length - 1 && <div className="absolute left-[7px] top-[24px] bottom-[-24px] w-px bg-slate-100" />}
+            <div className="z-10 mt-1 flex h-4 w-4 items-center justify-center rounded-full border border-slate-200 bg-slate-50 transition group-hover:bg-cyan-50">
               {activity.icon}
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold leading-tight text-white transition group-hover:text-cyan-200">{activity.title}</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-slate-500">
+              <p className="text-sm font-semibold leading-tight text-slate-900 transition group-hover:text-cyan-600">{activity.title}</p>
+              <p className="mt-1 text-[10px] uppercase tracking-[0.25em] text-slate-400">
                 {new Date(activity.time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} • {new Date(activity.time).toLocaleDateString('fr-FR')}
               </p>
             </div>
@@ -92,17 +92,17 @@ export default function ActivityFeed() {
           <div className="space-y-4">
             {[1, 2, 3].map((item) => (
               <div key={item} className="flex gap-4 animate-pulse">
-                <div className="h-4 w-4 rounded-full bg-white/10" />
+                <div className="h-4 w-4 rounded-full bg-slate-100" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-3 w-3/4 rounded bg-white/10" />
-                  <div className="h-2 w-1/2 rounded bg-white/10" />
+                  <div className="h-3 w-3/4 rounded bg-slate-100" />
+                  <div className="h-2 w-1/2 rounded bg-slate-100" />
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {!loading && !activities.length && <p className="py-4 text-center text-xs italic text-slate-500">Aucune activité récente.</p>}
+        {!loading && !activities.length && <p className="py-4 text-center text-xs italic text-slate-400">Aucune activité récente.</p>}
       </div>
     </div>
   );

@@ -62,17 +62,17 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
-            className="relative w-full max-w-lg rounded-[2rem] border border-white/10 bg-slate-950/95 p-8 shadow-2xl backdrop-blur-2xl"
+            className="relative w-full max-w-lg rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <button onClick={onClose} className="absolute right-6 top-6 rounded-xl p-2 text-slate-400 transition hover:bg-white/10 hover:text-white">
+            <button onClick={onClose} className="absolute right-6 top-6 rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-900">
               <X size={18} />
             </button>
 
@@ -81,8 +81,8 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                 <Briefcase size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Nouveau Projet</h2>
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">Production</p>
+                <h2 className="text-lg font-semibold text-slate-900">Nouveau Projet</h2>
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">Production</p>
               </div>
             </div>
 
@@ -94,7 +94,7 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Ex: Refonte site web Client X"
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-500/40"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-cyan-500/40 focus:bg-white transition-all"
                   required
                 />
               </div>
@@ -106,7 +106,7 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Objectifs, périmètre, livrables..."
                   rows={3}
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-cyan-500/40 resize-none"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-cyan-500/40 focus:bg-white transition-all resize-none"
                 />
               </div>
 
@@ -116,7 +116,7 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                   <select
                     value={branch}
                     onChange={(e) => setBranch(e.target.value as 'STUDIO' | 'LABS')}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-cyan-500/40"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-cyan-500/40 focus:bg-white transition-all"
                   >
                     <option value="STUDIO">Services (Studio)</option>
                     <option value="LABS">Innovation (Labs)</option>
@@ -128,7 +128,7 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-cyan-500/40"
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-cyan-500/40 focus:bg-white transition-all"
                   />
                 </div>
               </div>
@@ -138,7 +138,7 @@ export default function NewProjectModal({ isOpen, onClose, onSuccess }: NewProje
                 <select
                   value={leadId}
                   onChange={(e) => setLeadId(e.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-white/5 p-3 text-sm text-white outline-none focus:border-cyan-500/40"
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-900 outline-none focus:border-cyan-500/40 focus:bg-white transition-all"
                 >
                   <option value="">Aucun client</option>
                   {leads.map((lead) => (

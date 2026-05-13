@@ -1,7 +1,7 @@
 # FICHE DE POSTE — OPAYS TECH
 
 **Intitulé du poste :** Directeur Général & Lead R&D  
-**Titulaire :** [DG]  
+**Titulaire :** Fenelon LAMSASIRI  
 **Rôle HQ :** `CEO`  
 **Type :** `ASSOCIATE`  
 **Référence :** `JD-OPAYS-001`

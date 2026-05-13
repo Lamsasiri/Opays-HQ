@@ -8,23 +8,23 @@ OPAYS HQ est l'outil central de gestion pour l'équipe d'OPAYS TECH. Il permet d
 
 ## 2. Guide par Rôle
 
-### 👤 DG / CEO
+### 👤 DG / CEO (Fenelon LAMSASIRI)
 - **Vue complète :** Accès à tous les modules (Dashboard, Projets, Leads, Trésorerie, Equity, Settings).
 - **Pilotage :** Gestion des accès de l'équipe via Paramètres > Contrôle des Accès.
 - **R&D :** Accès au module Labs pour la veille technologique et la recherche.
 
-### 💻 CTO (Evans)
+### 💻 CTO
 - **Projets :** Créer et gérer les projets techniques liés aux Leads gagnés.
 - **Workspace :** Console technique pour le suivi des builds et déploiements.
 - **Tâches :** Définir les Definition of Done et assigner les tâches.
 - **Labs :** Recherche et prototypage de nouvelles solutions.
 
-### 📊 CSO / Sales (Prince, Patricia, Zaina)
+### 📊 CSO / Sales / Communication
 - **Leads :** Ajouter chaque nouveau contact dans le module Prospects.
 - **Studio :** Utiliser le calculateur ROI pour les simulations client.
-- **Coordination :** (Prince) Planifier les interventions terrain.
-- **Brand Assets :** (Zaina) Créer et gérer les supports de communication.
-- **Trésorerie :** (Patricia) Saisie journalière des recettes/dépenses.
+- **Coordination :** Planifier les interventions terrain.
+- **Brand Assets :** Créer et gérer les supports de communication.
+- **Trésorerie :** Saisie journalière des recettes et dépenses.
 
 ## 3. Système d'Invitations
 Pour ajouter un membre :
