@@ -48,15 +48,9 @@ export default function SettingsPage() {
     ]);
     
     if (profiles) {
-      // Filtrer pour ne garder que les membres officiels et éviter les doublons/placeholders
-      const officialEmails = [
-        'lamsasfenelon@gmail.com',
-        'evansselemani@gmail.com',
-        'zamwanapatricia@gmail.com',
-        'zainagodlive28@gmail.com',
-        'princebagheni@gmail.com'
-      ];
-      const filtered = profiles.filter(p => officialEmails.includes(p.email?.toLowerCase()));
+      // On filtre les membres réels (associés ou ayant un email officiel connu)
+      // Cela évite d'afficher les comptes de test ou les résidus fictifs.
+      const filtered = profiles.filter(p => p.email && (p.type === 'ASSOCIATE' || p.is_admin));
       setMembers(filtered);
     }
     if (equityData) setEquity(equityData);

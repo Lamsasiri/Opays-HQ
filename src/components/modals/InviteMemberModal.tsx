@@ -21,19 +21,20 @@ export default function InviteMemberModal({ isOpen, onClose, onSuccess }: { isOp
     setLoading(true);
 
     try {
-      // Pour une invitation simplifiée dans cette version, on crée directement un profil
-      // Dans une version plus avancée, on utiliserait supabase.auth.admin.inviteUserByEmail
+      // Insertion réelle dans la base de données 'profiles'
       const { error } = await supabase.from('profiles').insert([
         { 
-          email: formData.email, 
+          email: formData.email.toLowerCase(), 
           full_name: formData.full_name, 
           role: formData.role,
+          type: 'ASSOCIATE',
           permissions: {
             dashboard: true,
-            leads: formData.role === 'SALES' || formData.role === 'CEO' || formData.role === 'COO',
+            leads: ['CEO', 'COO', 'SALES'].includes(formData.role),
             projects: true,
-            treasury: formData.role === 'CEO' || formData.role === 'COO',
-            hr: formData.role === 'CEO' || formData.role === 'COO'
+            treasury: ['CEO', 'COO', 'ADMIN'].includes(formData.role),
+            hr: ['CEO', 'COO', 'ADMIN'].includes(formData.role),
+            labs: true
           }
         }
       ]);
@@ -42,9 +43,8 @@ export default function InviteMemberModal({ isOpen, onClose, onSuccess }: { isOp
       
       onSuccess();
       onClose();
-      alert(`Invitation envoyée à ${formData.email}. (Simulé : Profil créé)`);
     } catch (err: any) {
-      alert(`Erreur: ${err.message}`);
+      alert(`Erreur d'invitation: ${err.message}`);
     } finally {
       setLoading(false);
     }
