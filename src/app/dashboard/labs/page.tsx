@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
-import { FlaskConical, Beaker, Lightbulb, Shield, Send, Lock, CheckCircle2, Sparkles } from 'lucide-react';
+import { FlaskConical, Beaker, Lightbulb, Shield, Send, Lock, CheckCircle2, Sparkles, TrendingUp, Globe, ArrowRight } from 'lucide-react';
 
 export default function LabsPage() {
   const [notes, setNotes] = useState<any[]>([]);
