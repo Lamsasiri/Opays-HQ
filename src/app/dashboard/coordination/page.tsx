@@ -15,7 +15,9 @@ import {
   ArrowRight,
   Activity,
   ShieldCheck,
-  Zap
+  Zap,
+  FileText,
+  Compass
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 

@@ -13,7 +13,8 @@ import {
   Trash2, 
   Loader2, 
   AlertCircle,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
