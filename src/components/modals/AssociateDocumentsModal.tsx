@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, FileUp, FileText, Download, Trash2, ShieldCheck, Plus } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 
-export default function AssociateDocumentsModal({ isOpen, onClose, member }: { isOpen: boolean, onClose: () => void, member: any }) {
+export default function AssociateDocumentsModal({ isOpen, onClose, member }: { isOpen: boolean, onClose: () => void, member?: any | null }) {
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState<any[]>([]);
   const [newDoc, setNewDoc] = useState({ title: '', url: '', type: 'LEGAL' });
