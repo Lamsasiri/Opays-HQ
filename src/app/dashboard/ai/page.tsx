@@ -154,7 +154,3 @@ export default function AIPage() {
     </div>
   );
 }
-      </div>
-    </div>
-  );
-}
