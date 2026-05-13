@@ -58,47 +58,81 @@ export default function CoordinationPage() {
       
       <div className="relative mx-auto max-w-7xl space-y-10">
         <header className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-cyan-600">
-              <div className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-600"></span>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-600">
+                <div className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-600"></span>
+                </div>
+                Live Ops Control
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Command Center v2.0</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">v2.4 Premium</span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl uppercase">Pilotage <span className="text-cyan-600">Opérationnel</span></h1>
-            <p className="max-w-2xl text-sm leading-7 text-slate-500 font-medium">Synchronisation stratégique des descentes terrain et du pipeline commercial pour l'exécution tactique.</p>
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900 lg:text-6xl uppercase tracking-tighter">Pilotage <span className="text-cyan-600">Opérationnel</span></h1>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-500 font-medium">
+                Le coeur tactique d'Opays Tech. Ici, nous transformons les signaux du terrain en déploiements technologiques concrets.
+              </p>
+            </div>
           </div>
           <div className="flex gap-4">
             <button 
-              className="inline-flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-6 py-3.5 text-xs font-black uppercase tracking-widest text-slate-900 shadow-sm transition hover:bg-slate-50 hover:border-slate-300"
+              className="inline-flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-6 py-4 text-xs font-black uppercase tracking-widest text-slate-900 shadow-sm transition hover:bg-slate-50 hover:border-slate-300"
             >
-              <FileText size={18} /> Guide Opérationnel
+              <FileText size={18} /> Méthodologie
             </button>
             <Link 
               href="/dashboard/calendar" 
-              className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-8 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-slate-900/10 transition hover:bg-black"
+              className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-10 py-4 text-xs font-black uppercase tracking-widest text-white shadow-2xl shadow-slate-900/20 transition hover:bg-black"
             >
-              <Calendar size={18} /> Planifier
+              <Calendar size={18} /> Planning Commando
             </Link>
           </div>
         </header>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 bg-white border border-slate-200 rounded-[2.5rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
-            <div className="text-2xl font-black text-cyan-600/10 mb-4">PHASE 01</div>
-            <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-3">Immersion Terrain</h4>
-            <p className="text-xs text-slate-500 font-medium leading-relaxed">Identification des frictions réelles chez le prospect. L'objectif est de collecter le "bruit" opérationnel sans filtre technique.</p>
-          </div>
-          <div className="p-8 bg-white border border-slate-200 rounded-[2.5rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
-            <div className="text-2xl font-black text-cyan-600/10 mb-4">PHASE 02</div>
-            <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-3">Diagnostic IA</h4>
-            <p className="text-xs text-slate-500 font-medium leading-relaxed">Analyse des données collectées via le moteur d'audit pour quantifier le ROI potentiel et les goulots d'étranglement.</p>
-          </div>
-          <div className="p-8 bg-white border border-slate-200 rounded-[2.5rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
-            <div className="text-2xl font-black text-cyan-600/10 mb-4">PHASE 03</div>
-            <h4 className="text-sm font-black uppercase tracking-widest text-slate-900 mb-3">Exécution Tactique</h4>
-            <p className="text-xs text-slate-500 font-medium leading-relaxed">Déploiement des solutions automatisées et suivi de la performance en temps réel pour valider les gains projetés.</p>
+        <section className="relative">
+          <div className="absolute inset-0 bg-cyan-600/5 blur-3xl rounded-[4rem] -z-10" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-10 bg-white border border-slate-200 rounded-[3rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
+              <div className="text-4xl font-black text-cyan-600/10 mb-6 italic">01</div>
+              <div className="inline-flex items-center gap-2 text-cyan-600 mb-4">
+                <Compass size={20} />
+                <h4 className="text-sm font-black uppercase tracking-[0.2em]">Immersion Terrain</h4>
+              </div>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                <span className="text-slate-900 font-bold">Patricia & Zaina</span> identifient les goulots d'étranglement chez les clients. Capture du besoin brut.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <ArrowRight size={14} /> Flux Commercial
+              </div>
+            </div>
+            <div className="p-10 bg-white border border-slate-200 rounded-[3rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
+              <div className="text-4xl font-black text-cyan-600/10 mb-6 italic">02</div>
+              <div className="inline-flex items-center gap-2 text-indigo-600 mb-4">
+                <Activity size={20} />
+                <h4 className="text-sm font-black uppercase tracking-[0.2em]">Diagnostic & ROI</h4>
+              </div>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                <span className="text-slate-900 font-bold">Prince (Coordination)</span> analyse la faisabilité technique et simule le gain pour le client.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <ArrowRight size={14} /> Intelligence HQ
+              </div>
+            </div>
+            <div className="p-10 bg-white border border-slate-200 rounded-[3rem] shadow-sm relative overflow-hidden group hover:border-cyan-500/30 transition-all">
+              <div className="text-4xl font-black text-cyan-600/10 mb-6 italic">03</div>
+              <div className="inline-flex items-center gap-2 text-emerald-600 mb-4">
+                <Zap size={20} />
+                <h4 className="text-sm font-black uppercase tracking-[0.2em]">Exécution Studio</h4>
+              </div>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                <span className="text-slate-900 font-bold">Evans & Équipe Tech</span> déploient l'automatisation. Validation de la valeur livrée.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <ArrowRight size={14} /> Livraison Elite
+              </div>
+            </div>
           </div>
         </section>
 

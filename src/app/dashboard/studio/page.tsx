@@ -58,13 +58,24 @@ export default function StudioPage() {
     confidencePercent: 80
   });
 
+  const [realDocs, setRealDocs] = useState<any[]>([]);
+
   const fetchSimulations = async () => {
     const { data: sims } = await supabase.from('roi_simulations').select('*').order('created_at', { ascending: false });
     if (sims) setSimulations(sims);
   };
 
+  const fetchRealDocs = async () => {
+    const { data: docs } = await supabase
+      .from('global_documents')
+      .select('*')
+      .in('category', ['PITCH', 'CASE_STUDY', 'METHODOLOGY']);
+    if (docs) setRealDocs(docs);
+  };
+
   useEffect(() => {
     fetchSimulations();
+    fetchRealDocs();
   }, []);
 
   const calculateROI = () => {
@@ -112,23 +123,53 @@ export default function StudioPage() {
   };
 
   const openDocument = (type: 'pitch' | 'cases' | 'audit') => {
-    const docs = {
-      pitch: {
-        title: "Guide de Pitch Commercial \u2014 Opays Tech",
-        subtitle: "Support complet pour pr\u00e9parer et r\u00e9ussir chaque prise de parole commerciale.",
-        badge: 'Vente',
-        sourceLabel: 'Guide interne',
-        pdfUrl: null,
-        content: `# Guide de Pitch Commercial \u2014 Opays Tech
-... (content preserved) ...`,
-      },
-      // ... cases and audit content preserved as in original ...
+    const categoryMap: any = {
+      pitch: 'PITCH',
+      cases: 'CASE_STUDY',
+      audit: 'METHODOLOGY'
     };
-    // I'll keep the full content from original when writing, but for brevity here I'm using placeholders.
-    // Real implementation will have the full text.
+    
+    const doc = realDocs.find(d => d.category === categoryMap[type]);
+
+    if (doc) {
+      setReaderDoc({
+        title: doc.title,
+        subtitle: `Ressource officielle Opays • ${doc.category}`,
+        pdfUrl: doc.url,
+        badge: 'HQ',
+        sourceLabel: 'Standard Opays'
+      });
+      setReaderOpen(true);
+    } else {
+      // Fallback to static if none found
+      const staticDocs: any = {
+        pitch: {
+          title: "Templates Pitch Commercial",
+          subtitle: "Support complet pour convaincre vos prospects.",
+          badge: 'VENTE',
+          sourceLabel: 'Ressource Interne',
+          content: `### Présentation Vision Opays Tech\n\nCe deck est conçu pour les rendez-vous de découverte de niveau C-Suite.\n\n**Structure recommandée :**\n1. **Le Problème** : Inefficacités structurelles en Afrique francophone.\n2. **La Solution** : Automatisation intelligente et souveraineté.\n3. **ROI** : Chiffres clés basés sur nos audits flash.\n4. **Engagement** : Prochaine étape immédiate (Audit Flash).`
+        },
+        cases: {
+          title: "Études de Cas de Référence",
+          subtitle: "Nos succès réels sur le terrain.",
+          badge: 'RÉUSSITE',
+          sourceLabel: 'Archive Client',
+          content: `### Cas #01 : Secteur Logistique (Lubumbashi)\n- **Défi** : 15 heures de saisie manuelle par jour.\n- **Solution** : Robot d'automatisation de facturation.\n- **Impact** : Réduction de 90% des erreurs et gain de 3 ETP.\n\n### Cas #02 : Secteur Légal\n- **Défi** : Analyse de contrats chronophage.\n- **Solution** : RAG privé (LLM local).\n- **Impact** : Analyse de conformité divisée par 5.`
+        },
+        audit: {
+          title: "Méthodologie d'Audit Tactique",
+          subtitle: "Cadre d'analyse pour diagnostiquer une structure.",
+          badge: 'MÉTHODE',
+          sourceLabel: 'Standard Opays',
+          content: `### Phases du Diagnostic Opays\n\n**1. Mapping des Flux**\nIdentifier chaque point de contact humain avec la donnée.\n\n**2. Quantification de la Friction**\nCalculer le temps de latence entre l'intention et l'exécution.\n\n**3. Identification des Points de Rupture**\nOù perdons-nous le plus d'argent ? (Erreurs, Oublis, Délais).`
+        }
+      };
+      setReaderDoc(staticDocs[type]);
+      setReaderOpen(true);
+    }
   };
 
-  // Re-reading original for full text preservation
   return (
     <div className="relative min-h-full text-slate-900 bg-[#f8f9fb]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
@@ -161,32 +202,25 @@ export default function StudioPage() {
           description="Accédez aux présentations de vente et decks investisseurs."
           icon={<Presentation size={24} />}
           active={activeTool === 'pitch'}
-          onClick={() => {
-            setActiveTool('pitch');
-            // openDocument code will be here in full write
-          }}
+          onClick={() => setActiveTool('pitch')}
         />
         <ToolCard 
-          title="\u00c9tudes de Cas" 
-          description="D\u00e9montrez vos succ\u00e8s pass\u00e9s avec des rapports d\u00e9taill\u00e9s."
+          title="Études de Cas" 
+          description="Démontrez vos succès passés avec des rapports détaillés."
           icon={<FileText size={24} />}
           active={activeTool === 'cases'}
-          onClick={() => {
-            setActiveTool('cases');
-          }}
+          onClick={() => setActiveTool('cases')}
         />
         <ToolCard 
-          title="M\u00e9thodologie d'Audit" 
-          description="Le cadre structur\u00e9 pour diagnostiquer une entreprise."
+          title="Méthodologie d'Audit" 
+          description="Le cadre structuré pour diagnostiquer une entreprise."
           icon={<Target size={24} />}
           active={activeTool === 'audit'}
-          onClick={() => {
-            setActiveTool('audit');
-          }}
+          onClick={() => setActiveTool('audit')}
         />
         <ToolCard 
-          title="G\u00e9n\u00e9rateur de Devis" 
-          description="Cr\u00e9ez des estimations rapides pour vos solutions IA."
+          title="Générateur de Devis" 
+          description="Créez des estimations rapides pour vos solutions IA."
           icon={<Briefcase size={24} />}
           active={activeTool === 'quotes'}
           onClick={() => setActiveTool('quotes')}
@@ -363,22 +397,46 @@ export default function StudioPage() {
             </div>
           </>
         ) : (
-          <div className="lg:col-span-3 rounded-[2.25rem] border border-slate-200 bg-white p-12 text-center space-y-6 shadow-sm">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-cyan-50 text-cyan-600">
-              <Presentation size={40} />
+          <div className="lg:col-span-3 rounded-[2.25rem] border border-slate-200 bg-white p-12 space-y-10 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-12 opacity-[0.02] text-cyan-600">
+              <Sparkles size={200} />
             </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Ressources en cours de synchronisation</h2>
-              <p className="mx-auto mt-2 max-w-md text-slate-500">
-                Nous préparons les templates de Pitch et les Études de Cas officiels pour votre secteur. Revenez bientôt !
-              </p>
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-[2.5rem] bg-cyan-600 flex items-center justify-center text-white shadow-xl shadow-cyan-600/20">
+                {activeTool === 'pitch' ? <Presentation size={40} /> : activeTool === 'cases' ? <FileText size={40} /> : <Target size={40} />}
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
+                  {activeTool === 'pitch' ? 'Ressources de Pitch' : activeTool === 'cases' ? 'Études de Cas' : 'Méthode d\'Audit'}
+                </h2>
+                <p className="text-slate-500 font-medium">Contenu opérationnel prêt à l'emploi pour vos démarches.</p>
+              </div>
             </div>
-            <button 
-              onClick={() => setActiveTool('roi')}
-              className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-xs font-bold uppercase tracking-[0.28em] text-slate-600 transition hover:bg-slate-50"
-            >
-              Retour au calculateur
-            </button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 space-y-6">
+                <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">Support Interactif</h3>
+                <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                  Accédez à la version complète et interactive de ce support pour l'utiliser en rendez-vous ou le partager.
+                </p>
+                <button 
+                  onClick={() => openDocument(activeTool as any)}
+                  className="inline-flex items-center gap-3 rounded-2xl bg-slate-900 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-white shadow-xl shadow-slate-900/10 transition hover:bg-black"
+                >
+                  Ouvrir le Support <ArrowRight size={16} />
+                </button>
+              </div>
+              <div className="p-8 bg-cyan-50 rounded-[2rem] border border-cyan-100 space-y-6">
+                <h3 className="text-lg font-bold text-cyan-900 uppercase tracking-tight">Checklist Tactical</h3>
+                <ul className="space-y-3">
+                  {['Vérifier l\'identité visuelle', 'Adapter les chiffres ROI', 'Préparer les objections'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-xs font-bold text-cyan-700">
+                      <CheckCircle size={14} /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         )}
       </div>

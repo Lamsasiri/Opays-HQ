@@ -18,7 +18,8 @@ import {
   Briefcase,
   Sparkles,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  ArrowRight
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import InviteMemberModal from '@/components/modals/InviteMemberModal';
@@ -201,7 +202,11 @@ export default function SettingsPage() {
                     { title: 'RCCM / Identification Nationale', type: 'PDF', date: 'Fév 2026' },
                     { title: 'Pacte d\'Associés v1.2', type: 'DOCX', date: 'Mars 2026' },
                   ].map((doc, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4 hover:bg-white hover:border-slate-200 transition-all cursor-pointer group">
+                    <div 
+                      key={i} 
+                      onClick={() => setIsDocsOpen(true)}
+                      className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4 hover:bg-white hover:border-indigo-200 hover:shadow-lg transition-all cursor-pointer group"
+                    >
                       <div className="flex items-center gap-4">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 group-hover:text-indigo-600 transition-colors">
                           <FileText size={20} />
@@ -211,6 +216,7 @@ export default function SettingsPage() {
                           <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{doc.type} • Modifié le {doc.date}</p>
                         </div>
                       </div>
+                      <ArrowRight size={16} className="text-slate-200 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                     </div>
                   ))}
                 </div>

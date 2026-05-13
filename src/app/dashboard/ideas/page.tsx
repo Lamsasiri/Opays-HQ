@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Lightbulb, ThumbsUp, MessageSquare, Sparkles, ArrowRight, Users } from 'lucide-react';
 import NewIdeaModal from '@/components/modals/NewIdeaModal';
+import IdeaDetailsModal from '@/components/modals/IdeaDetailsModal';
 
 const CategoryColors: any = {
   'TECH': 'text-cyan-700 bg-cyan-50 border-cyan-100',
@@ -110,47 +111,11 @@ export default function IdeasPage() {
         </div>
 
         {selectedIdea && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-white/20">
-              <div className="p-10 space-y-8">
-                <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <span className={`rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-[0.2em] ${CategoryColors[selectedIdea.category]}`}>
-                      {selectedIdea.category}
-                    </span>
-                    <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tighter">{selectedIdea.title}</h2>
-                  </div>
-                  <button onClick={() => setSelectedIdea(null)} className="p-3 bg-slate-50 rounded-2xl text-slate-400 hover:text-slate-900 transition-colors">
-                    <ArrowRight className="rotate-180" size={24} />
-                  </button>
-                </div>
-
-                <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
-                  <p className="text-sm text-slate-600 font-medium leading-relaxed">{selectedIdea.description}</p>
-                </div>
-
-                <div className="space-y-6">
-                  <div className="flex items-center gap-3 text-slate-400 border-b border-slate-100 pb-4">
-                    <MessageSquare size={16} />
-                    <h4 className="text-[10px] font-black uppercase tracking-widest">Commentaires de l'équipe</h4>
-                  </div>
-                  <div className="py-10 text-center">
-                    <p className="text-sm text-slate-400 italic font-medium">Aucun commentaire pour le moment. L'IA analyse la pertinence...</p>
-                  </div>
-                  <div className="flex gap-4 pt-4 border-t border-slate-50">
-                    <input 
-                      type="text" 
-                      placeholder="Votre avis technique..." 
-                      className="flex-1 px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm focus:outline-none focus:border-cyan-400 transition-all font-medium"
-                    />
-                    <button className="px-8 py-4 bg-cyan-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-cyan-700 transition-all shadow-lg shadow-cyan-600/20">
-                      Publier
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <IdeaDetailsModal 
+            idea={selectedIdea} 
+            onClose={() => setSelectedIdea(null)} 
+            onUpdate={fetchIdeas}
+          />
         )}
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

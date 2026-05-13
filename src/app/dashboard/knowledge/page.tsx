@@ -22,11 +22,11 @@ import {
 import NewKnowledgeModal from '@/components/modals/NewKnowledgeModal';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
 
-const IconMap: Record<string, React.ReactNode> = {
-  METHOD: <Target className="text-cyan-600" size={22} />,
-  GUIDE: <GraduationCap className="text-emerald-600" size={22} />,
-  VISION: <Lightbulb className="text-amber-600" size={22} />,
-  TECH: <BookOpen className="text-violet-600" size={22} />,
+const CategoryStyles: Record<string, { icon: any, color: string, bg: string }> = {
+  METHOD: { icon: Target, color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
+  GUIDE: { icon: GraduationCap, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
+  VISION: { icon: Lightbulb, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
+  TECH: { icon: BookOpen, color: 'text-violet-600', bg: 'bg-violet-50 border-violet-100' },
 };
 
 const CategoryLabel: Record<string, string> = {
@@ -502,11 +502,14 @@ export default function KnowledgePage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
           {filteredArticles.map((article) => {
             const active = article.id === activeArticle?.id;
+            const style = CategoryStyles[article.category] || { icon: Book, color: 'text-slate-600', bg: 'bg-slate-50 border-slate-100' };
+            const Icon = style.icon;
+            
             return (
               <button
                 key={article.id}
                 onClick={() => openReader(article)}
-                className={`group relative flex flex-col h-[340px] rounded-[2.5rem] border p-8 text-left transition-all ${
+                className={`group relative flex flex-col h-[380px] rounded-[2.5rem] border p-8 text-left transition-all overflow-hidden ${
                   active
                     ? 'border-indigo-600 bg-white shadow-2xl shadow-indigo-600/10 ring-1 ring-indigo-600/10'
                     : 'border-slate-200 bg-white hover:border-indigo-200 hover:shadow-xl hover:shadow-indigo-600/5'
@@ -514,11 +517,11 @@ export default function KnowledgePage() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4">
-                    <div className={`rounded-2xl p-4 border transition-all ${active ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
-                      {IconMap[article.category] || <Book size={24} />}
+                    <div className={`rounded-2xl p-4 border transition-all ${active ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-600/20' : `${style.bg} ${style.color}`}`}>
+                      <Icon size={24} />
                     </div>
                     <div className="min-w-0">
-                      <h3 className={`text-lg font-bold uppercase tracking-tight leading-tight line-clamp-1 ${active ? 'text-slate-900' : 'text-slate-700'}`}>{article.title}</h3>
+                      <h3 className={`text-lg font-bold uppercase tracking-tight leading-tight line-clamp-2 ${active ? 'text-slate-900' : 'text-slate-700'}`}>{article.title}</h3>
                       <p className="mt-1 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
                         {CategoryLabel[article.category] || article.category} • {article.target_role || 'ALL'}
                       </p>
@@ -527,7 +530,7 @@ export default function KnowledgePage() {
                 </div>
 
                 <div className={`mt-8 flex-1 overflow-hidden text-sm font-medium leading-relaxed ${active ? 'text-slate-600' : 'text-slate-500'}`}>
-                  <p className="line-clamp-4">
+                  <p className="line-clamp-3">
                     {article.content.replace(/[#*`]/g, '').trim()}
                   </p>
                 </div>
