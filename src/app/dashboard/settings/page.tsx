@@ -46,7 +46,19 @@ export default function SettingsPage() {
       supabase.from('profiles').select('*').order('full_name'),
       supabase.from('equity_distribution').select('*, profiles(full_name, role)')
     ]);
-    if (profiles) setMembers(profiles);
+    
+    if (profiles) {
+      // Filtrer pour ne garder que les membres officiels et éviter les doublons/placeholders
+      const officialEmails = [
+        'lamsasfenelon@gmail.com',
+        'evansselemani@gmail.com',
+        'zamwanapatricia@gmail.com',
+        'zainagodlive28@gmail.com',
+        'princebagheni@gmail.com'
+      ];
+      const filtered = profiles.filter(p => officialEmails.includes(p.email?.toLowerCase()));
+      setMembers(filtered);
+    }
     if (equityData) setEquity(equityData);
     setLoading(false);
   };
