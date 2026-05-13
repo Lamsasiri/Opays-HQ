@@ -1,216 +1,188 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import { useChat } from 'ai/react';
-import { AnimatePresence, motion } from 'framer-motion';
-import {
+import React, { useState } from 'react';
+import { 
+  Sparkles, 
+  Cpu, 
+  Search, 
+  Zap, 
+  MessageSquare, 
+  BarChart3, 
+  Database, 
+  ShieldCheck, 
+  ArrowRight, 
+  Activity,
   Bot,
-  ChevronDown,
-  Cpu,
-  Database,
-  Loader2,
-  Send,
-  Shield,
-  Sparkles,
-  Terminal,
-  User,
-  Wand2,
-  Zap,
-  CheckCircle2,
-  Share2,
+  BrainCircuit,
+  Workflow,
+  Command,
+  Layout,
+  Globe
 } from 'lucide-react';
-import { useProfile } from '@/lib/ProfileProvider';
+import AICreativeAgent from '@/components/AICreativeAgent';
+import AIAuditSpace from '@/components/AIAuditSpace';
 
-const AVAILABLE_MODELS = [
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek V3', provider: 'DeepSeek', icon: <Zap size={14} /> },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', icon: <Sparkles size={14} /> },
-  { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'OpenAI', icon: <Cpu size={14} /> },
-  { id: 'google/gemini-pro-1.5', name: 'Gemini 1.5 Pro', provider: 'Google', icon: <Database size={14} /> },
-];
+export default function AIPage() {
+  const [activeTab, setActiveTab] = useState<'STUDIO' | 'AUDIT'>('STUDIO');
 
-const SUGGESTED_SKILLS = [
-  { id: 'task', label: 'Créer une tâche', icon: <CheckCircle2 size={14} className="text-emerald-600" /> },
-  { id: 'audit', label: 'Flux d\'activité', icon: <Zap size={14} className="text-amber-600" /> },
-  { id: 'financial', label: 'Santé financière', icon: <Database size={14} className="text-sky-600" /> },
-  { id: 'knowledge', label: 'Base de savoir', icon: <Terminal size={14} className="text-violet-600" /> },
-  { id: 'linkedin', label: 'Post LinkedIn', icon: <Share2 size={14} className="text-cyan-600" /> },
-];
-
-export default function AICommandCenter() {
-  const { profile } = useProfile();
-  const [selectedModel, setSelectedModel] = useState(AVAILABLE_MODELS[0]);
-  const [modelOpen, setModelOpen] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const { messages, input, setInput, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat',
-    body: {
-      userProfile: profile,
-      modelId: selectedModel.id,
-    },
-    initialMessages: [
-      {
-        id: 'system-init',
-        role: 'assistant',
-        content: `Bienvenue dans le Command Center, **${profile?.full_name || 'associ\u00e9'}**. Je suis Opays Help Ai OS, pr\u00eat \u00e0 piloter les op\u00e9rations avec **${selectedModel.name}**. Posez une question ou utilisez un skill ci-dessous.`,
-      },
-    ],
-  });
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const handleSkillClick = (skill: string) => {
-    if (skill === 'task') setInput('Crée une tâche pour...');
-    if (skill === 'linkedin') setInput('Rédige un post LinkedIn sur...');
-    if (skill === 'audit') setInput("Quelles sont les dernières activités importantes dans l'entreprise ?");
-    if (skill === 'financial') setInput('Fais-moi un rapport sur la santé financière actuelle.');
-    if (skill === 'knowledge') setInput('Cherche dans la base de connaissance comment nous gérons...');
-  };
+  const tabs = [
+    { id: 'STUDIO', label: 'AI Studio', icon: <Sparkles size={18} />, description: 'Génération créative & Agents' },
+    { id: 'AUDIT', label: 'Espace Audit', icon: <Activity size={18} />, description: 'Analyse & Optimisation' },
+  ];
 
   return (
-    <div className="relative flex min-h-full flex-col overflow-hidden text-slate-900 bg-[#f8f9fb]">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:48px_48px] opacity-20" />
-
-      {/* Top bar */}
-      <div className="relative z-10 flex items-center justify-between border-b border-slate-200 bg-white/80 px-6 py-3 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
-            <Bot size={18} />
-          </div>
-          <div>
-            <h1 className="text-base font-semibold text-slate-900">Opays Help Ai OS</h1>
-            <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-600">Command Center</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Model selector dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setModelOpen(!modelOpen)}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-            >
-              {selectedModel.icon}
-              <span>{selectedModel.name}</span>
-              <ChevronDown size={14} className={`text-slate-400 transition ${modelOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {modelOpen && (
-              <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl">
-                {AVAILABLE_MODELS.map((model) => (
-                  <button
-                    key={model.id}
-                    onClick={() => { setSelectedModel(model); setModelOpen(false); }}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${
-                      selectedModel.id === model.id
-                        ? 'bg-cyan-50 text-cyan-700'
-                        : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    {model.icon}
-                    <div>
-                      <p className="font-semibold">{model.name}</p>
-                      <p className="text-[10px] text-slate-500">{model.provider}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
+    <div className="relative min-h-full px-6 py-8 text-slate-900 lg:px-8 bg-[#f8f9fb]">
+      {/* Background Decorative Elements */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.05),transparent_50%)]" />
+      
+      <div className="relative z-10 mx-auto max-w-[1600px] space-y-10">
+        <header className="flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-blue-600">
+              <BrainCircuit size={14} /> Cognitive Intelligence
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl uppercase">AI Command Center</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500 font-medium">L'interface centrale pour piloter les agents autonomes, les automatisations et les analyses prédictives d'Opays Tech.</p>
+            </div>
           </div>
 
-          <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-600">Online</span>
-
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
-            <Shield size={14} className="text-cyan-600" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">RBAC</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Skills bar */}
-      <div className="relative z-10 flex items-center gap-2 overflow-x-auto border-b border-slate-100 bg-slate-50 px-6 py-2">
-        <span className="mr-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Skills</span>
-        {SUGGESTED_SKILLS.map((skill) => (
-          <button
-            key={skill.id}
-            onClick={() => handleSkillClick(skill.id)}
-            className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-600 transition hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 shadow-sm"
-          >
-            {skill.icon}
-            {skill.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Chat — centered, full width */}
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 py-4 md:px-6">
-        <div ref={scrollRef} className="flex-1 space-y-6 overflow-y-auto py-4 custom-scrollbar">
-          <AnimatePresence initial={false}>
-            {messages.map((m) => (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                key={m.id}
-                className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          <div className="flex w-full flex-wrap gap-2 md:w-fit rounded-3xl border border-slate-200 bg-white p-1.5 shadow-sm">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex flex-1 md:flex-none items-center gap-3 rounded-2xl px-6 py-3.5 transition-all ${
+                  activeTab === tab.id 
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                }`}
               >
-                <div className={`flex max-w-[780px] gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl shadow-md ${
-                    m.role === 'user'
-                      ? 'bg-slate-100 text-slate-500'
-                      : 'bg-gradient-to-br from-cyan-400 to-blue-600 text-white'
-                  }`}>
-                    {m.role === 'user' ? <User size={16} /> : <Sparkles size={16} />}
-                  </div>
-                  <div className={`rounded-[1.5rem] px-5 py-4 text-sm leading-7 shadow-sm ${
-                    m.role === 'user'
-                      ? 'rounded-tr-sm bg-cyan-600 text-white'
-                      : 'rounded-tl-sm border border-slate-200 bg-white text-slate-800'
-                  }`}>
-                    {m.content}
-                  </div>
+                {tab.icon}
+                <div className="text-left">
+                  <p className="text-xs font-black uppercase tracking-widest leading-none">{tab.label}</p>
+                  <p className={`mt-1 text-[9px] font-medium uppercase tracking-wider opacity-60 ${activeTab === tab.id ? 'text-blue-300' : 'text-slate-400'}`}>
+                    {tab.description}
+                  </p>
                 </div>
-              </motion.div>
+              </button>
             ))}
-          </AnimatePresence>
+          </div>
+        </header>
 
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="flex gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 text-white shadow-md">
-                  <Loader2 size={16} className="animate-spin" />
+        {activeTab === 'STUDIO' && (
+          <div className="grid grid-cols-1 gap-10 xl:grid-cols-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Main Studio Area */}
+            <div className="xl:col-span-8 space-y-10">
+              <AICreativeAgent />
+              
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="group rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm hover:border-blue-500/30 transition-all hover:shadow-xl hover:shadow-blue-600/5">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                    <Workflow size={28} />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">Automatisations Flux</h3>
+                  <p className="mt-3 text-sm text-slate-500 font-medium leading-relaxed">Connectez les données du CRM aux agents de rédaction pour automatiser la prospection.</p>
+                  <button className="mt-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-blue-600 hover:text-blue-700">
+                    Ouvrir le Workflow <ArrowRight size={14} />
+                  </button>
                 </div>
-                <div className="flex gap-1.5 rounded-[1.5rem] rounded-tl-sm border border-slate-200 bg-white px-5 py-4 shadow-sm">
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-cyan-400" />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-cyan-400 [animation-delay:0.2s]" />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-cyan-400 [animation-delay:0.4s]" />
+
+                <div className="group rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm hover:border-violet-500/30 transition-all hover:shadow-xl hover:shadow-violet-600/5">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 text-violet-600 border border-violet-100 group-hover:bg-violet-600 group-hover:text-white transition-all">
+                    <Bot size={28} />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 uppercase tracking-tight">Agents Personnalisés</h3>
+                  <p className="mt-3 text-sm text-slate-500 font-medium leading-relaxed">Configurez des assistants spécialisés pour l'audit, le juridique ou le support technique.</p>
+                  <button className="mt-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.24em] text-violet-600 hover:text-violet-700">
+                    Gérer les Agents <ArrowRight size={14} />
+                  </button>
                 </div>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Input */}
-        <div className="border-t border-slate-200 pt-3">
-          <form onSubmit={handleSubmit} className="flex items-center gap-3 rounded-[1.5rem] border border-slate-200 bg-white px-4 py-3 shadow-lg focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-50/50 transition-all">
-            <Wand2 size={18} className="text-slate-400" />
-            <input
-              value={input}
-              onChange={handleInputChange}
-              placeholder={`Posez une question \u00e0 Opays Help Ai (${selectedModel.name})...`}
-              className="flex-1 bg-transparent py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400"
-            />
-            <button
-              type="submit"
-              disabled={isLoading || !input.trim()}
-              className="inline-flex items-center gap-2 rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-30"
-            >
-              Envoyer <Send size={16} />
-            </button>
-          </form>
-        </div>
+            {/* Sidebar Stats & Info */}
+            <div className="xl:col-span-4 space-y-8">
+              <div className="rounded-[2.5rem] border border-slate-900 bg-slate-900 p-10 text-white shadow-2xl shadow-slate-900/20">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 shadow-xl shadow-blue-600/20">
+                    <Cpu size={28} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold uppercase tracking-tight">Status Infra</h3>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-300">Modèles Actifs</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    { name: 'GPT-4o (Reasoning)', status: 'Optimal', latency: '120ms', color: 'bg-emerald-400' },
+                    { name: 'Claude 3.5 Sonnet', status: 'Optimal', latency: '85ms', color: 'bg-emerald-400' },
+                    { name: 'Opays Custom RAG', status: 'Ready', latency: '210ms', color: 'bg-blue-400' },
+                  ].map((model) => (
+                    <div key={model.name} className="flex items-center justify-between border-b border-white/10 pb-6 last:border-0 last:pb-0">
+                      <div>
+                        <p className="text-sm font-bold uppercase tracking-tight">{model.name}</p>
+                        <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-slate-400">Latency: {model.latency}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{model.status}</span>
+                        <div className={`h-2 w-2 rounded-full ${model.color} shadow-[0_0_8px_rgba(255,255,255,0.2)]`} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-12 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+                  <div className="flex items-center gap-3 mb-3">
+                    <ShieldCheck size={18} className="text-blue-400" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Sécurité Souveraine</p>
+                  </div>
+                  <p className="text-xs leading-relaxed text-slate-400 font-medium italic">
+                    Toutes les interactions sont chiffrées. Les données clients ne sont pas utilisées pour l'entraînement des modèles publics.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-[2.5rem] border border-slate-200 bg-white p-10 shadow-sm overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-8 opacity-5">
+                  <Globe size={120} />
+                </div>
+                <h3 className="text-sm font-black uppercase tracking-[0.28em] text-slate-900 mb-8">Utilisation Mensuelle</h3>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                      <span className="text-slate-400">Tokens Consommés</span>
+                      <span className="text-slate-900">1.2M / 5.0M</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '24%' }} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                      <span className="text-slate-400">Analyses Audit</span>
+                      <span className="text-slate-900">42 / 100</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full bg-indigo-600 rounded-full" style={{ width: '42%' }} />
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-10 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400 leading-relaxed italic">
+                  Quota réinitialisé dans <span className="text-slate-900">12 jours</span>.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'AUDIT' && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <AIAuditSpace />
+          </div>
+        )}
       </div>
     </div>
   );

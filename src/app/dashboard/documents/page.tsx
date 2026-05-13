@@ -1,7 +1,24 @@
 "use client";
 
 import React, { useMemo, useState } from 'react';
-import { BookCopy, ClipboardList, Copy, FileText, Scale, ShieldCheck, Sparkles, BadgeDollarSign, ScrollText, CheckCircle2, Printer, ReceiptText, ClipboardCheck, NotepadText } from 'lucide-react';
+import { 
+  BookCopy, 
+  ClipboardList, 
+  Copy, 
+  FileText, 
+  Scale, 
+  ShieldCheck, 
+  Sparkles, 
+  BadgeDollarSign, 
+  ScrollText, 
+  CheckCircle2, 
+  Printer, 
+  ReceiptText, 
+  ClipboardCheck, 
+  NotepadText,
+  ChevronRight,
+  Download
+} from 'lucide-react';
 import DocumentTemplate from '@/components/DocumentTemplate';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
 
@@ -159,8 +176,8 @@ const templates: TemplateItem[] = [
   {
     key: 'QUOTE',
     title: 'Devis commercial',
-    subtitle: 'Le premier document à envoyer avant facture ou contrat.',
-    icon: <ReceiptText size={18} />,
+    subtitle: 'Le premier document à envoyer.',
+    icon: <ReceiptText size={20} />,
     summary: 'Très utile pour formaliser une proposition, cadrer le périmètre et poser une estimation simple.',
     copyText: quoteCopy,
     kind: 'INVOICE',
@@ -184,8 +201,8 @@ const templates: TemplateItem[] = [
   {
     key: 'INVOICE',
     title: 'Facture standard',
-    subtitle: 'Modèle prêt à copier, à imprimer et à exporter en PDF.',
-    icon: <BadgeDollarSign size={18} />,
+    subtitle: 'Modèle prêt à copier et imprimer.',
+    icon: <BadgeDollarSign size={20} />,
     summary: 'À utiliser pour toutes les factures client. Structure simple, lisible et compatible avec le sceau officiel.',
     copyText: invoiceCopy,
     kind: 'INVOICE',
@@ -209,8 +226,8 @@ const templates: TemplateItem[] = [
   {
     key: 'PURCHASE_ORDER',
     title: 'Bon de commande',
-    subtitle: 'Quand un client valide la commande ou la prestation.',
-    icon: <ClipboardCheck size={18} />,
+    subtitle: 'Validation client avant démarrage.',
+    icon: <ClipboardCheck size={20} />,
     summary: 'Permet de confirmer la commande avant démarrage et d’éviter les zones floues.',
     copyText: purchaseOrderCopy,
     kind: 'CONTRACT',
@@ -235,8 +252,8 @@ const templates: TemplateItem[] = [
   {
     key: 'CONTRACT',
     title: 'Contrat de prestation',
-    subtitle: 'Base claire pour une prestation, un projet ou un accompagnement.',
-    icon: <Scale size={18} />,
+    subtitle: 'Base claire pour une mission.',
+    icon: <Scale size={20} />,
     summary: 'Pour cadrer une mission, préciser les livrables et protéger les deux parties.',
     copyText: contractCopy,
     kind: 'CONTRACT',
@@ -272,9 +289,9 @@ const templates: TemplateItem[] = [
   },
   {
     key: 'MINUTES',
-    title: 'Compte rendu de réunion',
-    subtitle: 'Document simple pour garder la trace des décisions et actions.',
-    icon: <NotepadText size={18} />,
+    title: 'Compte rendu',
+    subtitle: 'Trace des décisions et actions.',
+    icon: <NotepadText size={20} />,
     summary: 'Très utile pour les réunions CEO/COO, les points de suivi projet et les décisions d’équipe.',
     copyText: minutesCopy,
     kind: 'ADMIN',
@@ -299,8 +316,8 @@ const templates: TemplateItem[] = [
   {
     key: 'ADMIN',
     title: 'Note administrative',
-    subtitle: 'Format simple pour décisions internes, validations et instructions.',
-    icon: <ScrollText size={18} />,
+    subtitle: 'Décisions et instructions internes.',
+    icon: <ScrollText size={20} />,
     summary: 'À utiliser pour les notes internes, instructions de direction, validations et comptes rendus simples.',
     copyText: adminCopy,
     kind: 'ADMIN',
@@ -353,41 +370,42 @@ export default function DocumentsPage() {
   };
 
   return (
-    <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.12),_transparent_24%),linear-gradient(180deg,#050816_0%,#090d19_48%,#0b1020_100%)]" />
-      <div className="relative z-10 mx-auto max-w-7xl space-y-8 p-6 md:p-8">
+    <div className="relative min-h-full px-6 py-8 text-slate-900 lg:px-8 bg-[#f8f9fb]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
+      
+      <div className="relative z-10 mx-auto max-w-7xl space-y-8">
         <header className="space-y-3 print:hidden">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200 backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-sky-600">
             <BookCopy size={12} /> Modèles administratifs
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-white">Factures, contrats et documents à standardiser</h1>
-          <p className="max-w-3xl text-sm leading-7 text-slate-400">
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl uppercase">Standardisation des Documents</h1>
+          <p className="max-w-3xl text-sm leading-7 text-slate-500 font-medium">
             Cette page regroupe les formats que l’équipe peut copier, personnaliser puis exporter en PDF. Le sceau officiel est déjà branché dans le modèle d’impression.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
-          <aside className="space-y-4 print:hidden">
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[380px_minmax(0,1fr)]">
+          <aside className="space-y-3 print:hidden">
             {templates.map((item) => {
               const active = item.key === selected;
               return (
                 <button
                   key={item.key}
                   onClick={() => setSelected(item.key)}
-                  className={`w-full rounded-[1.75rem] border p-5 text-left backdrop-blur-xl transition ${
+                  className={`w-full rounded-[2rem] border p-6 text-left transition-all ${
                     active
-                      ? 'border-cyan-400/30 bg-cyan-400/10 shadow-xl shadow-cyan-400/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/8'
+                      ? 'border-sky-600 bg-white shadow-xl shadow-sky-600/5 ring-1 ring-sky-600/10'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-cyan-300">
+                    <div className={`rounded-2xl p-3 border transition-all ${active ? 'bg-sky-600 text-white border-sky-600 shadow-lg shadow-sky-600/20' : 'bg-slate-50 text-slate-400 border-slate-100'}`}>
                       {item.icon}
                     </div>
                     <div className="min-w-0">
-                      <h2 className="text-base font-semibold text-white">{item.title}</h2>
-                      <p className="mt-1 text-xs uppercase tracking-[0.24em] text-slate-500">{item.subtitle}</p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-300">{item.summary}</p>
+                      <h2 className={`text-base font-bold uppercase tracking-tight ${active ? 'text-slate-900' : 'text-slate-600'}`}>{item.title}</h2>
+                      <p className="mt-1 text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">{item.subtitle}</p>
+                      <p className={`mt-3 text-sm leading-relaxed font-medium ${active ? 'text-slate-600' : 'text-slate-400'}`}>{item.summary}</p>
                     </div>
                   </div>
                 </button>
@@ -396,31 +414,31 @@ export default function DocumentsPage() {
           </aside>
 
           <section className="space-y-6">
-            <div className="rounded-[2.25rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm print:hidden">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="max-w-2xl space-y-2">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-300">
-                    <Sparkles size={12} /> Format prêt à copier
+                  <div className="inline-flex items-center gap-2 rounded-full border border-slate-100 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.28em] text-slate-500">
+                    <Sparkles size={12} /> Format prêt à l'emploi
                   </div>
-                  <h2 className="text-2xl font-semibold tracking-tight text-white">{template.title}</h2>
-                  <p className="text-sm leading-relaxed text-slate-400">{template.summary}</p>
+                  <h2 className="text-3xl font-bold tracking-tight text-slate-900 uppercase">{template.title}</h2>
+                  <p className="text-sm font-medium leading-relaxed text-slate-500">{template.summary}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={handleCopy}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
                   >
-                    {copied ? <CheckCircle2 size={16} className="text-emerald-300" /> : <Copy size={16} />} {copied ? 'Copié' : 'Copier le texte'}
+                    {copied ? <CheckCircle2 size={16} className="text-emerald-600" /> : <Copy size={16} />} {copied ? 'Copié' : 'Copier le texte'}
                   </button>
                   <button
                     onClick={() => setModalOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/15"
+                    className="inline-flex items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50 px-5 py-3 text-xs font-bold text-sky-600 transition hover:bg-sky-100"
                   >
-                    <FileText size={16} /> Ouvrir en lecture centrée
+                    <FileText size={16} /> Lecture centrée
                   </button>
                   <button
                     onClick={() => window.print()}
-                    className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                    className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold text-white shadow-lg shadow-slate-900/10 transition hover:bg-black"
                   >
                     <Printer size={16} /> Imprimer / PDF
                   </button>
@@ -428,47 +446,50 @@ export default function DocumentsPage() {
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl print:shadow-none print:border-none print:bg-transparent">
+            <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl shadow-slate-900/5 print:shadow-none print:border-none print:bg-transparent">
               {template.render}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 print:hidden">
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Règle 1</p>
-                <p className="mt-2 leading-relaxed">Le texte doit rester simple et compréhensible par une personne non technique.</p>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 print:hidden">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Règle 1</p>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600">Le texte doit rester simple et compréhensible par une personne non technique.</p>
               </div>
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Règle 2</p>
-                <p className="mt-2 leading-relaxed">Le logo et le sceau doivent être visibles dans le rendu final exporté en PDF.</p>
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Règle 2</p>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600">Le logo et le sceau doivent être visibles dans le rendu final exporté en PDF.</p>
               </div>
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Règle 3</p>
-                <p className="mt-2 leading-relaxed">Quand le document est long, le PDF est la meilleure version à partager.</p>
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Règle 3</p>
+                <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600">Quand le document est long, le PDF est la meilleure version à partager.</p>
               </div>
             </div>
           </section>
         </div>
 
-        <section className="rounded-[2.25rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl print:hidden">
-          <div className="flex items-center gap-2 text-cyan-300">
-            <ClipboardList size={18} />
-            <h3 className="text-xs font-bold uppercase tracking-[0.28em] text-slate-300">Autres documents à modéliser</h3>
+        <section className="rounded-[2.5rem] border border-slate-200 bg-white p-10 shadow-sm print:hidden">
+          <div className="flex items-center gap-3">
+            <div className="rounded-xl bg-sky-50 p-2 text-sky-600">
+              <ClipboardList size={20} />
+            </div>
+            <h3 className="text-sm font-black uppercase tracking-[0.28em] text-slate-900">Autres documents à modéliser</h3>
           </div>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-400">
+          <p className="mt-5 max-w-3xl text-sm font-medium leading-relaxed text-slate-500">
             Ceux-ci peuvent être standardisés dès maintenant pour gagner du temps, homogénéiser la qualité et faciliter l’archivage PDF.
           </p>
-          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             {extraDocs.map((doc) => (
-              <div key={doc} className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-slate-200">
-                {doc}
+              <div key={doc} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-xs font-bold text-slate-600 hover:bg-white hover:border-slate-200 transition-all cursor-pointer group">
+                <span className="uppercase tracking-tight group-hover:text-slate-900">{doc}</span>
+                <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-all" />
               </div>
             ))}
           </div>
-          <div className="mt-5 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-100">
-            <div className="flex items-center gap-2 font-semibold">
-              <ShieldCheck size={16} /> Priorité recommandée
+          <div className="mt-10 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-6 text-sm text-emerald-900">
+            <div className="flex items-center gap-3 font-bold uppercase tracking-tight">
+              <ShieldCheck size={18} className="text-emerald-600" /> Priorité recommandée
             </div>
-            <p className="mt-2 leading-relaxed">
+            <p className="mt-3 leading-relaxed font-medium opacity-80">
               Devis, bon de commande, bon de réception, note de frais, ordre de mission et rapport financier mensuel sont les prochains documents les plus utiles à standardiser.
             </p>
           </div>

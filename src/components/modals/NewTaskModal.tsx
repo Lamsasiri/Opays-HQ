@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 
-export default function NewTaskModal({ isOpen, onClose, onSuccess, task }: { isOpen: boolean, onClose: () => void, onSuccess: () => void, task?: any }) {
+export default function NewTaskModal({ isOpen, onClose, onSuccess, task, initialDate }: { isOpen: boolean, onClose: () => void, onSuccess: () => void, task?: any, initialDate?: string }) {
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
@@ -25,10 +25,16 @@ export default function NewTaskModal({ isOpen, onClose, onSuccess, task }: { isO
           assigned_to: task.assigned_to || ''
         });
       } else {
-        setFormData({ title: '', project_id: '', priority: 'MEDIUM', due_date: '', assigned_to: '' });
+        setFormData({ 
+          title: '', 
+          project_id: '', 
+          priority: 'MEDIUM', 
+          due_date: initialDate || '', 
+          assigned_to: '' 
+        });
       }
     }
-  }, [isOpen, task]);
+  }, [isOpen, task, initialDate]);
 
   if (!isOpen) return null;
 

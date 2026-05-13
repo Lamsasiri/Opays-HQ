@@ -15,6 +15,9 @@ import {
   X,
   Sparkles,
   ArrowRight,
+  Receipt,
+  Clock,
+  TrendingUp,
 } from 'lucide-react';
 import NewContractModal from '@/components/modals/NewContractModal';
 import NewInvoiceModal from '@/components/modals/NewInvoiceModal';
@@ -22,9 +25,9 @@ import Link from 'next/link';
 import { useProfile } from '@/lib/ProfileProvider';
 
 const StatusColors: any = {
-  PENDING: 'text-amber-300 bg-amber-500/10 border-amber-500/20',
-  PARTIAL: 'text-sky-300 bg-sky-500/10 border-sky-500/20',
-  PAID: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/20',
+  PENDING: 'text-amber-600 bg-amber-50 border-amber-100',
+  PARTIAL: 'text-sky-600 bg-sky-50 border-sky-100',
+  PAID: 'text-emerald-600 bg-emerald-50 border-emerald-100',
 };
 
 const StatusLabels: any = {
@@ -81,34 +84,35 @@ export default function ContractsPage() {
   const activeProjectTitle = projectIdFilter && (contracts[0]?.projects?.title || billing[0]?.projects?.title);
 
   return (
-    <div className="relative min-h-full overflow-hidden bg-[#050816] text-slate-100">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.12),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(16,185,129,0.08),_transparent_26%),linear-gradient(180deg,#050816_0%,#090d1d_58%,#0b1020_100%)]" />
-      <div className="relative z-10 space-y-8 p-6 md:p-8">
+    <div className="relative min-h-full px-6 py-8 text-slate-900 lg:px-8 bg-[#f8f9fb]">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
+      
+      <div className="relative z-10 mx-auto max-w-7xl space-y-8">
         <header className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-200 backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-600">
               <Sparkles size={12} /> Suivi contractuel
             </div>
             <div>
-              <h1 className="text-3xl font-semibold tracking-tight text-white">Contrats & facturation</h1>
-              <p className="mt-2 max-w-2xl text-sm text-slate-400">
+              <h1 className="text-4xl font-bold tracking-tight text-slate-900 lg:text-5xl uppercase">Contrats & facturation</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-500 font-medium">
                 Un espace clair pour suivre les engagements signés, les paiements attendus et ce qui reste à recouvrer.
               </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
             {projectIdFilter && (
-              <Link href="/dashboard/contracts" className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 backdrop-blur-xl transition hover:bg-white/10">
+              <Link href="/dashboard/contracts" className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
                 <X size={16} /> Effacer le filtre
               </Link>
             )}
             {isManager && (
               <>
-                <button onClick={() => setIsContractOpen(true)} className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/15">
-                  <Plus size={16} /> Contrat
+                <button onClick={() => setIsContractOpen(true)} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-3 text-xs font-bold text-slate-900 shadow-sm transition hover:bg-slate-50">
+                  <Plus size={16} /> Nouveau Contrat
                 </button>
-                <button onClick={() => setIsInvoiceOpen(true)} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:opacity-95">
-                  <DollarSign size={16} /> Facture
+                <button onClick={() => setIsInvoiceOpen(true)} className="inline-flex items-center gap-2 rounded-2xl bg-cyan-600 px-6 py-3.5 text-xs font-bold text-white shadow-lg shadow-cyan-600/20 transition hover:bg-cyan-700">
+                  <DollarSign size={16} /> Nouvelle Facture
                 </button>
               </>
             )}
@@ -116,131 +120,146 @@ export default function ContractsPage() {
         </header>
 
         {projectIdFilter && activeProjectTitle && (
-          <div className="rounded-[1.75rem] border border-cyan-500/20 bg-cyan-500/10 p-4 backdrop-blur-xl">
-            <div className="flex items-center gap-3 text-cyan-200">
+          <div className="rounded-2xl border border-cyan-100 bg-cyan-50/50 p-4">
+            <div className="flex items-center gap-3 text-cyan-700">
               <Filter size={18} />
-              <p className="text-sm font-medium">
-                Filtré par projet : <span className="font-bold">{activeProjectTitle}</span>
+              <p className="text-sm font-bold">
+                Filtré par projet : <span className="uppercase tracking-tight text-cyan-900">{activeProjectTitle}</span>
               </p>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Montant total</p>
-            <h3 className="text-2xl font-semibold text-white">{totalDue.toLocaleString()} $</h3>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm group">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Montant total dû</p>
+            <div className="mt-4 flex items-center justify-between">
+              <h3 className="text-3xl font-bold text-slate-900">{totalDue.toLocaleString()} $</h3>
+              <div className="rounded-xl bg-slate-50 p-3 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-900 transition-all">
+                <Receipt size={24} />
+              </div>
+            </div>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Total encaissé</p>
-            <h3 className="text-2xl font-semibold text-emerald-300">{totalPaid.toLocaleString()} $</h3>
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm group">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Total encaissé</p>
+            <div className="mt-4 flex items-center justify-between">
+              <h3 className="text-3xl font-bold text-emerald-600">{totalPaid.toLocaleString()} $</h3>
+              <div className="rounded-xl bg-emerald-50 p-3 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                <TrendingUp size={24} />
+              </div>
+            </div>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">À recouvrer</p>
-            <h3 className="text-2xl font-semibold text-amber-300">{(totalDue - totalPaid).toLocaleString()} $</h3>
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm group">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Reste à recouvrer</p>
+            <div className="mt-4 flex items-center justify-between">
+              <h3 className="text-3xl font-bold text-amber-600">{(totalDue - totalPaid).toLocaleString()} $</h3>
+              <div className="rounded-xl bg-amber-50 p-3 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all">
+                <Clock size={24} />
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-                <FileText size={20} className="text-cyan-300" /> Documents contractuels
+          <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 p-8">
+              <h2 className="flex items-center gap-3 text-lg font-bold text-slate-900 uppercase tracking-tight">
+                <FileText size={20} className="text-cyan-600" /> Documents contractuels
               </h2>
-              <span className="text-xs font-medium text-slate-400">{contracts.length} fichiers</span>
+              <span className="rounded-full bg-slate-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 border border-slate-100">{contracts.length} fichiers</span>
             </div>
-            <div className="space-y-3 p-6">
+            <div className="space-y-1 p-4">
               {contracts.map((contract: any) => (
-                <div key={contract.id} className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-cyan-500/20 hover:bg-white/10">
+                <div key={contract.id} className="group flex items-center justify-between rounded-2xl border border-transparent p-4 transition hover:bg-slate-50 hover:border-slate-100">
                   <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-300">
-                      <FileText size={18} />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-600 border border-cyan-100 group-hover:bg-cyan-600 group-hover:text-white transition-all">
+                      <FileText size={20} />
                     </div>
                     <div>
-                      <Link href={`/dashboard/projects/${contract.projects?.id}`} className="text-sm font-semibold text-white transition hover:text-cyan-300">
+                      <Link href={`/dashboard/projects/${contract.projects?.id}`} className="text-sm font-bold text-slate-900 hover:text-cyan-600 transition-colors uppercase tracking-tight">
                         {contract.projects?.title || 'Projet'}
                       </Link>
-                      <p className="mt-0.5 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
                         {contract.projects?.leads?.company_name} • v{contract.version} • {new Date(contract.signed_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                   {contract.url && (
-                    <a href={contract.url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:bg-white/10 hover:text-cyan-300">
-                      <Download size={16} />
+                    <a href={contract.url} target="_blank" rel="noreferrer" className="rounded-xl border border-slate-100 bg-slate-50 p-2.5 text-slate-400 transition hover:bg-white hover:text-cyan-600 hover:border-cyan-200 hover:shadow-sm">
+                      <Download size={18} />
                     </a>
                   )}
                 </div>
               ))}
               {!loading && !contracts.length && (
-                <div className="py-12 text-center">
-                  <FileText size={40} className="mx-auto text-slate-600" />
-                  <p className="mt-3 text-sm italic text-slate-500">Aucun contrat trouvé.</p>
+                <div className="py-20 text-center">
+                  <FileText size={48} className="mx-auto text-slate-100" />
+                  <p className="mt-4 text-sm font-medium italic text-slate-400">Aucun contrat trouvé.</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 shadow-2xl shadow-black/20 backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
-                <DollarSign size={20} className="text-emerald-300" /> État des paiements
+          <div className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 p-8">
+              <h2 className="flex items-center gap-3 text-lg font-bold text-slate-900 uppercase tracking-tight">
+                <DollarSign size={20} className="text-emerald-600" /> État des paiements
               </h2>
-              <span className="text-xs font-medium text-slate-400">{pendingCount} en attente</span>
+              <span className="rounded-full bg-slate-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 border border-slate-100">{pendingCount} en attente</span>
             </div>
-            <div className="space-y-3 p-6">
+            <div className="space-y-1 p-4">
               {billing.map((invoice: any) => (
-                <div key={invoice.id} className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10">
+                <div key={invoice.id} className="group flex items-center justify-between rounded-2xl border border-transparent p-4 transition hover:bg-slate-50 hover:border-slate-100">
                   <div className="flex items-center gap-4">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-2xl ${invoice.status === 'PAID' ? 'bg-emerald-500/10 text-emerald-300' : 'bg-amber-500/10 text-amber-300'}`}>
-                      {invoice.status === 'PAID' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${invoice.status === 'PAID' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'} group-hover:shadow-sm transition-all`}>
+                      {invoice.status === 'PAID' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
                     </div>
                     <div>
-                      <Link href={`/dashboard/projects/${invoice.projects?.id}`} className="text-sm font-semibold text-white transition hover:text-cyan-300">
+                      <Link href={`/dashboard/projects/${invoice.projects?.id}`} className="text-sm font-bold text-slate-900 hover:text-cyan-600 transition-colors uppercase tracking-tight">
                         {invoice.projects?.title || 'Projet'}
                       </Link>
-                      <p className="mt-0.5 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
                         {invoice.projects?.leads?.company_name} • Échéance : {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : 'N/A'}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 text-right">
+                  <div className="flex items-center gap-5 text-right">
                     <div>
-                      <p className="text-xs font-bold text-white">{(invoice.amount_paid || 0).toLocaleString()} / {(invoice.amount_total || 0).toLocaleString()} $</p>
-                      <span className={`mt-1 inline-block rounded-full border px-2 py-1 text-[9px] font-bold uppercase tracking-[0.24em] ${StatusColors[invoice.status]}`}>
+                      <p className="text-sm font-black text-slate-900">{(invoice.amount_paid || 0).toLocaleString()} / {(invoice.amount_total || 0).toLocaleString()} $</p>
+                      <span className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${StatusColors[invoice.status]}`}>
                         {StatusLabels[invoice.status] || invoice.status}
                       </span>
                     </div>
                     {isManager && (
-                      <button onClick={() => deleteInvoice(invoice.id)} className="rounded-xl border border-white/10 bg-white/5 p-2 text-slate-400 transition hover:border-rose-500/30 hover:bg-rose-500/10 hover:text-rose-300">
-                        <Trash2 size={14} />
+                      <button onClick={() => deleteInvoice(invoice.id)} className="rounded-xl border border-slate-100 bg-slate-50 p-2 text-slate-400 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600 hover:shadow-sm">
+                        <Trash2 size={16} />
                       </button>
                     )}
                   </div>
                 </div>
               ))}
               {!loading && !billing.length && (
-                <div className="py-12 text-center">
-                  <DollarSign size={40} className="mx-auto text-slate-600" />
-                  <p className="mt-3 text-sm italic text-slate-500">Aucun suivi de paiement trouvé.</p>
+                <div className="py-20 text-center">
+                  <DollarSign size={48} className="mx-auto text-slate-100" />
+                  <p className="mt-4 text-sm font-medium italic text-slate-400">Aucun suivi de paiement trouvé.</p>
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Ce que cette page dit au client</p>
-            <p>On suit les engagements avec sérieux, sans complexité inutile.</p>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-slate-600 shadow-sm">
+            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Vision Client</p>
+            <p className="leading-relaxed font-medium">On suit les engagements avec sérieux, sans complexité inutile. La transparence financière est le socle de la confiance.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Ce qu'elle dit à l'équipe</p>
-            <p>Chaque projet a ses documents, ses échéances et ses paiements visibles en un coup d'œil.</p>
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-slate-600 shadow-sm">
+            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Vision Équipe</p>
+            <p className="leading-relaxed font-medium">Chaque projet a ses documents, ses échéances et ses paiements visibles en un coup d'œil pour éviter tout goulot d'étranglement.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 text-sm text-slate-300 backdrop-blur-xl">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500">Règle simple</p>
-            <p>Si un suivi n'est pas clair, il doit être rendu lisible avant de passer à autre chose.</p>
+          <div className="rounded-3xl border border-slate-200 bg-white p-8 text-sm text-slate-600 shadow-sm">
+            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">Règle d'or</p>
+            <p className="leading-relaxed font-medium">Si un suivi n'est pas clair, il doit être rendu lisible avant de passer à l'exécution technique. Pas de contrat, pas de projet.</p>
           </div>
         </div>
 
