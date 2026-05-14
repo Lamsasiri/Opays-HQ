@@ -20,7 +20,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [showNewProject, setShowNewProject] = useState(false);
   const supabase = useMemo(() => createClient(), []);
-  const { checkAccess, isAssociate } = useProfile();
+  const { checkAccess } = useProfile();
 
   const fetchData = async () => {
     setLoading(true);
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
     }
   };
 
-  const canSeeFinancials = isAssociate || checkAccess('treasury') || checkAccess('billing');
+  const canSeeFinancials = checkAccess('treasury') || checkAccess('billing');
   const activeCount = projects.filter((project) => project.status !== 'COMPLETED').length;
 
   return (

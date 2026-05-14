@@ -2,6 +2,8 @@ export type DashboardRole = 'CEO' | 'COO' | 'CTO' | 'SALES' | 'INVESTOR' | 'ENGI
 export type ProfileType = 'ASSOCIATE' | 'EMPLOYEE';
 
 export interface RbacProfile {
+  id?: string | null;
+  email?: string | null;
   role?: DashboardRole | string | null;
   type?: ProfileType | string | null;
   is_admin?: boolean | null;
@@ -10,43 +12,48 @@ export interface RbacProfile {
 
 const DEFAULT_OPEN_ROUTES = new Set([
   '/dashboard',
-  '/dashboard/ai',
-  '/dashboard/projects',
-  '/dashboard/tasks',
-  '/dashboard/knowledge',
-  '/dashboard/ideas',
-  '/dashboard/calendar',
-  '/dashboard/brand',
   '/dashboard/profile',
-  '/dashboard/preview',
-  '/dashboard/audit',
 ]);
 
-const MODULE_RULES: Record<string, DashboardRole[]> = {
-  treasury: ['CEO', 'COO', 'ADMIN'],
-  equity: ['CEO', 'COO', 'CTO', 'SALES', 'ADMIN'],
-  leads: ['CEO', 'COO', 'SALES', 'ADMIN'],
-  studio: ['CEO', 'SALES', 'ADMIN'],
-  coordination: ['CEO', 'SALES', 'ADMIN'],
-  contracts: ['CEO', 'COO', 'ADMIN'],
-  hr: ['CEO', 'COO', 'ADMIN', 'ENGINEER'],
-  labs: ['CEO', 'CTO', 'ADMIN'],
-  workspace: ['CEO', 'CTO', 'ADMIN'],
-  settings: ['CEO', 'COO', 'CTO', 'ADMIN'],
-  admin: ['CEO', 'ADMIN'],
-  brand: ['CEO', 'SALES', 'ADMIN'],
-  projects: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  tasks: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  knowledge: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  ideas: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  calendar: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  profile: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  preview: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-  audit: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-};
+export const FENELON_EMAIL = 'lamsasfenelon@gmail.com';
+
+export const MODULE_IDS = [
+  'ai',
+  'projects',
+  'tasks',
+  'knowledge',
+  'ideas',
+  'calendar',
+  'brand',
+  'preview',
+  'audit',
+  'treasury',
+  'equity',
+  'leads',
+  'studio',
+  'coordination',
+  'contracts',
+  'documents',
+  'hr',
+  'labs',
+  'workspace',
+  'settings',
+  'admin',
+  'job-descriptions',
+] as const;
+
+export const MODULE_RULES: Record<string, DashboardRole[]> = Object.fromEntries(
+  MODULE_IDS.map((moduleId) => [moduleId, []])
+) as Record<string, DashboardRole[]>;
 
 export function normalizePermissions(permissions: RbacProfile['permissions']) {
   return permissions && typeof permissions === 'object' ? permissions : {};
+}
+
+export function isRbacAdmin(profile: RbacProfile | null | undefined) {
+  if (!profile) return false;
+
+  return profile.is_admin === true && profile.email?.toLowerCase() === FENELON_EMAIL;
 }
 
 export function getModuleIdFromPathname(pathname: string) {
@@ -74,19 +81,36 @@ export function isDashboardOpenRoute(pathname: string) {
 export function canAccessModule(profile: RbacProfile | null | undefined, moduleId: string) {
   if (!profile) return false;
 
-  const role = (profile.role || '') as DashboardRole | string;
-  const type = profile.type || '';
-  const isAdmin = profile.is_admin === true || role === 'CEO' || role === 'ADMIN';
+  const isAdmin = isRbacAdmin(profile);
   const permissions = normalizePermissions(profile.permissions);
 
   if (isAdmin) return true;
+  if (moduleId === 'job-descriptions') return false;
   if (permissions[moduleId] === true) return true;
-  if (permissions[moduleId] === false) return false;
-  if (moduleId === 'hr' && type === 'EMPLOYEE') return true;
+  return false;
+}
 
-  const allowedRoles = MODULE_RULES[moduleId];
-  if (!allowedRoles) return true;
-  return allowedRoles.includes(role as DashboardRole);
+export function canGrantModulePermission(
+  actor: RbacProfile | null | undefined,
+  target: RbacProfile | null | undefined,
+  moduleId: string
+) {
+  if (!actor || !target) return false;
+  if (moduleId === 'job-descriptions') return false;
+
+  return isRbacAdmin(actor);
+}
+
+export function sanitizeGrantedPermissions(
+  actor: RbacProfile | null | undefined,
+  target: RbacProfile | null | undefined,
+  nextPermissions: Record<string, boolean>
+) {
+  return Object.fromEntries(
+    Object.entries(nextPermissions).filter(([moduleId]) =>
+      canGrantModulePermission(actor, target, moduleId)
+    )
+  );
 }
 
 export function canAccessPath(profile: RbacProfile | null | undefined, pathname: string) {

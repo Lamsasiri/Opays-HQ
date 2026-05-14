@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase';
 import { ArrowDownRight, ArrowUpRight, Handshake, Plus, Trash2, Wallet } from 'lucide-react';
 import NewPartnerModal from '@/components/modals/NewPartnerModal';
 import NewTransactionModal from '@/components/modals/NewTransactionModal';
+import { canAccessPath } from '@/lib/rbac';
 
 export default function TreasuryPage() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -23,8 +24,7 @@ export default function TreasuryPage() {
     const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     setProfile(profileData);
 
-    const isAuthorized = ['CEO', 'COO', 'ADMIN'].includes(profileData?.role || '') || profileData?.permissions?.treasury || profileData?.type === 'ASSOCIATE';
-    if (!isAuthorized) {
+    if (!canAccessPath(profileData, '/dashboard/treasury')) {
       window.location.href = '/dashboard';
       return;
     }
@@ -48,7 +48,7 @@ export default function TreasuryPage() {
     }
   };
 
-  const canEdit = ['CEO', 'COO', 'ADMIN'].includes(profile?.role || '') || profile?.permissions?.treasury || profile?.permissions?.accounting;
+  const canEdit = canAccessPath(profile, '/dashboard/treasury');
   const balance = logs.reduce((acc, log) => acc + (log.type === 'INCOME' ? log.amount : -log.amount), 0);
   const income = logs.filter((l) => l.type === 'INCOME').reduce((acc, l) => acc + l.amount, 0);
   const expenses = logs.filter((l) => l.type === 'EXPENSE').reduce((acc, l) => acc + l.amount, 0);

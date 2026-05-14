@@ -229,11 +229,11 @@ export default function DashboardOverview({
               </div>
               <div className="mt-5 grid grid-cols-2 gap-3">
                 {[
-                  { href: '/dashboard/ai', label: 'AI Center' },
-                  { href: '/dashboard/tasks', label: 'Kanban' },
-                  { href: '/dashboard/treasury', label: 'Trésorerie' },
-                  { href: '/dashboard/settings', label: 'Pilotage' },
-                ].map((item) => (
+                  { href: '/dashboard/ai', label: 'AI Center', moduleId: 'ai' },
+                  { href: '/dashboard/tasks', label: 'Kanban', moduleId: 'tasks' },
+                  { href: '/dashboard/treasury', label: 'Trésorerie', moduleId: 'treasury' },
+                  { href: '/dashboard/settings', label: 'Pilotage', moduleId: 'settings' },
+                ].filter((item) => profile?.is_admin || profile?.permissions?.[item.moduleId]).map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

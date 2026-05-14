@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { UserCircle, FileText, Target, BarChart3, Download, Award, Users, Sparkles, TrendingUp, DollarSign, Clock, LayoutGrid, List } from 'lucide-react';
 import AdminHRView from '@/components/AdminHRView';
+import { canAccessModule } from '@/lib/rbac';
 
 export default function HRPage() {
   const [profile, setProfile] = useState<any>(null);
@@ -41,7 +42,7 @@ export default function HRPage() {
     </div>
   );
 
-  const isAdmin = ['CEO', 'COO', 'ADMIN'].includes(profile?.role || '') || profile?.permissions?.hr;
+  const isAdmin = canAccessModule(profile, 'hr') && profile?.type !== 'EMPLOYEE';
 
   return (
     <div className="relative min-h-full px-6 py-8 text-slate-900 lg:px-8 bg-[#f8f9fb]">

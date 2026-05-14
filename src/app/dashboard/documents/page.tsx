@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { 
   BookCopy, 
   ClipboardList, 
@@ -17,10 +17,14 @@ import {
   ClipboardCheck, 
   NotepadText,
   ChevronRight,
-  Download
+  Download,
+  Plus
 } from 'lucide-react';
 import DocumentTemplate from '@/components/DocumentTemplate';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
+import AssociateDocumentsModal from '@/components/modals/AssociateDocumentsModal';
+import { createClient } from '@/lib/supabase';
+import { useProfile } from '@/lib/ProfileProvider';
 
 type TemplateKey = 'INVOICE' | 'QUOTE' | 'CONTRACT' | 'PURCHASE_ORDER' | 'MINUTES' | 'ADMIN';
 
@@ -357,8 +361,14 @@ const extraDocs = [
 ];
 
 export default function DocumentsPage() {
+  const supabase = useMemo(() => createClient(), []);
+  const { isManager } = useProfile();
   const [selected, setSelected] = useState<TemplateKey>('INVOICE');
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [members, setMembers] = useState<any[]>([]);
+  const [selectedMember, setSelectedMember] = useState<any | null>(null);
+  const [privateDocs, setPrivateDocs] = useState<any[]>([]);
   const [copied, setCopied] = useState(false);
 
   const template = useMemo(() => templates.find((item) => item.key === selected) || templates[0], [selected]);
@@ -368,6 +378,28 @@ export default function DocumentsPage() {
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1500);
   };
+
+  const fetchPrivateDocs = async () => {
+    const { data } = await supabase
+      .from('associate_documents')
+      .select('*, profiles(full_name, email)')
+      .order('uploaded_at', { ascending: false });
+
+    setPrivateDocs(data || []);
+
+    if (isManager) {
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role')
+        .order('full_name');
+
+      setMembers(profileData || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchPrivateDocs();
+  }, [isManager, supabase]);
 
   return (
     <div className="relative min-h-full px-6 py-8 text-slate-900 lg:px-8 bg-[#f8f9fb]">
@@ -383,6 +415,70 @@ export default function DocumentsPage() {
             Cette page regroupe les formats que l’équipe peut copier, personnaliser puis exporter en PDF. Le sceau officiel est déjà branché dans le modèle d’impression.
           </p>
         </header>
+
+        <section className="rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm print:hidden">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-600">
+                <ShieldCheck size={12} /> Cercle restreint
+              </div>
+              <h2 className="mt-3 text-2xl font-bold uppercase tracking-tight text-slate-900">Documents privés</h2>
+              <p className="mt-2 max-w-2xl text-sm font-medium leading-7 text-slate-500">
+                Chaque membre voit uniquement les documents qui lui sont assignés. Fenelon voit tout et peut partager un document à un utilisateur précis.
+              </p>
+            </div>
+            {isManager && (
+              <div className="flex flex-wrap gap-3">
+                <select
+                  value={selectedMember?.id || ''}
+                  onChange={(event) => setSelectedMember(members.find((member) => member.id === event.target.value) || null)}
+                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-600 outline-none"
+                >
+                  <option value="">Choisir un membre</option>
+                  {members.map((member) => (
+                    <option key={member.id} value={member.id}>
+                      {member.full_name || member.email}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => selectedMember && setShareOpen(true)}
+                  disabled={!selectedMember}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-5 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Plus size={16} /> Partager
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {privateDocs.map((doc) => (
+              <a
+                key={doc.id}
+                href={doc.file_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-3xl border border-slate-100 bg-slate-50 p-5 transition hover:border-emerald-200 hover:bg-white"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-bold uppercase tracking-tight text-slate-900">{doc.title}</p>
+                    <p className="mt-2 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
+                      {doc.type} {isManager && doc.profiles?.full_name ? `- ${doc.profiles.full_name}` : ''}
+                    </p>
+                  </div>
+                  <Download size={16} className="text-slate-400" />
+                </div>
+              </a>
+            ))}
+            {privateDocs.length === 0 && (
+              <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center text-sm font-medium text-slate-400">
+                Aucun document privé disponible.
+              </div>
+            )}
+          </div>
+        </section>
 
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-[380px_minmax(0,1fr)]">
           <aside className="space-y-3 print:hidden">
@@ -505,6 +601,11 @@ export default function DocumentsPage() {
         badge="Modèle"
         sourceLabel="PDF recommandé"
         copyText={template.copyText}
+      />
+      <AssociateDocumentsModal
+        isOpen={shareOpen}
+        onClose={() => setShareOpen(false)}
+        member={selectedMember}
       />
     </div>
   );

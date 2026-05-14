@@ -20,8 +20,10 @@ import { createClient } from '@/lib/supabase';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
 import NewAssetModal from '@/components/modals/NewAssetModal';
 import AICreativeAgent from '@/components/AICreativeAgent';
+import { useProfile } from '@/lib/ProfileProvider';
 
 export default function BrandPage() {
+  const { isManager } = useProfile();
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [readerOpen, setReaderOpen] = useState(false);
@@ -109,13 +111,15 @@ export default function BrandPage() {
               </p>
             </div>
           </div>
-          <button 
-            onClick={() => setModalOpen(true)}
-            className="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl bg-slate-900 px-10 py-5 text-xs font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:bg-black hover:scale-105 active:scale-95"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-indigo-600 opacity-0 group-hover:opacity-20 transition-opacity" />
-            <Plus size={18} /> Ajouter un Support
-          </button>
+          {isManager && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl bg-slate-900 px-10 py-5 text-xs font-black uppercase tracking-widest text-white shadow-2xl transition-all hover:bg-black hover:scale-105 active:scale-95"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-600 to-indigo-600 opacity-0 group-hover:opacity-20 transition-opacity" />
+              <Plus size={18} /> Ajouter un Support
+            </button>
+          )}
         </header>
 
         <div className="grid grid-cols-1 gap-12 xl:grid-cols-[450px_1fr]">
@@ -266,12 +270,14 @@ export default function BrandPage() {
                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prêt pour diffusion</span>
                         </div>
                         <div className="flex gap-2">
-                          <button 
-                            onClick={(e) => handleDelete(asset.id, e)}
-                            className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-slate-400 transition hover:bg-red-50 hover:text-red-600 hover:border-red-100 shadow-sm"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          {isManager && (
+                            <button
+                              onClick={(e) => handleDelete(asset.id, e)}
+                              className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-slate-400 transition hover:bg-red-50 hover:text-red-600 hover:border-red-100 shadow-sm"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

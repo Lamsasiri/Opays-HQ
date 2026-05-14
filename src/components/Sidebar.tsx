@@ -70,7 +70,7 @@ const NavItem = ({ href, label, sublabel, icon, active, badge }: NavItemProps) =
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { profile, checkAccess, logout, unreadCount, isAssociate, isManager, isCEO } = useProfile();
+  const { profile, checkAccess, logout, unreadCount, isAssociate, isManager } = useProfile();
 
   if (!profile) {
     return (
@@ -82,17 +82,17 @@ export default function Sidebar() {
 
   const commonLinks = [
     { href: '/dashboard', label: 'Accueil', icon: <LayoutDashboard size={18} />, show: true },
-    { href: '/dashboard/ai', label: 'IA', sublabel: 'Studio Créatif', icon: <Sparkles size={18} />, show: true },
-    { href: '/dashboard/projects', label: 'Nos Projets', sublabel: 'Livraison Client', icon: <Briefcase size={18} />, show: true },
+    { href: '/dashboard/ai', label: 'IA', sublabel: 'Studio Créatif', icon: <Sparkles size={18} />, show: checkAccess('ai') },
+    { href: '/dashboard/projects', label: 'Nos Projets', sublabel: 'Livraison Client', icon: <Briefcase size={18} />, show: checkAccess('projects') },
     { href: '/dashboard/workspace', label: 'Workspace', sublabel: 'Ingénierie & Prod', icon: <Monitor size={18} />, show: checkAccess('workspace') },
-    { href: '/dashboard/calendar', label: 'Calendrier', icon: <Calendar size={18} />, show: true },
+    { href: '/dashboard/calendar', label: 'Calendrier', icon: <Calendar size={18} />, show: checkAccess('calendar') },
     { href: '/dashboard/contracts', label: 'Contrats', icon: <FileText size={18} />, show: checkAccess('contracts') },
-    { href: '/dashboard/documents', label: 'Modèles Doc.', sublabel: 'Factures & contrats', icon: <FileText size={18} />, show: isManager },
-    { href: '/dashboard/job-descriptions', label: 'Fiches de poste', sublabel: 'Associés & rôles', icon: <BookOpen size={18} />, show: true },
-    { href: '/dashboard/knowledge', label: 'Guide & Savoir-faire', icon: <BookOpen size={18} />, show: true },
+    { href: '/dashboard/documents', label: 'Documents privés', sublabel: 'Accès personnel', icon: <FileText size={18} />, show: checkAccess('documents') },
+    { href: '/dashboard/job-descriptions', label: 'Fiches de poste', sublabel: 'CEO Only', icon: <BookOpen size={18} />, show: checkAccess('job-descriptions') },
+    { href: '/dashboard/knowledge', label: 'Guide & Savoir-faire', icon: <BookOpen size={18} />, show: checkAccess('knowledge') },
     { href: '/dashboard/labs', label: 'Labs (R&D)', sublabel: 'Stratégie & Futur', icon: <FlaskConical size={18} />, show: checkAccess('labs') },
-    { href: '/dashboard/tasks', label: 'Mes Tâches', icon: <CheckCircle2 size={18} />, show: true, badge: undefined },
-    { href: '/dashboard/ideas', label: 'Boîte à Idées', icon: <Lightbulb size={18} />, show: true },
+    { href: '/dashboard/tasks', label: 'Mes Tâches', icon: <CheckCircle2 size={18} />, show: checkAccess('tasks'), badge: undefined },
+    { href: '/dashboard/ideas', label: 'Boîte à Idées', icon: <Lightbulb size={18} />, show: checkAccess('ideas') },
   ];
 
   const associateLinks = [
@@ -105,7 +105,7 @@ export default function Sidebar() {
   ];
 
   const employeeLinks = [
-    { href: '/dashboard/hr', label: 'Espace Employé', icon: <UserCircle size={18} />, show: true },
+    { href: '/dashboard/hr', label: 'Espace Employé', icon: <UserCircle size={18} />, show: checkAccess('hr') },
   ];
 
   return (

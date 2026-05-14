@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import NewKnowledgeModal from '@/components/modals/NewKnowledgeModal';
 import DocumentReaderModal from '@/components/DocumentReaderModal';
+import { isRbacAdmin } from '@/lib/rbac';
 
 const CategoryStyles: Record<string, { icon: any, color: string, bg: string }> = {
   METHOD: { icon: Target, color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
@@ -411,7 +412,7 @@ export default function KnowledgePage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (user) {
-      const { data: profileData } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+      const { data: profileData } = await supabase.from('profiles').select('id, email, role, is_admin, permissions').eq('id', user.id).single();
       setProfile(profileData);
     }
 
@@ -438,7 +439,7 @@ export default function KnowledgePage() {
     }
   };
 
-  const isAdmin = ['CEO', 'COO', 'ADMIN'].includes(profile?.role || '');
+  const isAdmin = isRbacAdmin(profile);
 
   const filteredArticles = useMemo(() => {
     const term = search.trim().toLowerCase();

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { X, Shield, Check, Lock, AlertCircle, Search, Users, Briefcase, Wallet, Target, FlaskConical, Monitor, Radio, Palette, BookOpen, Lightbulb, Calendar, FileText, BarChart3, Settings, Sparkles } from 'lucide-react';
+import { canGrantModulePermission, sanitizeGrantedPermissions } from '@/lib/rbac';
+import { useProfile } from '@/lib/ProfileProvider';
 
 const MODULES = [
   // Modules généraux
@@ -11,6 +13,8 @@ const MODULES = [
   { id: 'knowledge', label: 'Guide & Savoir-faire', description: 'Base de connaissances interne', icon: BookOpen, category: 'Général' },
   { id: 'ideas', label: 'Boîte à Idées', description: 'Propositions et innovations', icon: Lightbulb, category: 'Général' },
   { id: 'calendar', label: 'Calendrier', description: 'Planning et événements', icon: Calendar, category: 'Général' },
+  { id: 'documents', label: 'Documents privés', description: 'Documents partagés individuellement', icon: FileText, category: 'Général' },
+  { id: 'job-descriptions', label: 'Fiches de poste', description: 'Réservé à Fenelon', icon: BookOpen, category: 'Administration' },
   // Modules Associés / Ventes
   { id: 'leads', label: 'Prospects (Ventes)', description: 'Pipeline commercial et CRM', icon: Users, category: 'Ventes & Business' },
   { id: 'studio', label: 'Outils de Vente', description: 'Stratégie ROI et outils commerciaux', icon: Target, category: 'Ventes & Business' },
@@ -33,6 +37,7 @@ const MODULES = [
 const CATEGORIES = ['Général', 'Ventes & Business', 'Finance & Stratégie', 'Technique', 'Administration'];
 
 export default function AccessControlModal({ isOpen, onClose, member }: { isOpen: boolean, onClose: () => void, member?: any | null }) {
+  const { profile: actorProfile } = useProfile();
   const [loading, setLoading] = useState(false);
   const [permissions, setPermissions] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState('');
@@ -48,8 +53,7 @@ export default function AccessControlModal({ isOpen, onClose, member }: { isOpen
         if (existing[mod.id] !== undefined) {
           defaults[mod.id] = existing[mod.id];
         } else {
-          // Déduire les permissions par défaut selon le rôle
-          defaults[mod.id] = getDefaultPermission(mod.id, member.role, member.type);
+          defaults[mod.id] = false;
         }
       });
 
@@ -58,15 +62,19 @@ export default function AccessControlModal({ isOpen, onClose, member }: { isOpen
   }, [member]);
 
   const togglePermission = (moduleId: string) => {
+    if (!canGrantModulePermission(actorProfile, member, moduleId)) return;
     setPermissions(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
 
   const handleSave = async () => {
+    if (!member || !actorProfile) return;
+
     setLoading(true);
-    const { error } = await supabase
-      .from('profiles')
-      .update({ permissions })
-      .eq('id', member.id);
+    const sanitizedPermissions = sanitizeGrantedPermissions(actorProfile, member, permissions);
+    const { error } = await supabase.rpc('admin_update_profile_permissions', {
+      target_profile_id: member.id,
+      next_permissions: sanitizedPermissions,
+    });
 
     if (!error) {
       onClose();
@@ -145,16 +153,18 @@ export default function AccessControlModal({ isOpen, onClose, member }: { isOpen
                   {categoryModules.map((mod) => {
                     const Icon = mod.icon;
                     const isEnabled = permissions[mod.id];
+                    const canGrant = canGrantModulePermission(actorProfile, member, mod.id);
 
                     return (
                       <button
                         key={mod.id}
                         onClick={() => togglePermission(mod.id)}
+                        disabled={!canGrant}
                         className={`w-full flex items-center justify-between p-3.5 rounded-2xl border transition-all text-left ${
                           isEnabled
                             ? 'bg-white border-slate-200 hover:border-indigo-300'
                             : 'bg-slate-50/50 border-slate-100 opacity-50'
-                        }`}
+                        } ${canGrant ? '' : 'cursor-not-allowed opacity-40'}`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`p-2 rounded-xl transition-all ${
@@ -164,7 +174,9 @@ export default function AccessControlModal({ isOpen, onClose, member }: { isOpen
                           </div>
                           <div>
                             <p className="text-sm font-bold text-slate-900">{mod.label}</p>
-                            <p className="text-[10px] text-slate-400 font-medium">{mod.description}</p>
+                            <p className="text-[10px] text-slate-400 font-medium">
+                              {canGrant ? mod.description : 'Votre rôle ne peut pas accorder ce module'}
+                            </p>
                           </div>
                         </div>
                         <div className={`w-10 h-6 rounded-full relative transition-all ${
@@ -202,35 +214,4 @@ export default function AccessControlModal({ isOpen, onClose, member }: { isOpen
       </div>
     </div>
   );
-}
-
-/** Déduire les permissions par défaut selon le rôle et le type */
-function getDefaultPermission(moduleId: string, role: string, type: string): boolean {
-  const ROLE_DEFAULTS: Record<string, string[]> = {
-    projects: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    tasks: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    knowledge: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    ideas: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    calendar: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    leads: ['CEO', 'COO', 'SALES', 'ADMIN'],
-    studio: ['CEO', 'SALES', 'ADMIN'],
-    coordination: ['CEO', 'SALES', 'ADMIN'],
-    brand: ['CEO', 'SALES', 'ADMIN'],
-    contracts: ['CEO', 'COO', 'ADMIN'],
-    treasury: ['CEO', 'COO', 'ADMIN'],
-    equity: ['CEO', 'COO', 'CTO', 'SALES', 'ADMIN'],
-    audit: ['CEO', 'COO', 'CTO', 'SALES', 'ENGINEER', 'ADMIN'],
-    labs: ['CEO', 'CTO', 'ADMIN'],
-    workspace: ['CEO', 'CTO', 'ADMIN'],
-    hr: ['CEO', 'COO', 'ADMIN'],
-    settings: ['CEO', 'COO', 'CTO', 'ADMIN'],
-    admin: ['CEO', 'ADMIN'],
-  };
-
-  // HR accessible aux employés
-  if (moduleId === 'hr' && type === 'EMPLOYEE') return true;
-
-  const allowedRoles = ROLE_DEFAULTS[moduleId];
-  if (!allowedRoles) return true;
-  return allowedRoles.includes(role);
 }

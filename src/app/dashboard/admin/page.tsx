@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { FileUp, Lock, Shield, UserPlus, Users, Clock, Check, X, Loader2, Sparkles, Mail, Trash2 } from 'lucide-react';
 import InviteMemberModal from '@/components/modals/InviteMemberModal';
 import AccessControlModal from '@/components/modals/AccessControlModal';
+import { canAccessPath } from '@/lib/rbac';
 
 export default function AdminPage() {
   const supabase = createClient();
@@ -27,7 +28,7 @@ export default function AdminPage() {
     const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single();
     setProfile(profileData);
 
-    if (profileData?.role !== 'CEO' && !profileData?.is_admin) {
+    if (!canAccessPath(profileData, '/dashboard/admin')) {
       router.push('/dashboard');
       return;
     }

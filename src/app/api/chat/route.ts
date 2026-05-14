@@ -2,6 +2,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { canAccessModule } from '@/lib/rbac';
 
 const ALLOWED_MODELS = new Set([
   'deepseek/deepseek-chat',
@@ -37,6 +38,8 @@ type ProfileContext = {
   role?: string | null;
   type?: string | null;
   is_admin?: boolean | null;
+  email?: string | null;
+  permissions?: Record<string, boolean> | null;
 };
 
 function buildSystemPrompt(userProfile?: ProfileContext | null, role?: string) {
@@ -80,11 +83,11 @@ Objectif:
 }
 
 function hasFinancialAccess(profile: ProfileContext | null) {
-  return !!profile && (profile.is_admin || ['CEO', 'COO', 'ADMIN'].includes(profile.role || ''));
+  return canAccessModule(profile, 'treasury');
 }
 
 function hasTaskWriteAccess(profile: ProfileContext | null) {
-  return !!profile && (profile.type === 'ASSOCIATE' || profile.is_admin || ['CEO', 'COO', 'CTO', 'ADMIN'].includes(profile.role || ''));
+  return canAccessModule(profile, 'tasks');
 }
 
 function safeToolError(message: string, code = 'TOOL_ERROR') {
@@ -119,7 +122,7 @@ export async function POST(req: Request) {
 
   const { data: userProfile } = await supabase
     .from('profiles')
-    .select('id, full_name, role, type, is_admin')
+    .select('id, email, full_name, role, type, is_admin, permissions')
     .eq('id', user.id)
     .single();
 

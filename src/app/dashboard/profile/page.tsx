@@ -33,25 +33,19 @@ export default function ProfilePage() {
 
     // Validation basique
     const trimmedName = fullName.trim();
-    const trimmedPhone = phone.trim();
 
     if (trimmedName.length < 2 || trimmedName.length > 100) {
       alert('Le nom doit contenir entre 2 et 100 caractères.');
       return;
     }
 
-    if (trimmedPhone && !/^\+?[\d\s\-()]{6,20}$/.test(trimmedPhone)) {
-      alert('Format de téléphone invalide.');
-      return;
-    }
-
     setSaving(true);
-    // Restriction explicite : seuls full_name et phone sont modifiables par l'utilisateur
+    // Restriction explicite : seul full_name est modifié depuis cet écran.
+    // avatar_url pourra être ajouté ici quand l'upload d'avatar sera implémenté.
     const { error } = await supabase
       .from('profiles')
       .update({
         full_name: trimmedName,
-        phone: trimmedPhone || null,
       })
       .eq('id', profile.id);
 

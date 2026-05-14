@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import { TrendingUp, Award, Calendar, CheckCircle2 } from 'lucide-react';
+import { canAccessPath } from '@/lib/rbac';
 
 export default async function EquityPage() {
   const supabase = await createServerSupabaseClient();
@@ -12,9 +13,7 @@ export default async function EquityPage() {
     .eq('id', user?.id)
     .single();
 
-  const isAuthorized = profile?.type === 'ASSOCIATE' || profile?.permissions?.equity || ['CEO', 'COO', 'ADMIN'].includes(profile?.role || '');
-
-  if (!isAuthorized) {
+  if (!canAccessPath(profile, '/dashboard/equity')) {
     redirect('/dashboard');
   }
 

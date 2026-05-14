@@ -1,9 +1,11 @@
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import Sidebar from '@/components/Sidebar';
 import ClientSearchWrapper from '@/components/ClientSearchWrapper';
 import { ProfileProvider } from '@/lib/ProfileProvider';
 import AIChatbotIsland from '@/components/AIChatbotIsland';
+import { canAccessPath } from '@/lib/rbac';
 
 export default async function DashboardLayout({
   children,
@@ -22,6 +24,17 @@ export default async function DashboardLayout({
     .select('*')
     .eq('id', user.id)
     .single();
+
+  const headerStore = await headers();
+  const pathname = headerStore.get('x-opays-pathname') || '/dashboard';
+
+  if (!profile) {
+    redirect('/login');
+  }
+
+  if (!canAccessPath(profile, pathname)) {
+    redirect(`/dashboard?from=${encodeURIComponent(pathname)}`);
+  }
 
   return (
     <ProfileProvider initialProfile={profile}>

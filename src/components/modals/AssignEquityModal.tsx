@@ -31,14 +31,10 @@ export default function AssignEquityModal({ isOpen, onClose, onSuccess }: { isOp
     e.preventDefault();
     setLoading(true);
     
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        equity_percent: formData.equity_percent,
-        type: 'ASSOCIATE', // Force status to associate if receiving equity
-        // We might want a dedicated column for agreement URL, but for now we could use a custom log entry
-      })
-      .eq('id', formData.profile_id);
+    const { error } = await supabase.rpc('admin_update_profile_equity', {
+      target_profile_id: formData.profile_id,
+      next_equity_percent: formData.equity_percent,
+    });
 
     if (!error && formData.equity_agreement_url) {
       // We could log the agreement in equity_vesting_logs with 0 shares as a record

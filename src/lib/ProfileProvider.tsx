@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { createClient } from '@/lib/supabase';
-import { canAccessModule } from '@/lib/rbac';
+import { canAccessModule, isRbacAdmin } from '@/lib/rbac';
 
 export interface Profile {
   id: string;
@@ -55,9 +55,9 @@ export function ProfileProvider({
   const supabase = useMemo(() => createClient(), []);
 
   const isAssociate = profile?.type === 'ASSOCIATE';
-  const isManager = ['CEO', 'COO', 'CTO', 'ADMIN'].includes(profile?.role || '') || !!profile?.is_admin;
-  const isCEO = profile?.role === 'CEO' || !!profile?.is_admin;
-  const isSalesLead = profile?.role === 'SALES' || profile?.role === 'CEO';
+  const isManager = isRbacAdmin(profile);
+  const isCEO = isRbacAdmin(profile);
+  const isSalesLead = checkAccessSnapshot(profile, 'leads');
 
   const checkAccess = useCallback((moduleId: string): boolean => {
     return canAccessModule(profile, moduleId);
@@ -130,4 +130,8 @@ export function ProfileProvider({
       {children}
     </ProfileContext.Provider>
   );
+}
+
+function checkAccessSnapshot(profile: Profile | null, moduleId: string) {
+  return canAccessModule(profile, moduleId);
 }

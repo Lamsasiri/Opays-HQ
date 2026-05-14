@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 import { Phone, Mail, Building2, MoreHorizontal, Plus, Clock, Target, Trash2, CheckCircle, Trophy, Sparkles, TrendingUp, Shield } from 'lucide-react';
 import NewLeadModal from '@/components/modals/NewLeadModal';
+import { canAccessPath } from '@/lib/rbac';
 
 const StatusColors: any = {
   'NEW': 'bg-sky-50 text-sky-700 border-sky-100',
@@ -32,8 +33,7 @@ export default function LeadsPage() {
       const { data: profileData } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       setProfile(profileData);
 
-      const isAuthorized = profileData?.type === 'ASSOCIATE' || profileData?.permissions?.leads || ['CEO', 'COO', 'ADMIN'].includes(profileData?.role || '');
-      if (!isAuthorized) {
+      if (!canAccessPath(profileData, '/dashboard/leads')) {
         window.location.href = '/dashboard';
         return;
       }
