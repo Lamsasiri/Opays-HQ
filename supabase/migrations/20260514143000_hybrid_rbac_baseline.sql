@@ -14,7 +14,7 @@ STABLE
 AS $$
   SELECT COALESCE(
     (
-      SELECT lower(COALESCE(email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech')
+      SELECT lower(COALESCE(email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech', 'lamsasiri@opays.tech')
         OR is_admin = TRUE
       FROM profiles
       WHERE id = auth.uid()
@@ -33,7 +33,7 @@ AS $$
   SELECT COALESCE(
     (
       SELECT CASE
-        WHEN lower(COALESCE(email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech')
+        WHEN lower(COALESCE(email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech', 'lamsasiri@opays.tech')
           OR is_admin = TRUE THEN TRUE
         WHEN COALESCE(permissions, '{}'::jsonb) ? module_id
           THEN (permissions ->> module_id)::BOOLEAN
@@ -59,7 +59,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF lower(COALESCE(NEW.email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech') THEN
+  IF lower(COALESCE(NEW.email, '')) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech', 'lamsasiri@opays.tech') THEN
     NEW.is_admin := TRUE;
   ELSE
     NEW.is_admin := COALESCE(NEW.is_admin, FALSE);
@@ -104,7 +104,7 @@ SET full_name = COALESCE(NULLIF(full_name, ''), 'Fenelon Lamsasiri'),
     is_admin = TRUE,
     permissions = '{}'::jsonb,
     updated_at = NOW()
-WHERE lower(email) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech');
+WHERE lower(email) IN ('lamsasfenelon@gmail.com', 'ceo@opays.tech', 'lamsasiri@opays.tech');
 
 UPDATE profiles
 SET role = 'SALES',
@@ -137,7 +137,8 @@ SET permissions = COALESCE(permissions, '{}'::jsonb) - 'brand',
 WHERE lower(COALESCE(email, '')) NOT IN (
   'zainagodlive28@gmail.com',
   'lamsasfenelon@gmail.com',
-  'ceo@opays.tech'
+  'ceo@opays.tech',
+  'lamsasiri@opays.tech'
 );
 
 COMMIT;

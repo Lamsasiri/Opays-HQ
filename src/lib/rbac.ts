@@ -3,6 +3,7 @@ export type ProfileType = 'ASSOCIATE' | 'EMPLOYEE';
 
 export interface RbacProfile {
   id?: string | null;
+  full_name?: string | null;
   email?: string | null;
   role?: DashboardRole | string | null;
   type?: ProfileType | string | null;
@@ -18,6 +19,7 @@ const DEFAULT_OPEN_ROUTES = new Set([
 export const ALLOWED_ADMIN_EMAILS = [
   'lamsasfenelon@gmail.com',
   'ceo@opays.tech',
+  'lamsasiri@opays.tech',
 ];
 
 export const FENELON_EMAILS = new Set(ALLOWED_ADMIN_EMAILS);
@@ -78,7 +80,12 @@ export function isFenelonProfile(profile: RbacProfile | null | undefined) {
 
   const email = profile.email?.toLowerCase() || '';
   const id = profile.id?.toLowerCase() || '';
-  return FENELON_EMAILS.has(email) || FENELON_PROFILE_IDS.has(id);
+  const fullName = profile.full_name?.toLowerCase() || '';
+  return (
+    FENELON_EMAILS.has(email) ||
+    FENELON_PROFILE_IDS.has(id) ||
+    fullName.includes('fenelon lamsasiri')
+  );
 }
 
 export function getModuleIdFromPathname(pathname: string) {
