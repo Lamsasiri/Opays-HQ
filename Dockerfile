@@ -24,9 +24,12 @@ RUN cp -r server dist-server/ 2>/dev/null || true
 FROM node:20-alpine
 WORKDIR /app
 
-# Install runtime dependencies only
+# Install build tools for native modules (better-sqlite3), then remove them
+RUN apk add --no-cache python3 g++ make
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev && \
+    apk del python3 g++ make && \
+    rm -rf /root/.npm /root/.cache
 
 # Copy built frontend
 COPY --from=frontend-builder /app/dist ./dist
