@@ -4,13 +4,14 @@ import { can } from '@/lib/rbac';
 import { useState, useEffect, useMemo } from 'react';
 import { apiGetDashboardStats, apiGetTasks, apiGetProjects, apiGetTreasury } from '@/lib/api';
 import {
-  ListTodo, FolderKanban, Landmark, Bot, TrendingUp, Users,
+  ListTodo, FolderKanban, TrendingUp, Users,
   ArrowUpRight, ArrowDownRight, Clock, CheckCircle2, AlertCircle,
-  Activity, BarChart3, DollarSign, Target
+  DollarSign, Search, Plus,
+  FileText, ChevronRight, Bell
 } from 'lucide-react';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  CartesianGrid, AreaChart, Area, BarChart, Bar
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, BarChart, Bar, PieChart, Pie, Cell, Legend
 } from 'recharts';
 
 export const Route = createFileRoute('/_app/app/dashboard')({
@@ -30,7 +31,7 @@ function fmtCurrency(n: number): string {
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'à l\'instant';
+  if (mins < 1) return "à l'instant";
   if (mins < 60) return `il y a ${mins} min`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `il y a ${hours}h`;
@@ -38,207 +39,313 @@ function timeAgo(dateStr: string): string {
   return `il y a ${days}j`;
 }
 
+// ─── Couleurs ──────────────────────────────────────────────
+
+const COLORS = {
+  primary: '#2563eb',
+  primaryLight: '#3b82f6',
+  success: '#16a34a',
+  warning: '#f59e0b',
+  danger: '#dc2626',
+  info: '#0891b2',
+  purple: '#7c3aed',
+  pink: '#db2777',
+  gray: '#64748b',
+  bg: '#f1f5f9',
+  card: '#ffffff',
+  sidebar: '#0f172a',
+  text: '#1e293b',
+  muted: '#94a3b8',
+  border: '#e2e8f0',
+};
+
+const CHART_COLORS = ['#2563eb', '#f59e0b', '#16a34a', '#dc2626', '#7c3aed', '#0891b2'];
+
 // ─── Composants ───────────────────────────────────────────
 
-function StatCard({ label, value, icon: Icon, color, trend, trendLabel }: {
-  label: string; value: string; icon: any; color: string;
+function KpiCard({ label, value, subtitle, icon: Icon, color, trend, trendLabel }: {
+  label: string; value: string; subtitle?: string; icon: any; color: string;
   trend?: 'up' | 'down'; trendLabel?: string;
 }) {
   return (
-    <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <div className="stat-label">{label}</div>
-          <div className={`stat-value ${color}`}>{value}</div>
+    <div style={{
+      background: COLORS.card,
+      borderRadius: '12px',
+      padding: '1.25rem',
+      border: `1px solid ${COLORS.border}`,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      transition: 'box-shadow 0.2s, transform 0.2s',
+      cursor: 'default',
+    }}
+    onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+    onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)'; e.currentTarget.style.transform = 'none'; }}
+    >
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: COLORS.muted, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+          {label}
         </div>
-        <div style={{
-          width: '2.5rem', height: '2.5rem', borderRadius: '0.75rem',
-          background: color === 'green' ? '#22c55e15' : color === 'red' ? '#ef444415' : color === 'orange' ? '#f59e0b15' : '#3b62d415',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <Icon size={18} style={{ color: color === 'green' ? '#22c55e' : color === 'red' ? '#ef4444' : color === 'orange' ? '#f59e0b' : 'var(--primary)' }} />
+        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: COLORS.text, lineHeight: 1.2 }}>
+          {value}
         </div>
-      </div>
-      {trend && trendLabel && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem', fontSize: '0.75rem' }}>
-          {trend === 'up' ? (
-            <ArrowUpRight size={12} style={{ color: '#22c55e' }} />
-          ) : (
-            <ArrowDownRight size={12} style={{ color: '#ef4444' }} />
-          )}
-          <span style={{ color: trend === 'up' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>{trendLabel}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function RecentTasks({ tasks }: { tasks: any[] }) {
-  const recent = tasks.slice(0, 5);
-  return (
-    <div className="card" style={{ height: '100%' }}>
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <div className="card-title">Tâches récentes</div>
-          <div className="card-description">Les 5 dernières tâches créées</div>
-        </div>
-        <span className="badge badge-blue">{tasks.length} total</span>
-      </div>
-      <div className="activity-list">
-        {recent.length === 0 ? (
-          <div className="kanban-empty">Aucune tâche pour le moment</div>
-        ) : recent.map((t: any) => (
-          <div key={t.id} className="activity-item" style={{ alignItems: 'center' }}>
-            <div style={{
-              width: '2rem', height: '2rem', borderRadius: '0.5rem', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: t.status === 'done' ? '#22c55e15' : t.status === 'in_progress' ? '#3b62d415' : '#94a3b815',
-            }}>
-              {t.status === 'done' ? <CheckCircle2 size={14} style={{ color: '#22c55e' }} /> :
-               t.status === 'in_progress' ? <Clock size={14} style={{ color: 'var(--primary)' }} /> :
-               <AlertCircle size={14} style={{ color: '#94a3b8' }} />}
-            </div>
-            <div className="activity-content">
-              <div className="activity-text" style={{ fontWeight: 500 }}>{t.title}</div>
-              <div className="activity-time">
-                {t.assignee_name || 'Non assigné'} · {timeAgo(t.created_at)}
-              </div>
-            </div>
-            <span className={`badge ${t.priority === 'urgent' ? 'badge-red' : t.priority === 'high' ? 'badge-orange' : 'badge-gray'}`}>
-              {t.priority || 'medium'}
-            </span>
+        {subtitle && (
+          <div style={{ fontSize: '0.75rem', color: COLORS.muted, marginTop: '0.25rem' }}>
+            {subtitle}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ActiveProjects({ projects }: { projects: any[] }) {
-  const active = projects.filter((p: any) => p.status === 'active' || p.status === 'planning').slice(0, 4);
-  return (
-    <div className="card" style={{ height: '100%' }}>
-      <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <div className="card-title">Projets actifs</div>
-          <div className="card-description">En cours et planifiés</div>
-        </div>
-        <span className="badge badge-green">{active.length} actifs</span>
-      </div>
-      <div className="activity-list">
-        {active.length === 0 ? (
-          <div className="kanban-empty">Aucun projet actif</div>
-        ) : active.map((p: any) => (
-          <div key={p.id} className="activity-item" style={{ flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-              <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{p.name}</div>
-              <span className={`badge ${p.status === 'active' ? 'badge-green' : 'badge-orange'}`}>
-                {p.status === 'active' ? 'En cours' : 'Planifié'}
-              </span>
-            </div>
-            {p.budget && (
-              <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>
-                Budget: {fmtCurrency(p.budget)}
-              </div>
+        )}
+        {trend && trendLabel && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem', fontSize: '0.75rem' }}>
+            {trend === 'up' ? (
+              <ArrowUpRight size={12} style={{ color: COLORS.success }} />
+            ) : (
+              <ArrowDownRight size={12} style={{ color: COLORS.danger }} />
             )}
-            {p.deadline && (
-              <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>
-                Échéance: {new Date(p.deadline).toLocaleDateString('fr-FR')}
-              </div>
-            )}
+            <span style={{ color: trend === 'up' ? COLORS.success : COLORS.danger, fontWeight: 600 }}>{trendLabel}</span>
           </div>
-        ))}
+        )}
+      </div>
+      <div style={{
+        width: '2.5rem', height: '2.5rem', borderRadius: '10px',
+        background: `${color}12`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        <Icon size={18} style={{ color }} />
       </div>
     </div>
   );
 }
 
-function TreasuryChart({ logs }: { logs: any[] }) {
+function Card({ title, subtitle, children, action }: {
+  title: string; subtitle?: string; children: React.ReactNode; action?: React.ReactNode;
+}) {
+  return (
+    <div style={{
+      background: COLORS.card,
+      borderRadius: '12px',
+      border: `1px solid ${COLORS.border}`,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '1rem 1.25rem',
+        borderBottom: `1px solid ${COLORS.border}`,
+      }}>
+        <div>
+          <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: COLORS.text }}>{title}</div>
+          {subtitle && <div style={{ fontSize: '0.75rem', color: COLORS.muted, marginTop: '0.125rem' }}>{subtitle}</div>}
+        </div>
+        {action}
+      </div>
+      <div style={{ padding: '1rem 1.25rem' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Badge({ label, color }: { label: string; color: string }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center',
+      padding: '0.125rem 0.5rem',
+      borderRadius: '9999px',
+      fontSize: '0.6875rem',
+      fontWeight: 600,
+      background: `${color}15`,
+      color: color,
+    }}>
+      {label}
+    </span>
+  );
+}
+
+// ─── Graphiques ────────────────────────────────────────────
+
+function RevenueChart({ logs }: { logs: any[] }) {
   const chartData = useMemo(() => {
     if (!logs || logs.length === 0) {
-      // Mock data pour montrer le graphique
       const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
       let balance = 0;
       return months.map(m => {
-        balance += Math.random() * 5000 - 2000;
-        return { month: m, solde: Math.round(balance * 100) / 100 };
+        balance += Math.random() * 8000 - 2000;
+        return { month: m, revenus: Math.round(balance * 100) / 100 };
       });
     }
-    // Grouper par mois
-    const grouped: Record<string, number> = {};
-    let cumul = 0;
+    const grouped: Record<string, { revenus: number; depenses: number }> = {};
     for (const log of logs) {
       const month = new Date(log.created_at).toLocaleDateString('fr-FR', { month: 'short' });
-      cumul += log.type === 'income' ? log.amount : -log.amount;
-      grouped[month] = cumul;
+      if (!grouped[month]) grouped[month] = { revenus: 0, depenses: 0 };
+      if (log.type === 'income') grouped[month].revenus += log.amount;
+      else grouped[month].depenses += log.amount;
     }
-    return Object.entries(grouped).map(([month, solde]) => ({ month, solde }));
+    return Object.entries(grouped).map(([month, d]) => ({ month, ...d }));
   }, [logs]);
 
   return (
-    <div className="card" style={{ height: '100%' }}>
-      <div className="card-header">
-        <div className="card-title">Évolution de la trésorerie</div>
-        <div className="card-description">Solde cumulé sur les 6 derniers mois</div>
-      </div>
-      <div style={{ width: '100%', height: 220 }}>
-        <ResponsiveContainer>
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="colorSolde" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b62d4" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#3b62d4" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} />
-            <YAxis stroke="#94a3b8" fontSize={12} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-            <Tooltip
-              contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '0.5rem', color: '#f1f5f9' }}
-              formatter={(value: number) => [`${fmtCurrency(value)}`, 'Solde']}
-            />
-            <Area type="monotone" dataKey="solde" stroke="#3b62d4" fill="url(#colorSolde)" strokeWidth={2} />
-          </AreaChart>
-        </ResponsiveContainer>
+    <div style={{ width: '100%', height: 260 }}>
+      <ResponsiveContainer>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.15} />
+              <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="depGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={COLORS.danger} stopOpacity={0.1} />
+              <stop offset="95%" stopColor={COLORS.danger} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={COLORS.border} vertical={false} />
+          <XAxis dataKey="month" stroke={COLORS.muted} fontSize={12} tickLine={false} axisLine={false} />
+          <YAxis stroke={COLORS.muted} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+          <Tooltip
+            contentStyle={{
+              background: COLORS.card,
+              border: `1px solid ${COLORS.border}`,
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              fontSize: '0.8125rem',
+            }}
+          />
+          <Area type="monotone" dataKey="revenus" stroke={COLORS.primary} strokeWidth={2} fill="url(#revGrad)" dot={false} activeDot={{ r: 4, fill: COLORS.primary }} />
+          <Area type="monotone" dataKey="depenses" stroke={COLORS.danger} strokeWidth={2} fill="url(#depGrad)" dot={false} activeDot={{ r: 4, fill: COLORS.danger }} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function InvoicesPieChart() {
+  const data = [
+    { name: 'Payées', value: 45, color: COLORS.success },
+    { name: 'En attente', value: 30, color: COLORS.warning },
+    { name: 'Impayées', value: 15, color: COLORS.danger },
+    { name: 'Brouillons', value: 10, color: COLORS.muted },
+  ];
+
+  return (
+    <div style={{ width: '100%', height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <ResponsiveContainer width="60%" height={200}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={45}
+            outerRadius={75}
+            paddingAngle={3}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={index} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{
+              background: COLORS.card,
+              border: `1px solid ${COLORS.border}`,
+              borderRadius: '8px',
+              fontSize: '0.8125rem',
+            }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {data.map((d, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem' }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color }} />
+            <span style={{ color: COLORS.muted }}>{d.name}</span>
+            <span style={{ fontWeight: 600, color: COLORS.text }}>{d.value}%</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function ActivityFeed() {
+function TodoList({ tasks }: { tasks: any[] }) {
+  const urgent = tasks.filter((t: any) => t.priority === 'urgent' || t.priority === 'high').slice(0, 5);
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
+
+  return (
+    <div>
+      {urgent.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '1.5rem 0', color: COLORS.muted, fontSize: '0.8125rem' }}>
+          Aucune tâche urgente — tout est sous contrôle ✓
+        </div>
+      ) : urgent.map((t: any) => (
+        <div key={t.id} style={{
+          display: 'flex', alignItems: 'center', gap: '0.75rem',
+          padding: '0.625rem 0',
+          borderBottom: `1px solid ${COLORS.border}`,
+          opacity: checked[t.id] ? 0.5 : 1,
+          textDecoration: checked[t.id] ? 'line-through' : 'none',
+        }}>
+          <div
+            onClick={() => setChecked(prev => ({ ...prev, [t.id]: !prev[t.id] }))}
+            style={{
+              width: 18, height: 18, borderRadius: '4px', flexShrink: 0, cursor: 'pointer',
+              border: `2px solid ${checked[t.id] ? COLORS.success : COLORS.border}`,
+              background: checked[t.id] ? COLORS.success : 'transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all 0.15s',
+            }}
+          >
+            {checked[t.id] && <span style={{ color: 'white', fontSize: '0.625rem', fontWeight: 700 }}>✓</span>}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: COLORS.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {t.title}
+            </div>
+            <div style={{ fontSize: '0.6875rem', color: COLORS.muted, marginTop: '0.125rem' }}>
+              {t.project_name || 'Sans projet'} · {timeAgo(t.created_at)}
+            </div>
+          </div>
+          <Badge label={t.priority || 'medium'} color={t.priority === 'urgent' ? COLORS.danger : t.priority === 'high' ? COLORS.warning : COLORS.muted} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RecentActivity() {
   const activities = [
-    { icon: Activity, text: 'Nouveau lead ajouté', time: 'il y a 2h', color: 'var(--primary)' },
-    { icon: CheckCircle2, text: 'Tâche « Déploiement API » terminée', time: 'il y a 4h', color: '#22c55e' },
-    { icon: AlertCircle, text: 'Facture FACT-2026-0001 émise', time: 'il y a 6h', color: '#f59e0b' },
-    { icon: Users, text: 'Nouveau membre invité', time: 'il y a 1j', color: '#3b82f6' },
+    { icon: FileText, text: 'Facture FACT-2026-0001 créée', time: 'il y a 2h', color: COLORS.primary },
+    { icon: CheckCircle2, text: 'Tâche « Audit CRM » terminée', time: 'il y a 4h', color: COLORS.success },
+    { icon: TrendingUp, text: 'Nouveau lead : ACME SARL', time: 'il y a 6h', color: COLORS.warning },
+    { icon: Users, text: 'Patricia Zamwana a rejoint l\'équipe', time: 'il y a 1j', color: COLORS.purple },
+    { icon: DollarSign, text: 'Paiement reçu — 2 500 $', time: 'il y a 1j', color: COLORS.success },
   ];
 
   return (
-    <div className="card" style={{ height: '100%' }}>
-      <div className="card-header">
-        <div className="card-title">Activité récente</div>
-        <div className="card-description">Les dernières actions sur la plateforme</div>
-      </div>
-      <div className="activity-list">
-        {activities.map((a, i) => {
-          const Icon = a.icon;
-          return (
-            <div key={i} className="activity-item" style={{ alignItems: 'center' }}>
-              <div style={{
-                width: '2rem', height: '2rem', borderRadius: '0.5rem', flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: `${a.color}15`,
-              }}>
-                <Icon size={14} style={{ color: a.color }} />
-              </div>
-              <div className="activity-content">
-                <div className="activity-text">{a.text}</div>
-                <div className="activity-time">{a.time}</div>
-              </div>
+    <div>
+      {activities.map((a, i) => {
+        const Icon = a.icon;
+        return (
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center', gap: '0.75rem',
+            padding: '0.625rem 0',
+            borderBottom: i < activities.length - 1 ? `1px solid ${COLORS.border}` : 'none',
+          }}>
+            <div style={{
+              width: '2rem', height: '2rem', borderRadius: '8px', flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: `${a.color}12`,
+            }}>
+              <Icon size={14} style={{ color: a.color }} />
             </div>
-          );
-        })}
-      </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '0.8125rem', color: COLORS.text }}>{a.text}</div>
+              <div style={{ fontSize: '0.6875rem', color: COLORS.muted, marginTop: '0.125rem' }}>{a.time}</div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -269,77 +376,150 @@ function DashboardPage() {
     });
   }, []);
 
-  const statCards = [
-    { label: 'Projets actifs', value: stats?.activeProjects ?? '—', icon: FolderKanban, color: 'blue' as const },
-    { label: 'Tâches en cours', value: stats?.tasksInProgress ?? '—', icon: ListTodo, color: 'green' as const },
-    { label: 'Tâches urgentes', value: stats?.urgentTasks ?? '—', icon: AlertCircle, color: 'red' as const },
-    { label: 'Employés', value: stats?.totalUsers ?? '—', icon: Users, color: 'orange' as const },
-    ...(can(roleName, 'treasury') ? [{
-      label: 'Trésorerie nette',
-      value: stats ? `${fmt((stats.totalIncome || 0) - (stats.totalExpense || 0))} $` : '—',
-      icon: DollarSign, color: 'blue' as const,
-      trend: 'up' as const,
-      trendLabel: '+12% ce mois',
-    }] : []),
+  const kpiCards = [
+    { label: 'Chiffre d\'affaires', value: stats ? `${fmtCurrency((stats.totalIncome || 0))}` : '—', subtitle: 'Ce mois', icon: DollarSign, color: COLORS.primary, trend: 'up' as const, trendLabel: '+12% vs mois préc.' },
+    { label: 'Dépenses', value: stats ? `${fmtCurrency((stats.totalExpense || 0))}` : '—', subtitle: 'Ce mois', icon: TrendingUp, color: COLORS.danger, trend: 'down' as const, trendLabel: '-5% vs mois préc.' },
+    { label: 'Projets actifs', value: stats?.activeProjects ?? '—', subtitle: `${stats?.activeProjects || 0} en cours`, icon: FolderKanban, color: COLORS.success },
+    { label: 'Tâches en cours', value: stats?.tasksInProgress ?? '—', subtitle: `${stats?.urgentTasks || 0} urgentes`, icon: ListTodo, color: COLORS.warning },
+    { label: 'Employés', value: stats?.totalUsers ?? '—', subtitle: 'Équipe active', icon: Users, color: COLORS.purple },
   ];
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header */}
+      {/* Header type ProfiMax */}
       <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem',
       }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            Bonjour, {user?.full_name || user?.email}
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: COLORS.text }}>
+            Tableau de bord
           </h1>
-          <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span className="badge badge-blue">{user?.role_label || '—'}</span>
-            <span>· Vue d'ensemble du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+          <p style={{ fontSize: '0.8125rem', color: COLORS.muted, marginTop: '0.125rem' }}>
+            {user?.role_label || '—'} · {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button className="btn btn-outline btn-sm">
-            <BarChart3 size={14} /> Rapport
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            background: COLORS.card, border: `1px solid ${COLORS.border}`,
+            borderRadius: '8px', padding: '0.375rem 0.75rem',
+          }}>
+            <Search size={14} style={{ color: COLORS.muted }} />
+            <input
+              placeholder="Rechercher..."
+              style={{ border: 'none', outline: 'none', fontSize: '0.8125rem', color: COLORS.text, background: 'transparent', width: '140px' }}
+            />
+          </div>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: '0.375rem',
+            background: COLORS.primary, color: 'white', border: 'none',
+            borderRadius: '8px', padding: '0.5rem 1rem',
+            fontSize: '0.8125rem', fontWeight: 600, cursor: 'pointer',
+            transition: 'opacity 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+          onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+          >
+            <Plus size={14} />
+            Nouveau
           </button>
-          <button className="btn btn-primary btn-sm">
-            <Target size={14} /> Nouveau projet
+          <button style={{
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            width: '2.25rem', height: '2.25rem', borderRadius: '8px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: COLORS.muted, transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = COLORS.border}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            <Bell size={18} />
           </button>
+          <div style={{
+            width: '2.25rem', height: '2.25rem', borderRadius: '8px',
+            background: COLORS.primary, color: 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer',
+          }}>
+            {user?.email?.charAt(0).toUpperCase() || '?'}
+          </div>
         </div>
       </div>
 
-      {/* Stats cards — 5 colonnes sur PC */}
+      {/* KPIs — 5 colonnes style ProfiMax */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
         gap: '1rem',
-        marginBottom: '2rem',
+        marginBottom: '1.5rem',
       }}>
-        {statCards.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
+        {kpiCards.map((kpi) => (
+          <KpiCard key={kpi.label} {...kpi} />
         ))}
       </div>
 
-      {/* Widgets — 2 colonnes sur PC */}
+      {/* Row 1: Graphique + To-Do (style ProfiMax) */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
+        gridTemplateColumns: '2fr 1fr',
         gap: '1.5rem',
         marginBottom: '1.5rem',
       }}>
-        <RecentTasks tasks={tasks} />
-        <TreasuryChart logs={treasury} />
+        <Card
+          title="Revenus vs Dépenses"
+          subtitle="Évolution sur les 6 derniers mois"
+          action={
+            <select style={{
+              border: `1px solid ${COLORS.border}`, borderRadius: '6px',
+              padding: '0.25rem 0.5rem', fontSize: '0.75rem', color: COLORS.text,
+              background: COLORS.card, outline: 'none', cursor: 'pointer',
+            }}>
+              <option>6 mois</option>
+              <option>12 mois</option>
+              <option>Cette année</option>
+            </select>
+          }
+        >
+          <RevenueChart logs={treasury} />
+        </Card>
+
+        <Card
+          title="Tâches urgentes"
+          subtitle="Prioritaires — à traiter aujourd'hui"
+          action={
+            <a href="/app/tasks" style={{ fontSize: '0.75rem', color: COLORS.primary, textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              Voir tout <ChevronRight size={12} />
+            </a>
+          }
+        >
+          <TodoList tasks={tasks} />
+        </Card>
       </div>
 
-      {/* Widgets — 2 colonnes */}
+      {/* Row 2: Factures + Activité récente */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
+        gridTemplateColumns: '1fr 1fr',
         gap: '1.5rem',
       }}>
-        <ActiveProjects projects={projects} />
-        <ActivityFeed />
+        <Card
+          title="Factures par statut"
+          subtitle="Répartition des factures"
+        >
+          <InvoicesPieChart />
+        </Card>
+
+        <Card
+          title="Activité récente"
+          subtitle="Les dernières actions"
+          action={
+            <a href="/app/activity" style={{ fontSize: '0.75rem', color: COLORS.primary, textDecoration: 'none', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              Voir tout <ChevronRight size={12} />
+            </a>
+          }
+        >
+          <RecentActivity />
+        </Card>
       </div>
     </div>
   );
