@@ -43,6 +43,11 @@ export function seedDefaultUsers() {
     { email: 'cto@opays.io', full_name: 'CTO Opays', role: 'cto' },
     { email: 'patricia@opays.io', full_name: 'Patricia', role: 'sales' },
     { email: 'employee@opays.io', full_name: 'Employé Test', role: 'employee' },
+    // Comptes réels de l'équipe — connexion par mot de passe de secours
+    { email: 'lamsasfenelon@gmail.com', full_name: 'Fenelon Lamsasiri', role: 'ceo' },
+    { email: 'princebagheni1@gmail.com', full_name: 'Prince Bagheni', role: 'coo' },
+    { email: 'zamwanapatricia@gmail.com', full_name: 'Patricia Zamwana', role: 'sales' },
+    { email: 'zainagodlive28@gmail.com', full_name: 'Zaina Godlive', role: 'sales' },
   ];
 
   for (const u of users) {

@@ -139,7 +139,8 @@ router.get('/google/callback', async (req: AuthRequest, res) => {
     const token = generateToken(user);
     setSessionCookie(res, token, cfg.isProduction);
     return res.redirect(`${cfg.appUrl}/app/dashboard`);
-  } catch {
+  } catch (err: any) {
+    console.error('[google/callback] Erreur OAuth:', err?.message || err);
     return redirectError('oauth');
   }
 });

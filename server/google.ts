@@ -4,19 +4,15 @@ import type { GoogleConfig } from './config';
 /**
  * Encapsulation du flux OAuth 2.0 Google (Authorization Code).
  *
- * Scopes demandés : identité OpenID + Drive / Sheets / Docs pour permettre,
- * ultérieurement, l'usage des outils Google de l'utilisateur depuis son espace.
- *
- * NOTE opérateur : les scopes Drive/Sheets/Docs sont « sensibles » et exigent
- * une vérification de l'application par Google avant usage en production.
+ * Scopes demandés : identité OpenID uniquement (email, profile).
+ * Les scopes Drive/Sheets/Docs ont été retirés car ils sont classés
+ * « sensibles » par Google et bloquent l'authentification même en mode
+ * testing. Ils pourront être rajoutés après vérification de l'application.
  */
 export const WORKSPACE_SCOPES: string[] = [
   'openid',
   'email',
   'profile',
-  'https://www.googleapis.com/auth/drive',
-  'https://www.googleapis.com/auth/spreadsheets',
-  'https://www.googleapis.com/auth/documents',
 ];
 
 export interface GoogleTokens {
@@ -46,7 +42,6 @@ export function buildAuthUrl(cfg: GoogleConfig, state: string): string {
     prompt: 'consent',
     scope: WORKSPACE_SCOPES,
     state,
-    include_granted_scopes: true,
   });
 }
 
