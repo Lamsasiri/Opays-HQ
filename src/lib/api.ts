@@ -351,6 +351,29 @@ export async function apiDeleteContact(id: string) {
   return request<{ ok: boolean }>(`/contacts/${id}`, { method: 'DELETE' });
 }
 
+// ─── Site Content Editor ──────────────────────────────
+export async function apiGetSiteContent() {
+  return request<{ content: any[] }>('/site-content');
+}
+
+export async function apiGetSiteContentSection(section: string) {
+  return request<{ section: string; content: any[] }>(`/site-content/${section}`);
+}
+
+export async function apiUpdateSiteContentField(section: string, field: string, content: string) {
+  return request<{ content: any }>(`/site-content/${section}/${field}`, {
+    method: 'PUT',
+    body: JSON.stringify({ content }),
+  });
+}
+
+export async function apiUpdateSiteContentBulk(entries: { section: string; field: string; content: string }[]) {
+  return request<{ ok: boolean; count: number }>('/site-content/bulk', {
+    method: 'PUT',
+    body: JSON.stringify({ entries }),
+  });
+}
+
 // ─── Vault ──────────────────────────────────────────────
 export async function apiGetContracts() {
   return request<{ contracts: any[] }>('/vault/contracts');

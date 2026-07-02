@@ -16,6 +16,7 @@ import { Route as AppAppVaultRouteImport } from './routes/_app.app.vault'
 import { Route as AppAppTreasuryRouteImport } from './routes/_app.app.treasury'
 import { Route as AppAppTasksRouteImport } from './routes/_app.app.tasks'
 import { Route as AppAppSovereignRouteImport } from './routes/_app.app.sovereign'
+import { Route as AppAppSiteContentRouteImport } from './routes/_app.app.site-content'
 import { Route as AppAppSettingsRouteImport } from './routes/_app.app.settings'
 import { Route as AppAppRhRouteImport } from './routes/_app.app.rh'
 import { Route as AppAppProjectsRouteImport } from './routes/_app.app.projects'
@@ -30,6 +31,7 @@ import { Route as AppAppDashboardRouteImport } from './routes/_app.app.dashboard
 import { Route as AppAppContactsRouteImport } from './routes/_app.app.contacts'
 import { Route as AppAppCalendarRouteImport } from './routes/_app.app.calendar'
 import { Route as AppAppBusinessRouteImport } from './routes/_app.app.business'
+import { Route as AppAppAnalyticsRouteImport } from './routes/_app.app.analytics'
 import { Route as AppAppAgentsRouteImport } from './routes/_app.app.agents'
 
 const LoginRoute = LoginRouteImport.update({
@@ -64,6 +66,11 @@ const AppAppTasksRoute = AppAppTasksRouteImport.update({
 const AppAppSovereignRoute = AppAppSovereignRouteImport.update({
   id: '/app/sovereign',
   path: '/app/sovereign',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppSiteContentRoute = AppAppSiteContentRouteImport.update({
+  id: '/app/site-content',
+  path: '/app/site-content',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAppSettingsRoute = AppAppSettingsRouteImport.update({
@@ -136,6 +143,11 @@ const AppAppBusinessRoute = AppAppBusinessRouteImport.update({
   path: '/app/business',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAppAnalyticsRoute = AppAppAnalyticsRouteImport.update({
+  id: '/app/analytics',
+  path: '/app/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAppAgentsRoute = AppAppAgentsRouteImport.update({
   id: '/app/agents',
   path: '/app/agents',
@@ -146,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/app/agents': typeof AppAppAgentsRoute
+  '/app/analytics': typeof AppAppAnalyticsRoute
   '/app/business': typeof AppAppBusinessRoute
   '/app/calendar': typeof AppAppCalendarRoute
   '/app/contacts': typeof AppAppContactsRoute
@@ -160,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/app/projects': typeof AppAppProjectsRoute
   '/app/rh': typeof AppAppRhRoute
   '/app/settings': typeof AppAppSettingsRoute
+  '/app/site-content': typeof AppAppSiteContentRoute
   '/app/sovereign': typeof AppAppSovereignRoute
   '/app/tasks': typeof AppAppTasksRoute
   '/app/treasury': typeof AppAppTreasuryRoute
@@ -169,6 +183,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/app/agents': typeof AppAppAgentsRoute
+  '/app/analytics': typeof AppAppAnalyticsRoute
   '/app/business': typeof AppAppBusinessRoute
   '/app/calendar': typeof AppAppCalendarRoute
   '/app/contacts': typeof AppAppContactsRoute
@@ -183,6 +198,7 @@ export interface FileRoutesByTo {
   '/app/projects': typeof AppAppProjectsRoute
   '/app/rh': typeof AppAppRhRoute
   '/app/settings': typeof AppAppSettingsRoute
+  '/app/site-content': typeof AppAppSiteContentRoute
   '/app/sovereign': typeof AppAppSovereignRoute
   '/app/tasks': typeof AppAppTasksRoute
   '/app/treasury': typeof AppAppTreasuryRoute
@@ -194,6 +210,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/app/agents': typeof AppAppAgentsRoute
+  '/_app/app/analytics': typeof AppAppAnalyticsRoute
   '/_app/app/business': typeof AppAppBusinessRoute
   '/_app/app/calendar': typeof AppAppCalendarRoute
   '/_app/app/contacts': typeof AppAppContactsRoute
@@ -208,6 +225,7 @@ export interface FileRoutesById {
   '/_app/app/projects': typeof AppAppProjectsRoute
   '/_app/app/rh': typeof AppAppRhRoute
   '/_app/app/settings': typeof AppAppSettingsRoute
+  '/_app/app/site-content': typeof AppAppSiteContentRoute
   '/_app/app/sovereign': typeof AppAppSovereignRoute
   '/_app/app/tasks': typeof AppAppTasksRoute
   '/_app/app/treasury': typeof AppAppTreasuryRoute
@@ -219,6 +237,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/app/agents'
+    | '/app/analytics'
     | '/app/business'
     | '/app/calendar'
     | '/app/contacts'
@@ -233,6 +252,7 @@ export interface FileRouteTypes {
     | '/app/projects'
     | '/app/rh'
     | '/app/settings'
+    | '/app/site-content'
     | '/app/sovereign'
     | '/app/tasks'
     | '/app/treasury'
@@ -242,6 +262,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/app/agents'
+    | '/app/analytics'
     | '/app/business'
     | '/app/calendar'
     | '/app/contacts'
@@ -256,6 +277,7 @@ export interface FileRouteTypes {
     | '/app/projects'
     | '/app/rh'
     | '/app/settings'
+    | '/app/site-content'
     | '/app/sovereign'
     | '/app/tasks'
     | '/app/treasury'
@@ -266,6 +288,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/login'
     | '/_app/app/agents'
+    | '/_app/app/analytics'
     | '/_app/app/business'
     | '/_app/app/calendar'
     | '/_app/app/contacts'
@@ -280,6 +303,7 @@ export interface FileRouteTypes {
     | '/_app/app/projects'
     | '/_app/app/rh'
     | '/_app/app/settings'
+    | '/_app/app/site-content'
     | '/_app/app/sovereign'
     | '/_app/app/tasks'
     | '/_app/app/treasury'
@@ -341,6 +365,13 @@ declare module '@tanstack/react-router' {
       path: '/app/sovereign'
       fullPath: '/app/sovereign'
       preLoaderRoute: typeof AppAppSovereignRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/site-content': {
+      id: '/_app/app/site-content'
+      path: '/app/site-content'
+      fullPath: '/app/site-content'
+      preLoaderRoute: typeof AppAppSiteContentRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/app/settings': {
@@ -441,6 +472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAppBusinessRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/app/analytics': {
+      id: '/_app/app/analytics'
+      path: '/app/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/app/agents': {
       id: '/_app/app/agents'
       path: '/app/agents'
@@ -453,6 +491,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAppAgentsRoute: typeof AppAppAgentsRoute
+  AppAppAnalyticsRoute: typeof AppAppAnalyticsRoute
   AppAppBusinessRoute: typeof AppAppBusinessRoute
   AppAppCalendarRoute: typeof AppAppCalendarRoute
   AppAppContactsRoute: typeof AppAppContactsRoute
@@ -467,6 +506,7 @@ interface AppRouteChildren {
   AppAppProjectsRoute: typeof AppAppProjectsRoute
   AppAppRhRoute: typeof AppAppRhRoute
   AppAppSettingsRoute: typeof AppAppSettingsRoute
+  AppAppSiteContentRoute: typeof AppAppSiteContentRoute
   AppAppSovereignRoute: typeof AppAppSovereignRoute
   AppAppTasksRoute: typeof AppAppTasksRoute
   AppAppTreasuryRoute: typeof AppAppTreasuryRoute
@@ -475,6 +515,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAppAgentsRoute: AppAppAgentsRoute,
+  AppAppAnalyticsRoute: AppAppAnalyticsRoute,
   AppAppBusinessRoute: AppAppBusinessRoute,
   AppAppCalendarRoute: AppAppCalendarRoute,
   AppAppContactsRoute: AppAppContactsRoute,
@@ -489,6 +530,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAppProjectsRoute: AppAppProjectsRoute,
   AppAppRhRoute: AppAppRhRoute,
   AppAppSettingsRoute: AppAppSettingsRoute,
+  AppAppSiteContentRoute: AppAppSiteContentRoute,
   AppAppSovereignRoute: AppAppSovereignRoute,
   AppAppTasksRoute: AppAppTasksRoute,
   AppAppTreasuryRoute: AppAppTreasuryRoute,

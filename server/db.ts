@@ -343,6 +343,15 @@ function initSchema() {
       updated_at TEXT DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS site_content (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      section TEXT NOT NULL,
+      field TEXT NOT NULL,
+      content TEXT NOT NULL,
+      updated_at TEXT DEFAULT (datetime('now')),
+      UNIQUE(section, field)
+    );
+
     CREATE TABLE IF NOT EXISTS site_contacts (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,

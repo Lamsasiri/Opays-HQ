@@ -145,3 +145,57 @@ export function seedMarketingTemplates() {
   console.log(`✅ ${templates.length} templates marketing créés`);
 }
 
+/** Sème le contenu initial du site vitrine opays.io. */
+export function seedSiteContent() {
+  const db = getDb();
+  const count = db.prepare('SELECT COUNT(*) as c FROM site_content').get() as { c: number };
+  if (count.c > 0) return;
+
+  const insert = db.prepare(`
+    INSERT INTO site_content (section, field, content)
+    VALUES (?, ?, ?)
+  `);
+
+  const entries: [string, string, string][] = [
+    // Hero
+    ['hero', 'title', 'Opays Tech'],
+    ['hero', 'subtitle', "Ingénierie de l'efficience par l'IA"],
+    ['hero', 'description', 'Nous concevons des systèmes intelligents qui transforment la complexité en performance. De l\'audit stratégique à l\'implémentation, chaque solution est pensée pour maximiser votre retour sur investissement technologique.'],
+    ['hero', 'cta', 'Diagnostic gratuit'],
+
+    // About
+    ['about', 'title', 'À propos'],
+    ['about', 'description', "Opays Tech est né d'une conviction : la technologie doit être un levier de croissance accessible à toutes les entreprises. Fondé par des experts en intelligence artificielle et en transformation digitale, nous accompagnons nos clients dans leur mutation technologique avec des solutions sur mesure, performantes et durables."],
+
+    // Services
+    ['services', 'title', 'Nos services'],
+    ['services', 'description', "De l'audit à l'implémentation, nous couvrons l'ensemble de vos besoins technologiques pour accélérer votre transformation digitale."],
+
+    // Contact
+    ['contact', 'title', 'Contactez-nous'],
+    ['contact', 'email', 'contact@opays.tech'],
+    ['contact', 'phone', '+243 820 000 000'],
+    ['contact', 'address', 'Kinshasa, République Démocratique du Congo'],
+
+    // Features
+    ['features', 'feature_1_title', 'Audit & Conseil'],
+    ['features', 'feature_1_desc', 'Analyse approfondie de votre système d\'information et recommandations stratégiques pour optimiser vos processus métier.'],
+    ['features', 'feature_2_title', 'IA & Machine Learning'],
+    ['features', 'feature_2_desc', 'Déploiement de modèles d\'intelligence artificielle sur mesure pour automatiser vos tâches complexes et extraire de la valeur de vos données.'],
+    ['features', 'feature_3_title', 'Développement Web'],
+    ['features', 'feature_3_desc', 'Création d\'applications web modernes, performantes et sécurisées, adaptées aux besoins spécifiques de votre entreprise.'],
+    ['features', 'feature_4_title', 'Infrastructure Cloud'],
+    ['features', 'feature_4_desc', 'Migration et gestion de votre infrastructure cloud pour une scalabilité optimale et une réduction des coûts opérationnels.'],
+    ['features', 'feature_5_title', 'Formation & Accompagnement'],
+    ['features', 'feature_5_desc', 'Programmes de formation sur mesure pour monter en compétence vos équipes sur les technologies émergentes.'],
+    ['features', 'feature_6_title', 'Sécurité & Conformité'],
+    ['features', 'feature_6_desc', 'Audit de sécurité, mise en conformité RGPD et déploiement de solutions de cybersécurité robustes.'],
+  ];
+
+  for (const [section, field, content] of entries) {
+    insert.run(section, field, content);
+  }
+
+  console.log(`✅ ${entries.length} contenus site vitrine créés`);
+}
+
