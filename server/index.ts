@@ -62,8 +62,14 @@ const authLimiter = rateLimit({
 
 // CSRF protection on all mutating requests (POST/PUT/PATCH/DELETE)
 // Désactivé en mode test pour ne pas casser les tests existants.
+// Les routes /api/auth sont exemptées car l'utilisateur n'a pas encore de token
+// avant de se connecter. Le token CSRF est posé lors du login (via setCsrfCookie).
 if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
-  app.use(csrfMiddleware);
+  app.use('/api', (req, res, next) => {
+    // Exempt auth routes (login, register, google oauth) — utilisateur n'a pas encore de token
+    if (req.path.startsWith('/auth/')) return next();
+    csrfMiddleware(req, res, next);
+  });
 }
 
 // API routes — rate limited auth first
