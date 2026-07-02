@@ -26,18 +26,48 @@ import marketingRoutes from './routes/marketing';
 import contactRoutes from './routes/contacts';
 import siteContentRoutes from './routes/site-content';
 import { seedDefaultUsers, seedMarketingTemplates, seedSiteContent } from './seed';
-import { loadConfigOrExit } from './config';
+import { loadConfigOrExit, loadAllowedOrigins } from './config';
 import { getDb } from './db';
+import rateLimit from 'express-rate-limit';
+import { csrfMiddleware } from './csrf';
+import { createBackupRouter } from './backup';
 
 export const app = express();
 
 // Middleware
-app.use(cors({ origin: true, credentials: true }));
+const allowedOrigins = loadAllowedOrigins(process.env);
+if (allowedOrigins.length === 0 && process.env.NODE_ENV === 'production') {
+  console.warn('[WARN] CORS_ORIGIN is empty — no cross-origin requests allowed in production');
+}
+app.use(cors({
+  origin: (origin, cb) => {
+    // allow requests with no origin (same-origin, server tools, curl)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error('Origin not allowed by CORS policy'), false);
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
-// API routes
-app.use('/api/auth', authRoutes);
+// Rate limiting on auth routes to prevent brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // max 20 requests per window per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Trop de tentatives, réessayez dans 15 minutes' },
+});
+
+// CSRF protection on all mutating requests (POST/PUT/PATCH/DELETE)
+// Désactivé en mode test pour ne pas casser les tests existants.
+if (process.env.NODE_ENV !== 'test' && !process.env.VITEST) {
+  app.use(csrfMiddleware);
+}
+
+// API routes — rate limited auth first
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/treasury', treasuryRoutes);
@@ -58,6 +88,9 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/marketing', marketingRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/site-content', siteContentRoutes);
+
+// Backup routes (manual trigger + list)
+app.use('/api/system', createBackupRouter());
 
 // Health check — formalized contract consumed by the platform health check.
 // res.json sets Content-Type: application/json and status 200 by default.
@@ -108,6 +141,41 @@ function start(): void {
   app.listen(config.port, '0.0.0.0', () => {
     console.log(`Opays HQ API running on port ${config.port}`);
   });
+
+  // 7. Schedule daily SQLite backup at 03:00 server time.
+  scheduleDailyBackup();
+}
+
+/**
+ * Planifie un backup automatique de la base SQLite chaque jour à 03:00.
+ * Utilise un intervalle simple (pas de dépendance externe) : vérifie toutes
+ * les 15 minutes si l'heure cible est atteinte.
+ */
+function scheduleDailyBackup(): void {
+  const BACKUP_HOUR = 3;
+  const BACKUP_MINUTE = 0;
+  const CHECK_INTERVAL_MS = 15 * 60 * 1000; // 15 min
+
+  let lastBackupDate = '';
+
+  const check = () => {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
+    // Ne pas relancer si déjà backupé aujourd'hui
+    if (lastBackupDate === today) return;
+
+    if (now.getHours() === BACKUP_HOUR && now.getMinutes() >= BACKUP_MINUTE) {
+      lastBackupDate = today;
+      console.log('[backup] Déclenchement du backup automatique quotidien...');
+      const { runBackup } = require('./backup');
+      runBackup();
+    }
+  };
+
+  setInterval(check, CHECK_INTERVAL_MS);
+  // Exécute aussi au démarrage si on est dans la fenêtre
+  check();
 }
 
 // Run the startup side effects (config validation, DB init, port bind) only when

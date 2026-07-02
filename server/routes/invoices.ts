@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import {
   getInvoices,
@@ -7,6 +8,7 @@ import {
   updateInvoiceStatus,
   deleteInvoice,
 } from '../models';
+import { createInvoiceSchema, updateInvoiceStatusSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -17,20 +19,17 @@ router.use(requireRole(...INVOICE_ROLES));
 
 // GET /api/invoices
 router.get('/', (req: AuthRequest, res) => {
-  res.json({ invoices: getInvoices(req.user!.id, req.user!.role_name) });
+  const { page, limit } = parsePagination(req.query);
+  res.json({ invoices: getInvoices(req.user!.id, req.user!.role_name), page, limit });
 });
 
 // POST /api/invoices
 router.post('/', (req: AuthRequest, res) => {
-  const { type, client_name, items, subtotal, total } = req.body;
-  if (!type || !client_name || !items || subtotal === undefined || total === undefined) {
-    return res.status(400).json({ error: 'Champs requis manquants : type, client_name, items, subtotal, total' });
+  const result = createInvoiceSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Données requises manquantes ou invalides', details: result.error.flatten() });
   }
-  const validTypes = ['sale', 'proforma', 'credit_note', 'debit_note', 'quote'];
-  if (!validTypes.includes(type)) {
-    return res.status(400).json({ error: `Type invalide. Valeurs acceptées : ${validTypes.join(', ')}` });
-  }
-  const invoice = createInvoice({ ...req.body, created_by: req.user!.id });
+  const invoice = createInvoice({ ...result.data, created_by: req.user!.id });
   res.status(201).json({ invoice });
 });
 
@@ -159,9 +158,11 @@ router.get('/:id/pdf', (req: AuthRequest, res) => {
 
 // PATCH /api/invoices/:id/status
 router.patch('/:id/status', (req: AuthRequest, res) => {
-  const { status } = req.body;
-  if (!status) return res.status(400).json({ error: 'Le champ status est requis' });
-  const invoice = updateInvoiceStatus(req.params.id, status);
+  const result = updateInvoiceStatusSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Statut invalide', details: result.error.flatten() });
+  }
+  const invoice = updateInvoiceStatus(req.params.id, result.data.status);
   if (!invoice) return res.status(404).json({ error: 'Facture introuvable ou statut invalide' });
   res.json({ invoice });
 });

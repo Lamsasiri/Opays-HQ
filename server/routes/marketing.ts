@@ -7,6 +7,7 @@ import {
   updateMarketingTemplate,
   deleteMarketingTemplate,
 } from '../models';
+import { createMarketingTemplateSchema, updateMarketingTemplateSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -17,7 +18,8 @@ router.use(requireRole(...MARKETING_ROLES));
 
 // GET /api/marketing/templates
 router.get('/templates', (req: AuthRequest, res) => {
-  res.json({ templates: getMarketingTemplates() });
+  const { limit, offset } = parsePagination(req.query as Record<string, unknown>);
+  res.json({ templates: getMarketingTemplates(limit, offset) });
 });
 
 // GET /api/marketing/templates/:id
@@ -29,17 +31,17 @@ router.get('/templates/:id', (req: AuthRequest, res) => {
 
 // POST /api/marketing/templates
 router.post('/templates', (req: AuthRequest, res) => {
-  const { name, content } = req.body;
-  if (!name || !content) {
-    return res.status(400).json({ error: 'Champs requis manquants : name, content' });
-  }
-  const template = createMarketingTemplate({ ...req.body, created_by: req.user!.id });
+  const parsed = createMarketingTemplateSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
+  const template = createMarketingTemplate({ ...parsed.data, created_by: req.user!.id });
   res.status(201).json({ template });
 });
 
 // PUT /api/marketing/templates/:id
 router.put('/templates/:id', (req: AuthRequest, res) => {
-  const template = updateMarketingTemplate(req.params.id, req.body);
+  const parsed = updateMarketingTemplateSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
+  const template = updateMarketingTemplate(req.params.id, parsed.data);
   if (!template) return res.status(404).json({ error: 'Template introuvable' });
   res.json({ template });
 });

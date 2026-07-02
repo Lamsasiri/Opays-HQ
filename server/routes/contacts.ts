@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getDb } from '../db';
 import crypto from 'crypto';
+import { updateContactStatusSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -17,9 +18,10 @@ function uuid(): string {
 // GET /api/contacts
 router.get('/', (req: AuthRequest, res) => {
   const db = getDb();
+  const { limit, offset } = parsePagination(req.query as Record<string, unknown>);
   const contacts = db.prepare(
-    'SELECT * FROM site_contacts ORDER BY created_at DESC'
-  ).all();
+    'SELECT * FROM site_contacts ORDER BY created_at DESC LIMIT ? OFFSET ?'
+  ).all(limit, offset);
   res.json({ contacts });
 });
 
@@ -34,23 +36,20 @@ router.get('/:id', (req: AuthRequest, res) => {
 // PATCH /api/contacts/:id/status
 router.patch('/:id/status', (req: AuthRequest, res) => {
   const db = getDb();
-  const { status } = req.body;
-  const validStatuses = ['new', 'read', 'replied', 'archived'];
-  if (!status || !validStatuses.includes(status)) {
-    return res.status(400).json({ error: 'Statut invalide. Valeurs acceptées : new, read, replied, archived' });
-  }
+  const parsed = updateContactStatusSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
 
   const contact = db.prepare('SELECT * FROM site_contacts WHERE id = ?').get(req.params.id) as any;
   if (!contact) return res.status(404).json({ error: 'Contact introuvable' });
 
-  const readAt = status === 'read' && !contact.read_at ? new Date().toISOString() : contact.read_at;
-  const repliedAt = status === 'replied' && !contact.replied_at ? new Date().toISOString() : contact.replied_at;
+  const readAt = parsed.data.status === 'read' && !contact.read_at ? new Date().toISOString() : contact.read_at;
+  const repliedAt = parsed.data.status === 'replied' && !contact.replied_at ? new Date().toISOString() : contact.replied_at;
 
   db.prepare(`
     UPDATE site_contacts
     SET status = ?, read_at = ?, replied_at = ?
     WHERE id = ?
-  `).run(status, readAt, repliedAt, req.params.id);
+  `).run(parsed.data.status, readAt, repliedAt, req.params.id);
 
   const updated = db.prepare('SELECT * FROM site_contacts WHERE id = ?').get(req.params.id);
   res.json({ contact: updated });

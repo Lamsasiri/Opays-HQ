@@ -1,23 +1,26 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getEquityLogs, createEquityLog } from '../models';
+import { createEquityLogSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
 
 // GET /api/equity — logs de vesting (vue gestion).
 router.get('/', requireRole('admin', 'ceo', 'coo'), (req: AuthRequest, res) => {
+  const { page, limit } = parsePagination(req.query);
   const logs = getEquityLogs();
-  res.json({ logs });
+  res.json({ logs, page, limit });
 });
 
 // POST /api/equity — attribue de l'equity (CEO/CTO uniquement).
 router.post('/', requireRole('ceo', 'cto'), (req: AuthRequest, res) => {
-  const { user_id, shares_vested, total_shares, vesting_date, notes } = req.body;
-  if (!user_id || shares_vested == null || total_shares == null || !vesting_date) {
-    return res.status(400).json({ error: 'Champs requis manquants' });
+  const result = createEquityLogSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Champs requis manquants ou invalides', details: result.error.flatten() });
   }
-  const log = createEquityLog({ user_id, shares_vested, total_shares, vesting_date, notes });
+  const log = createEquityLog(result.data);
   res.status(201).json({ log });
 });
 

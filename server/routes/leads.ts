@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getLeads, createLead, updateLead, deleteLead, convertLeadToProject } from '../models';
+import { createLeadSchema, updateLeadSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -11,22 +13,28 @@ router.use(requireRole(...CRM_ROLES));
 
 // GET /api/leads
 router.get('/', (req: AuthRequest, res) => {
-  res.json({ leads: getLeads() });
+  const { page, limit } = parsePagination(req.query);
+  const leads = getLeads();
+  res.json({ leads, page, limit });
 });
 
 // POST /api/leads
 router.post('/', (req: AuthRequest, res) => {
-  const { company_name } = req.body;
-  if (!company_name || !String(company_name).trim()) {
-    return res.status(400).json({ error: "Le nom de l'entreprise est requis" });
+  const result = createLeadSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Données invalides', details: result.error.flatten() });
   }
-  const lead = createLead({ ...req.body, created_by: req.user!.id });
+  const lead = createLead({ ...result.data, created_by: req.user!.id });
   res.status(201).json({ lead });
 });
 
 // PUT /api/leads/:id
 router.put('/:id', (req: AuthRequest, res) => {
-  const lead = updateLead(req.params.id, req.body);
+  const result = updateLeadSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Données invalides', details: result.error.flatten() });
+  }
+  const lead = updateLead(req.params.id, result.data as Record<string, unknown>);
   if (!lead) return res.status(404).json({ error: 'Lead introuvable' });
   res.json({ lead });
 });

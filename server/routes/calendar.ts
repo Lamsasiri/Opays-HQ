@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getCalendarEvents, createCalendarEvent, deleteCalendarEvent } from '../models';
+import { createEventSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -8,17 +10,19 @@ router.use(authMiddleware);
 const WRITE_ROLES = ['admin', 'ceo', 'coo', 'cto'] as const;
 
 // GET /api/calendar — tous les utilisateurs authentifiés (lecture).
-router.get('/', (_req: AuthRequest, res) => {
-  res.json({ events: getCalendarEvents() });
+router.get('/', (req: AuthRequest, res) => {
+  const { page, limit } = parsePagination(req.query);
+  const events = getCalendarEvents();
+  res.json({ events, page, limit });
 });
 
 // POST /api/calendar — managers uniquement.
 router.post('/', requireRole(...WRITE_ROLES), (req: AuthRequest, res) => {
-  const { title, start_time } = req.body;
-  if (!title || !start_time) {
-    return res.status(400).json({ error: 'Titre et date de début requis' });
+  const result = createEventSchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ error: 'Données invalides', details: result.error.flatten() });
   }
-  const event = createCalendarEvent({ ...req.body, created_by: req.user!.id });
+  const event = createCalendarEvent({ ...result.data, created_by: req.user!.id });
   res.status(201).json({ event });
 });
 

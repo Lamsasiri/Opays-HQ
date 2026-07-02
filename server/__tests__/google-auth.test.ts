@@ -32,7 +32,7 @@ describe('GET /api/auth/google', () => {
     expect(location).toContain('accounts.google.com');
     expect(location).toContain('client_id=test-client-id');
     expect(location).toContain('scope=');
-    expect(decodeURIComponent(location)).toContain('https://www.googleapis.com/auth/drive');
+    expect(decodeURIComponent(location)).toContain('openid email profile');
     expect(location).toContain('state=');
     expect(location).toContain('access_type=offline');
 

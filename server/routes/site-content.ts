@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getDb } from '../db';
+import { updateSiteContentSchema } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -26,10 +27,8 @@ router.get('/:section', (req: AuthRequest, res) => {
 // PUT /api/site-content/:section/:field — mettre à jour un champ
 router.put('/:section/:field', (req: AuthRequest, res) => {
   const db = getDb();
-  const { content } = req.body;
-  if (content === undefined || content === null) {
-    return res.status(400).json({ error: 'Le champ content est requis' });
-  }
+  const parsed = updateSiteContentSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
 
   db.prepare(`
     INSERT INTO site_content (section, field, content, updated_at)
@@ -37,7 +36,7 @@ router.put('/:section/:field', (req: AuthRequest, res) => {
     ON CONFLICT(section, field) DO UPDATE SET
       content = excluded.content,
       updated_at = datetime('now')
-  `).run(req.params.section, req.params.field, String(content));
+  `).run(req.params.section, req.params.field, parsed.data.content);
 
   const updated = db.prepare('SELECT * FROM site_content WHERE section = ? AND field = ?').get(
     req.params.section, req.params.field
@@ -65,7 +64,7 @@ router.put('/bulk', (req: AuthRequest, res) => {
   const transaction = db.transaction(() => {
     for (const entry of entries) {
       if (!entry.section || !entry.field || entry.content === undefined) {
-        throw new Error(`Entrée invalide : section, field et content sont requis`);
+        throw new Error('Entrée invalide : section, field et content sont requis');
       }
       upsert.run(entry.section, entry.field, String(entry.content));
     }

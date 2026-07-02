@@ -67,6 +67,12 @@ function migrateSchema() {
   ensureColumn('agent_configs', 'allowed_roles', 'TEXT');
   ensureColumn('agent_configs', 'updated_at', 'TEXT');
 
+  // Soft-delete pour les tables critiques (R2)
+  ensureColumn('projects', 'deleted_at', 'TEXT');
+  ensureColumn('leads', 'deleted_at', 'TEXT');
+  ensureColumn('invoices', 'deleted_at', 'TEXT');
+  ensureColumn('treasury_logs', 'deleted_at', 'TEXT');
+
   // Projets : champs additionnels (branche, stack, marges, feedback, lien lead).
   ensureColumn('projects', 'lead_id', 'TEXT');
   ensureColumn('projects', 'branch', "TEXT DEFAULT 'FORGE'");

@@ -4,6 +4,7 @@ import fs from 'fs';
 import multer from 'multer';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getContracts, createContract, getBilling } from '../models';
+import { createContractSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -25,7 +26,6 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: (_req, file, cb) => {
-    // Nom de fichier sûr : timestamp + nom de base assaini.
     const safe = path.basename(file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
     cb(null, `${Date.now()}-${safe}`);
   },
@@ -36,10 +36,11 @@ const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
 router.post('/upload', requireRole(...UPLOAD_ROLES), upload.single('file'), (req: AuthRequest, res) => {
   if (!req.file) return res.status(400).json({ error: 'Aucun fichier fourni' });
   const url = `/api/vault/files/${req.file.filename}`;
-  // Si un project_id est fourni, on enregistre aussi un contrat lié.
   let contract = null;
   if (req.body.project_id) {
-    contract = createContract({ project_id: req.body.project_id, url, signed_at: req.body.signed_at, version: req.body.version });
+    const parsed = createContractSchema.safeParse({ url, project_id: req.body.project_id, signed_at: req.body.signed_at, version: req.body.version });
+    const data = parsed.success ? parsed.data : { url, project_id: req.body.project_id };
+    contract = createContract(data);
   }
   res.status(201).json({ url, contract });
 });
@@ -54,12 +55,14 @@ router.get('/files/:name', requireRole(...READ_ROLES), (req: AuthRequest, res) =
 
 // GET /api/vault/contracts
 router.get('/contracts', requireRole(...READ_ROLES), (_req: AuthRequest, res) => {
-  res.json({ contracts: getContracts() });
+  const { limit, offset } = parsePagination(_req.query as Record<string, unknown>);
+  res.json({ contracts: getContracts(limit, offset) });
 });
 
 // GET /api/vault/billing
 router.get('/billing', requireRole(...READ_ROLES), (_req: AuthRequest, res) => {
-  res.json({ billing: getBilling() });
+  const { limit, offset } = parsePagination(_req.query as Record<string, unknown>);
+  res.json({ billing: getBilling(limit, offset) });
 });
 
 export default router;

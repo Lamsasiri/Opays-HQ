@@ -68,7 +68,6 @@ router.post('/chat', async (req: AuthRequest, res) => {
     return res.status(404).json({ error: 'Agent introuvable' });
   }
 
-  // Résout ou crée la conversation, en vérifiant la propriété.
   let conversationId = conversation_id;
   if (conversationId) {
     if (getConversationOwner(conversationId) !== req.user!.id) {
@@ -79,10 +78,8 @@ router.post('/chat', async (req: AuthRequest, res) => {
     conversationId = createConversation(req.user!.id, agent_id, title);
   }
 
-  // Enregistre le message utilisateur avant l'appel LLM.
   addMessage(conversationId, 'user', message.trim());
 
-  // Construit le contexte : system prompt + historique complet.
   const history = getConversationMessages(conversationId) as { role: ChatMessage['role']; content: string }[];
   const messages: ChatMessage[] = [];
   if (agent.system_prompt) {
@@ -99,7 +96,6 @@ router.post('/chat', async (req: AuthRequest, res) => {
     addMessage(conversationId, 'assistant', answer);
     res.json({ conversation_id: conversationId, message: answer });
   } catch (err) {
-    // Pas d'enregistrement de réponse vide ; on signale un échec en amont.
     const detail = err instanceof Error ? err.message : 'Erreur LLM';
     res.status(502).json({ error: 'Échec de la génération', detail, conversation_id: conversationId });
   }

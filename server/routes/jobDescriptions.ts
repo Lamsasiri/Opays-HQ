@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware, requireRole, AuthRequest } from '../auth';
 import { getJobDescriptions, createJobDescription, deleteJobDescription } from '../models';
+import { createJobDescriptionSchema, parsePagination } from '../validation';
 
 const router = Router();
 router.use(authMiddleware);
@@ -8,15 +9,14 @@ router.use(authMiddleware);
 router.use(requireRole('ceo', 'cto'));
 
 router.get('/', (_req: AuthRequest, res) => {
-  res.json({ jobDescriptions: getJobDescriptions() });
+  const { limit, offset } = parsePagination(_req.query as Record<string, unknown>);
+  res.json({ jobDescriptions: getJobDescriptions(limit, offset) });
 });
 
 router.post('/', (req: AuthRequest, res) => {
-  const { title } = req.body;
-  if (!title || !String(title).trim()) {
-    return res.status(400).json({ error: 'Titre requis' });
-  }
-  const jd = createJobDescription(req.body);
+  const parsed = createJobDescriptionSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.errors[0].message });
+  const jd = createJobDescription(parsed.data);
   res.status(201).json({ jobDescription: jd });
 });
 

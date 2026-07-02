@@ -62,12 +62,12 @@ function sanitizeUser(u: any) {
 }
 
 // ─── Projects ───────────────────────────────────────────
-export function getProjects(userId: string, roleName: string) {
+export function getProjects(userId: string, roleName: string, limit = 50, offset = 0) {
   const db = getDb();
   if (['admin', 'ceo', 'coo', 'cto'].includes(roleName)) {
-    return db.prepare('SELECT p.*, u.full_name as owner_name FROM projects p LEFT JOIN users u ON p.owner_id = u.id ORDER BY p.created_at DESC').all();
+    return db.prepare('SELECT p.*, u.full_name as owner_name FROM projects p LEFT JOIN users u ON p.owner_id = u.id WHERE p.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
   }
-  return db.prepare('SELECT p.*, u.full_name as owner_name FROM projects p LEFT JOIN users u ON p.owner_id = u.id WHERE p.owner_id = ? ORDER BY p.created_at DESC').all(userId);
+  return db.prepare('SELECT p.*, u.full_name as owner_name FROM projects p LEFT JOIN users u ON p.owner_id = u.id WHERE p.owner_id = ? AND p.deleted_at IS NULL ORDER BY p.created_at DESC LIMIT ? OFFSET ?').all(userId, limit, offset);
 }
 
 export function createProject(data: { name: string; description?: string; owner_id: string; start_date?: string; deadline?: string; budget?: number }) {
@@ -151,7 +151,6 @@ export function getUsers() {
     ORDER BY r.level, u.full_name
   `).all();
 }
-
 // ─── Knowledge ───────────────────────────────────────────
 export function getArticles(roleName?: string) {
   const db = getDb();
@@ -615,7 +614,6 @@ export function getCalendarEvents() {
     ORDER BY e.start_time ASC
   `).all();
 }
-
 export function createCalendarEvent(data: { title: string; description?: string; start_time: string; end_time?: string; location?: string; created_by: string }) {
   const db = getDb();
   const id = uuid();
@@ -640,7 +638,6 @@ export function getIdeas() {
     ORDER BY i.votes DESC, i.created_at DESC
   `).all();
 }
-
 export function createIdea(data: { title: string; description?: string; category?: string; profile_id: string }) {
   const db = getDb();
   const id = uuid();
@@ -688,7 +685,6 @@ export function getSovereignResearch() {
     ORDER BY s.created_at DESC
   `).all();
 }
-
 export function createSovereignResearch(data: { title: string; abstract?: string; content_url?: string; author_id: string }) {
   const db = getDb();
   const id = uuid();

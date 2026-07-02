@@ -4,6 +4,7 @@ import { verifyPassword, createUser, getUserById, getUserByEmail, createGoogleUs
 import { generateToken, authMiddleware, requireRole, setSessionCookie, clearSessionCookie, AuthRequest } from '../auth';
 import { loadGoogleConfig } from '../config';
 import { buildAuthUrl, exchangeCode } from '../google';
+import { setCsrfCookie, clearCsrfCookie } from '../csrf';
 
 const router = Router();
 
@@ -32,6 +33,7 @@ router.post('/login', (req, res) => {
 
   const token = generateToken(user);
   setSessionCookie(res, token, isProduction());
+  setCsrfCookie(res, isProduction());
   res.json({ user, token });
 });
 
@@ -71,6 +73,7 @@ router.get('/me', authMiddleware, (req: AuthRequest, res) => {
 // POST /api/auth/logout — efface le cookie de session.
 router.post('/logout', (req, res) => {
   clearSessionCookie(res, isProduction());
+  clearCsrfCookie(res, isProduction());
   res.status(200).json({ ok: true });
 });
 
@@ -138,6 +141,7 @@ router.get('/google/callback', async (req: AuthRequest, res) => {
 
     const token = generateToken(user);
     setSessionCookie(res, token, cfg.isProduction);
+    setCsrfCookie(res, cfg.isProduction);
     return res.redirect(`${cfg.appUrl}/app/dashboard`);
   } catch (err: any) {
     console.error('[google/callback] Erreur OAuth:', err?.message || err);

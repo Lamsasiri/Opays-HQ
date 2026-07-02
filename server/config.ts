@@ -150,3 +150,17 @@ export function loadOpenRouterConfig(env: NodeJS.ProcessEnv): OpenRouterConfig |
     model: env.OPENROUTER_MODEL?.trim() || 'openai/gpt-4o-mini',
   };
 }
+
+// ─── Configuration CORS ────────────────────────────────────
+
+/**
+ * Charge la liste blanche des origines CORS depuis CORS_ORIGIN.
+ * Les origines sont séparées par des virgules.
+ * Retourne un tableau vide si non défini (pas d'origine autorisée en cross-site).
+ */
+export function loadAllowedOrigins(env: NodeJS.ProcessEnv): string[] {
+  return (env.CORS_ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
